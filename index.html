@@ -1,0 +1,2099 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="color-scheme" content="light dark">
+  <title>A3 & A4 통합 PDF 변환기</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+    // 화면 깜빡임(플래시)을 막기 위해 CSS 적용 전에 테마를 먼저 결정한다.
+    (function () {
+      var mode = 'auto';
+      try { mode = localStorage.getItem('worship-tool-theme') || 'auto'; } catch (e) { mode = 'auto'; }
+      var resolved = mode;
+      if (mode === 'auto') {
+        resolved = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+      }
+      document.documentElement.setAttribute('data-theme', resolved);
+      document.documentElement.setAttribute('data-theme-mode', mode);
+    })();
+  </script>
+
+  <style>
+    /* =====================================================================
+       디자인 토큰
+       주제: 교회 예배 준비 도구 — 찬송가집(양장 표지 + 금박)과 오선지에서 가져온 색·형태
+       색   : 종이(연회색 크라프트) / 잉크 / 와인레드(주 동작) / 놋쇠금(구조선) / 세이지그린(완료)
+       서체 : 제목 Gowun Batang(명조) · 본문 Pretendard · 라벨 Pretendard 자간확장
+       시그니처 : 오선(五線) 괘선 — 제목 아래와 섹션 사이 구분선
+       ===================================================================== */
+    :root {
+      --paper:        #E9EAE4;
+      --surface:      #FCFCFA;   /* 카드 */
+      --surface-2:    #F2F2ED;   /* 카드 안쪽 박스 */
+      --surface-3:    #FFFFFF;   /* 입력창 */
+      --text-main:    #17181A;
+      --text-muted:   #6B6F6B;
+      --rule:         #D5D6CD;
+      --rule-strong:  #B9BBAF;
+
+      --accent:       #8C2F39;   /* 와인레드 */
+      --accent-hover: #74262F;
+      --gold:         #8A6A2F;
+      --sage:         #3F6B52;
+      --indigo:       #4B4A6B;
+      --danger:       #A3282C;
+
+      /* 버튼 배경(밝은 테마는 흰 글자) */
+      --primary:        var(--accent);
+      --primary-hover:  var(--accent-hover);
+      --secondary:      var(--sage);
+      --purple:         var(--indigo);
+      --orange:         var(--gold);          /* 글자색으로도 쓰임 */
+      --orange-strong:  var(--gold);          /* 버튼 배경 */
+      --btn-ink:        #FFFFFF;              /* 버튼 글자색 */
+      --danger-text:    #8E2226;
+
+      --bg-color:     var(--paper);
+      --border:       var(--rule);
+      --dashed-border:#C3C5B9;
+      --accent-soft:  #F5EBEC;
+      --primary-soft: var(--accent-soft);
+      --orange-soft:  #F4EFE2;
+      --orange-border:#D7C79B;
+      --neutral-btn-bg:   #E4E5DD;
+      --neutral-btn-text: #17181A;
+      --focus-ring:   rgba(140,47,57,0.18);
+      --orange-ring:  rgba(138,106,47,0.16);
+
+      --shadow-sm: 0 1px 2px rgba(23,24,26,0.06);
+      --shadow-md: 0 1px 3px rgba(23,24,26,0.06), 0 8px 28px -18px rgba(23,24,26,0.35);
+      --radius: 10px;
+      --radius-sm: 7px;
+
+      --display: 'Gowun Batang', 'Nanum Myeongjo', serif;
+      --body: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+
+      color-scheme: light;
+    }
+
+    /* 어두운 테마 — 찬송가집 가죽 표지 */
+    :root[data-theme="dark"] {
+      --paper:        #131519;
+      --surface:      #1A1D22;
+      --surface-2:    #212429;
+      --surface-3:    #262A30;
+      --text-main:    #E9E7E1;
+      --text-muted:   #979C99;
+      --rule:         #32363D;
+      --rule-strong:  #4A4F57;
+
+      --accent:       #C4646C;
+      --accent-hover: #D4787F;
+      --gold:         #C9A45E;
+      --sage:         #6FA381;
+      --indigo:       #A5A2DA;
+      --danger:       #E0777A;
+
+      --orange-strong: var(--gold);
+      --btn-ink:      #14161A;               /* 어두운 테마는 밝은 버튼 + 어두운 글자 */
+      --danger-text:  #E88A8C;
+
+      --dashed-border:#414751;
+      --accent-soft:  #2A1D20;
+      --orange-soft:  #2B2416;
+      --orange-border:#5C4A22;
+      --neutral-btn-bg:   #2E333A;
+      --neutral-btn-text: #E9E7E1;
+      --focus-ring:   rgba(196,100,108,0.24);
+      --orange-ring:  rgba(201,164,94,0.20);
+
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.5);
+      --shadow-md: 0 1px 3px rgba(0,0,0,0.5), 0 12px 32px -20px rgba(0,0,0,0.9);
+
+      color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--body);
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.6;
+      padding: 28px 16px 56px;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color .18s ease, color .18s ease;
+    }
+
+    button, input, select, textarea { font-family: inherit; font-size: inherit; color: inherit; }
+    button { touch-action: manipulation; }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+
+    /* ---------- 시그니처: 오선 괘선 ---------- */
+    .staff-rule {
+      height: 17px;
+      background: repeating-linear-gradient(to bottom,
+        var(--rule-strong) 0 1px, transparent 1px 4px);
+      -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+      mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+      opacity: .85;
+    }
+    .staff-rule.tight { max-width: 260px; }
+
+    /* ---------- 셸 ---------- */
+    .app-wrapper {
+      max-width: 940px;
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-top: 3px solid var(--accent);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      padding: 28px 30px 40px;
+    }
+
+    /* ---------- 화면 모드 ---------- */
+    .theme-switch {
+      display: flex;
+      justify-content: flex-end;
+      gap: 2px;
+      padding: 3px;
+      margin: 0 0 26px auto;
+      width: fit-content;
+      background: var(--surface-2);
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+    }
+    .theme-btn {
+      background: transparent;
+      color: var(--text-muted);
+      border: none;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: -.01em;
+      cursor: pointer;
+      transition: background-color .15s ease, color .15s ease;
+    }
+    .theme-btn:hover { color: var(--text-main); }
+    .theme-btn[aria-pressed="true"] {
+      background: var(--surface-3);
+      color: var(--text-main);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ---------- 머리말 ---------- */
+    .header-section { text-align: center; margin-bottom: 42px; }
+    .header-section h1 {
+      font-family: var(--display);
+      font-size: clamp(1.7rem, 4.5vw, 2.15rem);
+      font-weight: 700;
+      letter-spacing: -.02em;
+      line-height: 1.25;
+      margin-bottom: 14px;
+    }
+    .header-section .staff-rule { margin: 0 auto 14px; max-width: 200px; }
+    .header-section p { color: var(--text-muted); font-size: .92rem; }
+
+    /* ---------- 섹션 ---------- */
+    .section-head { margin: 52px 0 18px; }
+    .section-head:first-of-type { margin-top: 0; }
+    .section-head .staff-rule { margin-bottom: 22px; }
+    .eyebrow {
+      display: block;
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 7px;
+    }
+    .section-title {
+      font-family: var(--display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -.015em;
+      color: var(--text-main);
+    }
+    .section-note { color: var(--text-muted); font-size: .87rem; margin-top: 5px; }
+
+    /* ---------- 패널 / 폼 ---------- */
+    .control-panel { display: flex; flex-direction: column; gap: 14px; margin-bottom: 22px; }
+    .input-box {
+      background: var(--surface-2);
+      border: 1px solid var(--rule);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+    .field-label {
+      display: block;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      text-transform: none;
+    }
+    .form-input, textarea, .form-select {
+      width: 100%;
+      background: var(--surface-3);
+      color: var(--text-main);
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-sm);
+      padding: 11px 12px;
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    .form-input { margin-bottom: 8px; }
+    textarea { height: 108px; resize: vertical; line-height: 1.65; }
+    .form-select { cursor: pointer; }
+    .form-input:focus, textarea:focus, .form-select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+    .form-input::placeholder, textarea::placeholder { color: var(--text-muted); opacity: .75; }
+
+    .hint { color: var(--text-muted); font-size: .8rem; line-height: 1.55; margin-top: 7px; }
+    .divider { border: 0; border-top: 1px solid var(--rule); margin: 18px 0; }
+    .mt-s { margin-top: 8px; }
+    .field-label.stacked { margin-top: 18px; }
+    .input-box.block { margin-bottom: 22px; }
+    .center { text-align: center; }
+    .text-danger { color: var(--danger-text); }
+    .text-muted { color: var(--text-muted); }
+
+    /* ---------- 버튼 ---------- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      width: 100%;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 12px 18px;
+      font-size: .95rem;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      color: var(--btn-ink);
+      cursor: pointer;
+      transition: background-color .15s ease, transform .08s ease, opacity .15s ease;
+    }
+    .btn:active:not(:disabled) { transform: translateY(1px); }
+    .btn-primary { background: var(--primary); }
+    .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
+    .btn-secondary { background: var(--secondary); }
+    .btn-orange { background: var(--orange-strong); }
+    .btn-purple { background: var(--purple); }
+    .btn-secondary:hover:not(:disabled),
+    .btn-orange:hover:not(:disabled),
+    .btn-purple:hover:not(:disabled) { opacity: .88; }
+    .btn:disabled { background: var(--neutral-btn-bg); color: var(--text-muted); cursor: not-allowed; }
+    .btn-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+    .btn-row .btn { flex: 1 1 200px; }
+
+    /* ---------- 파일 선택 ---------- */
+    .upload-box {
+      border: 1px dashed var(--dashed-border);
+      background: var(--surface-2);
+      border-radius: var(--radius);
+      padding: 30px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .15s ease, background-color .15s ease;
+    }
+    .upload-box:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .upload-box .up-title { font-weight: 700; letter-spacing: -.01em; }
+    .upload-box .up-mark {
+      display: block;
+      font-family: var(--display);
+      font-size: 1.5rem;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+    .upload-box.ppt { padding: 22px 20px; border-color: var(--orange-border); background: var(--orange-soft); }
+    .upload-box.ppt:hover { border-color: var(--gold); }
+    input[type="file"] { display: none; }
+
+    /* ---------- 항목 미리보기 ---------- */
+    .preview-header {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 10px;
+    }
+    #file-count {
+      font-size: .78rem; font-weight: 700; letter-spacing: .08em;
+      color: var(--text-muted); font-variant-numeric: tabular-nums;
+    }
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+      gap: 12px;
+      min-height: 118px;
+      padding: 16px;
+      background: var(--surface-2);
+      border: 1px solid var(--rule);
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+    }
+    .item-cell { display: flex; flex-direction: column; gap: 6px; }
+    .image-card {
+      position: relative;
+      aspect-ratio: 1;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--surface-3);
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    /* 텍스트 카드는 실제 인쇄 결과(흰 종이)를 보여주므로 두 테마 모두 흰 배경 */
+    .image-card.text-type {
+      background: #FFFFFF; color: #17181A;
+      padding: 11px; font-size: .76rem; line-height: 1.45;
+      text-align: center; word-break: break-all;
+    }
+    .image-card img { width: 100%; height: 100%; object-fit: cover; }
+    .delete-btn {
+      position: absolute; top: 5px; right: 5px;
+      width: 22px; height: 22px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(23,24,26,.62); color: #fff;
+      border: none; border-radius: 50%;
+      font-size: .7rem; line-height: 1; cursor: pointer;
+      opacity: 0; transition: opacity .15s ease;
+    }
+    .image-card:hover .delete-btn, .delete-btn:focus-visible { opacity: 1; }
+    @media (hover: none) { .delete-btn { opacity: 1; } }
+    .empty-msg {
+      grid-column: 1 / -1; text-align: center;
+      color: var(--text-muted); font-size: .88rem; padding: 24px 0;
+    }
+
+    /* 직접 지정 모드 컨트롤 */
+    .item-controls {
+      display: flex; flex-direction: column; gap: 5px;
+      background: var(--surface-3);
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-sm);
+      padding: 7px 8px;
+      font-size: .74rem;
+    }
+    .item-controls select {
+      width: 100%; padding: 4px 6px;
+      background: var(--surface-3); color: var(--text-main);
+      border: 1px solid var(--rule); border-radius: 5px;
+      font-size: .74rem; cursor: pointer;
+    }
+    .item-controls label {
+      display: flex; align-items: center; gap: 5px;
+      font-weight: 700; cursor: pointer;
+    }
+    .item-controls input[type="checkbox"] { accent-color: var(--accent); width: 14px; height: 14px; }
+    .item-controls label.disabled { color: var(--text-muted); font-weight: 400; cursor: not-allowed; }
+
+    /* ---------- 진행 표시 ---------- */
+    .progress-wrapper { display: none; margin-bottom: 18px; }
+    .progress-container {
+      height: 6px; border-radius: 999px; overflow: hidden;
+      background: var(--neutral-btn-bg); margin-bottom: 8px;
+    }
+    .progress-bar { height: 100%; width: 0%; background: var(--accent); transition: width .3s ease; }
+    .progress-text {
+      text-align: center; font-size: .8rem; font-weight: 600;
+      color: var(--text-muted); font-variant-numeric: tabular-nums;
+    }
+    .layout-info {
+      text-align: center; font-size: .84rem; font-weight: 600;
+      margin-top: 12px; line-height: 1.55;
+    }
+
+    /* ---------- 선택 칩 ---------- */
+    .font-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .font-chip {
+      flex: 1 1 150px;
+      display: flex; align-items: center; gap: 8px;
+      background: var(--surface-3);
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-sm);
+      padding: 11px 13px;
+      font-size: .9rem; font-weight: 700;
+      cursor: pointer;
+      transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease;
+    }
+    .font-chip input { accent-color: var(--accent); width: 16px; height: 16px; }
+    .font-chip:has(input:checked) {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+
+    /* ---------- 병합 목록 ---------- */
+    .ppt-list { list-style: none; margin-bottom: 14px; }
+    .ppt-item {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--surface-3);
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      margin-bottom: 6px;
+      font-size: .89rem;
+    }
+    .ppt-item strong { font-variant-numeric: tabular-nums; color: var(--text-muted); font-weight: 700; }
+    .ppt-name { flex: 1; word-break: break-all; margin-right: 8px; }
+    .ppt-actions { display: flex; gap: 4px; }
+    .ppt-item button {
+      border: none; border-radius: 5px; padding: 4px 8px;
+      font-size: .78rem; cursor: pointer;
+      transition: opacity .15s ease;
+    }
+    .move-btn { background: var(--neutral-btn-bg); color: var(--neutral-btn-text); }
+    .move-btn:disabled { opacity: .3; cursor: not-allowed; }
+    .del-btn { background: transparent; color: var(--danger-text); font-weight: 700; }
+    .del-btn:hover { background: var(--accent-soft); }
+
+    /* ---------- 업로드 목록 ---------- */
+    .up-list { list-style: none; margin-top: 12px; }
+    .up-item {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 8px; flex-wrap: wrap;
+      background: var(--surface-3);
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px; margin-bottom: 6px;
+      font-size: .85rem;
+    }
+    .up-item .name { flex: 1 1 160px; word-break: break-all; }
+    .up-item .state { font-weight: 700; white-space: nowrap; font-size: .8rem; }
+    .up-item .add {
+      background: var(--secondary); color: var(--btn-ink);
+      border: none; border-radius: 5px; padding: 6px 10px;
+      font-size: .78rem; font-weight: 700; cursor: pointer;
+    }
+    .up-item .add:disabled { background: var(--neutral-btn-bg); color: var(--text-muted); cursor: not-allowed; }
+    .up-error { flex-basis: 100%; margin-top: 2px; }
+
+    .fallback-link {
+      display: inline-block; margin-top: 8px;
+      font-size: .86rem; color: var(--accent);
+      text-underline-offset: 3px;
+    }
+
+    #uploadStatus, #pptStatus {
+      text-align: center; margin-top: 10px;
+      font-size: .86rem; font-weight: 600; line-height: 1.6;
+      white-space: pre-line;
+    }
+    #searchResults { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+    #searchResults .btn { justify-content: flex-start; padding: 9px 12px; font-size: .88rem; }
+    #downloadGroup { display: none; flex-direction: column; gap: 10px; margin-top: 14px; }
+
+    .search-row { display: flex; gap: 8px; }
+    .search-row .form-input { margin: 0; }
+    .search-row .btn { width: auto; flex: 0 0 88px; }
+
+    /* ---------- 반응형 ---------- */
+    @media (max-width: 600px) {
+      body { padding: 18px 12px 40px; }
+      .app-wrapper { padding: 20px 16px 30px; border-radius: 8px; }
+      .section-head { margin-top: 40px; }
+      .btn-row .btn { flex: 1 1 100%; }
+      .search-row { flex-wrap: wrap; }
+      .search-row .btn { flex: 1 1 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+
+  <div class="theme-switch" role="group" aria-label="화면 모드">
+    <button type="button" class="theme-btn" id="themeAuto" onclick="setThemeMode('auto')">시스템</button>
+    <button type="button" class="theme-btn" id="themeLight" onclick="setThemeMode('light')">밝게</button>
+    <button type="button" class="theme-btn" id="themeDark" onclick="setThemeMode('dark')">어둡게</button>
+  </div>
+
+  <div class="header-section">
+    <h1>예배 준비 도구</h1>
+    <div class="staff-rule"></div>
+    <p>콘티와 악보를 인쇄용 PDF로, 곡 목록을 하나의 발표 파일로</p>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- 1. 이미지 PDF 변환 섹션 -->
+  <!-- ============================================== -->
+  <header class="section-head">
+    <div class="staff-rule"></div>
+    <span class="eyebrow">인쇄</span>
+    <h2 class="section-title">악보 PDF 만들기</h2>
+    <p class="section-note">콘티 페이지와 악보 이미지를 A3 3단, A4 낱장으로 배치합니다.</p>
+  </header>
+
+  <div class="control-panel">
+    <div class="input-box">
+      <label class="field-label">파일 이름과 콘티</label>
+      <input type="text" id="fileNameInput" class="form-input" placeholder="저장할 파일 이름 (예: 찬양악보)">
+      <textarea id="textInput" class="mt-s" placeholder="입력한 텍스트로 첫 페이지를 생성하거나, 아래 버튼을 눌러 PPT를 자동 검색할 수 있습니다."></textarea>
+
+      <label class="field-label stacked">콘티 글자 크기</label>
+      <select id="conteFontSize" class="form-select" onchange="refreshTextItems()"></select>
+      <p class="hint">첫 페이지에 들어가는 콘티 글자 크기입니다. 이미 추가한 텍스트 페이지도 변경 즉시 다시 그려집니다.</p>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="addTextBox()">콘티를 첫 페이지로 넣기</button>
+        <button class="btn btn-orange" onclick="autoSearchPptFromText()">콘티에서 곡 찾기</button>
+      </div>
+    </div>
+
+    <div class="upload-box" onclick="document.getElementById('imageInput').click();">
+      <span class="up-mark">♪</span>
+      <div class="up-title">악보 이미지 고르기</div>
+      <p class="hint">여러 장을 한 번에 고를 수 있습니다. 올린 순서대로 배치됩니다.</p>
+    </div>
+    <input type="file" id="imageInput" multiple accept="image/*" onchange="handleFileSelect(event)">
+  </div>
+
+  <div class="preview-header">
+    <div id="file-count">항목 0개</div>
+  </div>
+
+  <div class="image-grid" id="imageGrid">
+    <div class="empty-msg">아직 추가된 항목이 없습니다.</div>
+  </div>
+
+  <div class="input-box block">
+    <label class="field-label">A3 배치 방식</label>
+    <div class="font-group">
+      <label class="font-chip"><input type="radio" name="layoutMode" value="auto" checked onchange="onLayoutModeChange()"> 자동 배치</label>
+      <label class="font-chip"><input type="radio" name="layoutMode" value="manual" onchange="onLayoutModeChange()"> 직접 지정</label>
+    </div>
+    <p class="hint" id="layoutModeHint"></p>
+
+    <label class="field-label stacked">분할 기준</label>
+    <select id="splitTolerance" class="form-select" onchange="onSplitToleranceChange()">
+      <option value="strict">엄격 — 오선이 뚜렷할 때만 자름</option>
+      <option value="normal" selected>보통 — 기준을 단계적으로 완화 (권장)</option>
+      <option value="loose">느슨 — 여백만 있으면 자름 (가사가 분리될 수 있음)</option>
+    </select>
+    <p class="hint">악보 한 단은 [코드 - 오선 - 가사]가 한 덩어리로 취급되어, 단과 단 사이에서만 잘립니다. “여백을 찾지 못해 분할할 수 없습니다”가 뜨면 한 단계 아래로 낮춰 보세요.</p>
+
+    <label class="field-label stacked">A3 최대 페이지</label>
+    <select id="maxA3Pages" class="form-select" onchange="onMaxPagesChange()">
+      <option value="">제한 없음</option>
+      <option value="1">1페이지</option>
+      <option value="2">2페이지</option>
+      <option value="3">3페이지</option>
+      <option value="4">4페이지</option>
+    </select>
+    <p class="hint">
+      지정한 페이지 안에 넣기 위해 ① 각 페이지에 담을 이미지를 순서대로 정하고 ② 그 페이지에서 분할할 이미지를 고릅니다.
+      분할하지 않는 이미지를 순서대로 배치한 뒤, 분할된 조각은 순서와 상관없이 각 단의 남은 공간에 채워 넣습니다.
+      폭은 최대 10%까지만 줄이고, 자르는 위치는 악보·글자를 피해 여백에서만 정합니다. 그래도 불가능하면 안내 후 중단합니다.
+    </p>
+  </div>
+
+  <div class="progress-wrapper" id="progressWrapper">
+    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="progress-text" id="progressText">준비 중...</div>
+  </div>
+
+  <button id="generateAllBtn" class="btn btn-primary" onclick="generateAllPDFs()" disabled>PDF 만들기</button>
+  <p id="a3LayoutInfo" class="layout-info"></p>
+  <p id="staleNote" class="layout-info text-danger"></p>
+  <div id="downloadGroup">
+    <button id="downloadA3Btn" class="btn btn-secondary">A3 내려받기 · 3단 배치</button>
+    <button id="downloadA4Btn" class="btn btn-purple">A4 내려받기 · 한 장씩</button>
+  </div>
+
+
+  <!-- ============================================== -->
+  <!-- 2. PPT 파일 업로드 (구글 슬라이드 변환) -->
+  <!-- ============================================== -->
+  <header class="section-head">
+    <div class="staff-rule"></div>
+    <span class="eyebrow">자료</span>
+    <h2 class="section-title">곡 파일 올리기</h2>
+    <p class="section-note">PPT 파일을 구글 슬라이드로 바꿔 검색 폴더에 넣습니다.</p>
+  </header>
+
+  <div class="input-box block">
+    <div class="upload-box ppt" onclick="document.getElementById('pptFileInput').click();">
+      <span class="up-mark">↑</span>
+      <div class="up-title">PPT 파일 고르기</div>
+      <p class="hint">파일당 20MB까지. 같은 이름이 이미 있으면 덮어쓸지 물어봅니다.</p>
+    </div>
+    <input type="file" id="pptFileInput" multiple
+           accept=".ppt,.pptx,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"
+           onchange="handlePptUpload(event)">
+
+    <ul class="up-list" id="uploadList"></ul>
+    <p id="uploadStatus" class="text-muted"></p>
+  </div>
+
+
+  <!-- ============================================== -->
+  <!-- 3. 구글 드라이브 PPT 자동 병합 섹션 -->
+  <!-- ============================================== -->
+  <header class="section-head">
+    <div class="staff-rule"></div>
+    <span class="eyebrow">발표</span>
+    <h2 class="section-title">곡 PPT 합치기</h2>
+    <p class="section-note">콘티 순서대로 찾아 하나의 파일로 만들고 내려받습니다.</p>
+  </header>
+
+  <div class="input-box block">
+    <input type="text" id="pptMergedName" class="form-input" placeholder="통합될 새 PPT 파일 이름 (예: 2026-08-16 예배PPT)">
+
+    <hr class="divider">
+
+    <label class="field-label">합칠 때 쓸 글꼴</label>
+    <div class="font-group" id="fontGroup">
+      <label class="font-chip"><input type="radio" name="mergeFont" value="DX시인과나" checked> DX시인과나</label>
+      <label class="font-chip"><input type="radio" name="mergeFont" value="맑은 고딕"> 맑은 고딕</label>
+    </div>
+
+    <label class="field-label stacked">글자 크기</label>
+    <select id="mergeFontSize" class="form-select">
+      <option value="">원본 크기 유지</option>
+    </select>
+    <p class="hint">크기를 지정하면 모든 텍스트가 같은 크기로 통일됩니다. 제목과 가사의 크기 차이가 필요하면 “원본 크기 유지”를 선택하세요.</p>
+
+    <hr class="divider">
+
+    <label class="field-label">곡 하나 찾아 넣기</label>
+    <div class="search-row">
+      <input type="text" id="pptSearchInput" class="form-input" placeholder="곡 제목 (예: 은혜)">
+      <button class="btn btn-primary" onclick="searchPpt()">찾기</button>
+    </div>
+    <div id="searchResults"></div>
+
+    <hr class="divider">
+
+    <label class="field-label">합칠 순서</label>
+    <ul class="ppt-list" id="pptList"></ul>
+
+    <button id="mergePptBtn" class="btn btn-orange" onclick="requestPptMerge()">
+      순서대로 합쳐서 내려받기
+    </button>
+    <p id="pptStatus" class="text-muted"></p>
+    <div id="pptFallback" class="center"></div>
+  </div>
+</div>
+
+<script>
+  // ========================================================
+  // ★ 본인의 구글 앱스 스크립트 웹 앱 URL을 반드시 여기에 넣으세요! ★
+  // ========================================================
+  const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw0r6Gt6FMwJbjdEKbAINkdzBXEyktdfuXuoo2X8gwxNfcCG4FffExpJr-liM1asIvz/exec";
+
+  // 병합 PPT에 적용할 수 있는 글꼴 (Apps Script 화이트리스트와 반드시 동일해야 함)
+  const MERGE_FONTS = ["DX시인과나", "맑은 고딕"];
+
+  // 병합 PPT 글자 크기 선택 범위 (pt)
+  const FONT_SIZE_MIN = 10, FONT_SIZE_MAX = 40;
+
+  // 콘티(첫 페이지) 텍스트 크기 선택 범위 및 기본값
+  const CONTE_FONT_MIN = 18, CONTE_FONT_MAX = 30, CONTE_FONT_DEFAULT = 22;
+
+  // 업로드 파일 1개당 크기 상한. base64 인코딩 시 약 1.33배로 커지므로 여유를 둔다.
+  const MAX_UPLOAD_MB = 20;
+
+  // 캔버스에서 사용할 대체 글꼴 체인 (아이폰에는 맑은 고딕이 없어 Apple SD Gothic Neo로 대체)
+  const CANVAS_FONT_STACK = "'Malgun Gothic', 'Apple SD Gothic Neo', 'Pretendard', sans-serif";
+
+  // Apps Script 실행 제한(6분)을 고려한 요청 타임아웃
+  const GAS_TIMEOUT_MS = 330000;
+
+  /* ---------------- A3 배치 상수 (mm 단위, A3 가로 = 420 x 297) ---------------- */
+  const A3_PAGE_W = 420;          // A3 가로 폭
+  const A3_PAGE_H = 297;          // A3 세로 높이
+  const A3_MARGIN = 5;            // 상하좌우 여백
+  const A3_COLS = 3;              // 단 수
+  const A3_GAP_X = 4;             // 단과 단 사이 간격
+  // 한 단의 폭 = (전체 폭 - 좌우 여백 - 단 사이 간격 합) / 단 수 = (420 - 10 - 8) / 3 = 134
+  const A3_COL_W = (A3_PAGE_W - A3_MARGIN * 2 - A3_GAP_X * (A3_COLS - 1)) / A3_COLS;
+  const A3_COL_STEP = A3_COL_W + A3_GAP_X;   // 다음 단으로 이동하는 x 거리 = 138
+  const A3_START_X = A3_MARGIN;
+  const A3_TOP = A3_MARGIN;                  // 단의 시작 y
+  const A3_BOTTOM = A3_PAGE_H - A3_MARGIN;   // 단의 끝 y = 292
+  const A3_COL_H = A3_BOTTOM - A3_TOP;       // 287
+  const A3_GAP = 4;               // 이미지 사이 세로 간격
+  const A3_SPLIT_BORDER = 0.25;   // 분할된 조각에 그릴 테두리 두께(mm)
+
+  // 최대 페이지를 맞추기 위해 허용하는 최소 축소 비율.
+  // 0.90 = 폭을 원래의 90%까지만 줄인다. (10%를 초과해 줄이지 않음)
+  const A3_MIN_SCALE = 0.90;
+  // 분할된 조각의 최소 높이. 이보다 작게 잘리면 알아볼 수 없으므로 분할하지 않는다.
+  const A3_MIN_PIECE_MM = 30;
+
+  /* ---------------- 이미지 여백 분석 (악보 / 가사가 잘리지 않게 자르기 위한 설정) ---------------- */
+  const INK_PROFILE_WIDTH = 200;   // 분석용 축소 폭(px). 값이 클수록 정확하지만 느려진다.
+  const INK_DARK_LEVEL = 200;      // 이 밝기(0~255)보다 어두우면 '내용'으로 간주
+  const INK_BLANK_RATIO = 0.02;    // 한 줄에서 내용 픽셀이 2% 이하이면 '빈 줄'로 판단 (스캔 잡티 허용)
+  const INK_MIN_BLANK_ROWS = 3;    // 빈 줄이 이만큼 연속돼야 실제 여백으로 인정
+
+  // 오선(五線)은 가로로 길게 이어지지만 가사 글자는 짧게 끊긴다. 이 차이로 둘을 구분한다.
+  const STAFF_PAD_ROWS = 1;        // 오선 묶음 위아래로 추가 확보할 여유 줄
+
+  /**
+   * 자를 위치를 찾는 단계별 기준.
+   * 위에서부터 엄격한 기준으로 시도하고, 후보를 못 찾으면 아래 단계로 내려가며 완화한다.
+   *  - blankBoost : 빈 줄 판정 기준을 얼마나 느슨하게 할지 (스캔 얼룩·회색 배경 대응)
+   *  - minRows    : 여백으로 인정할 최소 연속 줄 수
+   *  - staffRatio : 오선으로 볼 가로 연속 길이 비율 (흐릿하거나 끊긴 오선 대응)
+   *  - minLines   : 오선 묶음으로 인정할 최소 선 개수
+   *  - allowNonStaffNext : true 면 '여백 다음이 가사'인 자리도 허용 (가사가 분리될 수 있음)
+   */
+  const SPLIT_STAGES = [
+    { blankBoost: 0.00, minRows: 3, staffRatio: 0.50, minLines: 3, allowNonStaffNext: false },
+    { blankBoost: 0.03, minRows: 2, staffRatio: 0.45, minLines: 3, allowNonStaffNext: false },
+    { blankBoost: 0.06, minRows: 2, staffRatio: 0.35, minLines: 3, allowNonStaffNext: false },
+    { blankBoost: 0.10, minRows: 2, staffRatio: 0.25, minLines: 2, allowNonStaffNext: false }
+  ];
+  // '느슨' 선택 시 마지막으로 한 번 더 시도하는 기준
+  const SPLIT_STAGE_LOOSE = { blankBoost: 0.14, minRows: 2, staffRatio: 0.25, minLines: 2, allowNonStaffNext: true };
+
+  const INK_BLANK_MARGIN = 0.02;   // 이미지의 가장 밝은 줄보다 이만큼 위까지는 여백으로 본다
+  const INK_BLANK_CAP = 0.25;      // 여백 판정 기준의 상한 (이보다 크면 내용을 여백으로 오인)
+  // 오선 사이 구간에서 자를 여백을 고를 때, 구간 한가운데에서 멀수록 주는 감점.
+  // 코드가 오선에서 멀리 떨어져 조판된 악보에서 코드↔오선 여백을 잘못 고르는 것을 막는다.
+  const GAP_CENTER_WEIGHT = 0.5;
+
+  /* -----------------------------------------------------------------
+     [0-1] 화면 모드 (라이트 / 다크 / 시스템)
+  ----------------------------------------------------------------- */
+  const THEME_STORAGE_KEY = 'worship-tool-theme';
+  let themeMode = document.documentElement.getAttribute('data-theme-mode') || 'auto';
+
+  function resolveTheme(mode) {
+    if (mode === 'light' || mode === 'dark') return mode;
+    return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
+
+  function applyTheme() {
+    document.documentElement.setAttribute('data-theme', resolveTheme(themeMode));
+    document.documentElement.setAttribute('data-theme-mode', themeMode);
+
+    const map = { auto: 'themeAuto', light: 'themeLight', dark: 'themeDark' };
+    Object.keys(map).forEach(function (key) {
+      const btn = document.getElementById(map[key]);
+      if (btn) btn.setAttribute('aria-pressed', key === themeMode ? 'true' : 'false');
+    });
+  }
+
+  function setThemeMode(mode) {
+    themeMode = (mode === 'light' || mode === 'dark') ? mode : 'auto';
+    // 시크릿 모드 등에서 저장이 막혀도 화면 전환은 계속 동작해야 한다.
+    try { localStorage.setItem(THEME_STORAGE_KEY, themeMode); } catch (e) { /* 저장 실패 무시 */ }
+    applyTheme();
+  }
+
+  // 시스템 모드일 때 OS 설정이 바뀌면 즉시 따라간다.
+  if (window.matchMedia) {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const onChange = function () { if (themeMode === 'auto') applyTheme(); };
+    if (mq.addEventListener) mq.addEventListener('change', onChange);
+    else if (mq.addListener) mq.addListener(onChange);
+  }
+
+  applyTheme();
+
+  /* -----------------------------------------------------------------
+     [0-2] 공통 유틸
+  ----------------------------------------------------------------- */
+  let uidSeq = 0;
+  function uid() { uidSeq += 1; return Date.now() + "_" + uidSeq; }
+
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+  // GAS 통신 공통 함수 (text/plain 유지 → CORS 사전요청 회피, 아이폰 호환)
+  async function postToGas(payload, timeoutMs) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs || GAS_TIMEOUT_MS);
+    try {
+      const response = await fetch(GAS_WEB_APP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+      if (!response.ok) throw new Error("서버 응답 코드 " + response.status);
+      const raw = await response.text();
+      let result;
+      try { result = JSON.parse(raw); }
+      catch (e) { throw new Error("서버가 JSON이 아닌 응답을 보냈습니다. (배포 권한 또는 스크립트 오류 확인 필요)"); }
+      if (result.status !== "success") throw new Error(result.message || "서버에서 실패를 반환했습니다.");
+      return result;
+    } catch (e) {
+      if (e.name === "AbortError") throw new Error("응답 시간이 초과되었습니다. 파일 크기나 곡 수를 줄여서 다시 시도해 주세요.");
+      throw e;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  // 병합 PPT 글자 크기 선택 목록 (10 ~ 40)
+  (function buildFontSizeOptions() {
+    const sel = document.getElementById('mergeFontSize');
+    for (let s = FONT_SIZE_MIN; s <= FONT_SIZE_MAX; s++) {
+      const opt = document.createElement('option');
+      opt.value = String(s); opt.textContent = s + " pt";
+      sel.appendChild(opt);
+    }
+  })();
+
+  // 콘티 텍스트 크기 선택 목록 (18 ~ 30)
+  (function buildConteFontOptions() {
+    const sel = document.getElementById('conteFontSize');
+    for (let s = CONTE_FONT_MIN; s <= CONTE_FONT_MAX; s++) {
+      const opt = document.createElement('option');
+      opt.value = String(s); opt.textContent = s + (s === CONTE_FONT_DEFAULT ? " (기본)" : "");
+      if (s === CONTE_FONT_DEFAULT) opt.selected = true;
+      sel.appendChild(opt);
+    }
+  })();
+
+  function getConteFontSize() {
+    const raw = document.getElementById('conteFontSize').value;
+    const n = parseInt(raw, 10);
+    if (isNaN(n) || n < CONTE_FONT_MIN || n > CONTE_FONT_MAX) return CONTE_FONT_DEFAULT;
+    return n;
+  }
+
+  function getMaxA3Pages() {
+    const raw = document.getElementById('maxA3Pages').value;
+    if (!raw) return null;              // 제한 없음
+    const n = parseInt(raw, 10);
+    if (isNaN(n) || n < 1 || n > 4) return null;
+    return n;
+  }
+
+  /* ---------------- A3 배치 방식 (자동 / 직접 지정) ---------------- */
+
+  // '제한 없음' 상태에서 직접 지정 시 고를 수 있는 최대 페이지 수
+  const MANUAL_PAGE_LIMIT = 8;
+
+  function getLayoutMode() {
+    const checked = document.querySelector('input[name="layoutMode"]:checked');
+    return (checked && checked.value === 'manual') ? 'manual' : 'auto';
+  }
+
+  function getManualPageLimit() {
+    return getMaxA3Pages() || MANUAL_PAGE_LIMIT;
+  }
+
+  // 최대 페이지가 줄어들면 그보다 큰 페이지로 지정된 항목을 끌어올린다.
+  function clampItemPages() {
+    const limit = getManualPageLimit();
+    itemList.forEach(item => {
+      if (!item.page || item.page < 1) item.page = 1;
+      if (item.page > limit) item.page = limit;
+    });
+  }
+
+  function updateLayoutModeHint() {
+    const hint = document.getElementById('layoutModeHint');
+    hint.textContent = (getLayoutMode() === 'manual')
+      ? '각 항목 아래에서 들어갈 페이지와 분할 여부를 직접 정합니다. 같은 페이지 안에서는 업로드 순서대로 배치되고, 분할한 항목만 남은 공간에 채워집니다.'
+      : '페이지 배정과 분할 대상을 프로그램이 자동으로 계산합니다.';
+  }
+
+  function onLayoutModeChange() {
+    updateLayoutModeHint();
+    clampItemPages();
+    renderGrid();
+    markDirty();
+  }
+
+  function onMaxPagesChange() {
+    clampItemPages();
+    renderGrid();
+    markDirty();
+  }
+
+  function getSplitTolerance() {
+    const el = document.getElementById('splitTolerance');
+    const v = el ? el.value : 'normal';
+    return (v === 'strict' || v === 'loose') ? v : 'normal';
+  }
+
+  // 기준이 바뀌면 이미 계산해 둔 분할 후보를 버리고 다시 판정한다.
+  function onSplitToleranceChange() {
+    itemList.forEach(item => { delete item.blankFracs; delete item.splitDebug; });
+    renderGrid();
+    markDirty();
+  }
+
+  updateLayoutModeHint();   // 최초 진입 시 안내 문구 표시
+
+  /* -----------------------------------------------------------------
+     [1] 이미지 -> PDF 변환 관련 스크립트
+     ※ PDF 결과물은 인쇄용이므로 화면 모드와 무관하게 항상 흰 배경 / 검은 글씨로 생성한다.
+  ----------------------------------------------------------------- */
+  let itemList = [], finalA3File = null, finalA4File = null;
+  let hasGenerated = false;   // PDF를 한 번이라도 만들었는지 (다시 생성 안내에 사용)
+
+  function createA3TextImage(text) {
+    const fontSize = getConteFontSize();
+    const lineHeight = Math.round(fontSize * 32 / 22);   // 기본값(22px / 32px 줄간격) 비율 유지
+    const canvas = document.createElement('canvas'); canvas.width = 800; canvas.height = 600;
+    const ctx = canvas.getContext('2d'); ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0,0,800,600);
+    ctx.lineWidth = 2; ctx.strokeStyle = '#000000'; ctx.strokeRect(5,5,790,590);
+    ctx.fillStyle = '#000000'; ctx.font = fontSize + "px " + CANVAS_FONT_STACK; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    const lines = text.split('\n'); const startY = (canvas.height/2) - ((lines.length-1)*lineHeight/2);
+    lines.forEach((line, idx) => ctx.fillText(line, canvas.width/2, startY + (idx*lineHeight)));
+    const img = new Image(); img.src = canvas.toDataURL('image/png');
+    const size = { img: img, w: canvas.width, h: canvas.height };
+    canvas.width = 0; canvas.height = 0;   // 아이폰 캔버스 메모리 즉시 반환
+    return size;
+  }
+
+  function createA4TextImage(text) {
+    // A4는 원본(22px -> 37px) 비율을 유지해 확대한다.
+    const fontSize = Math.round(getConteFontSize() * 37 / 22);
+    const lineHeight = Math.round(fontSize * 49 / 37);
+    const canvas = document.createElement('canvas'); canvas.width = 840; canvas.height = 1188;
+    const ctx = canvas.getContext('2d'); ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0,0,840,1188);
+    ctx.fillStyle = '#000000'; ctx.font = "bold " + fontSize + "px " + CANVAS_FONT_STACK; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    const lines = text.split('\n'); const startY = (canvas.height/2) - ((lines.length-1)*lineHeight/2);
+    lines.forEach((line, idx) => ctx.fillText(line, canvas.width/2, startY + (idx*lineHeight)));
+    const img = new Image(); img.src = canvas.toDataURL('image/png');
+    const size = { img: img, w: canvas.width, h: canvas.height };
+    canvas.width = 0; canvas.height = 0;
+    return size;
+  }
+
+  // 콘티 텍스트 크기를 바꾸면 이미 추가된 텍스트 페이지를 모두 다시 그린다.
+  function refreshTextItems() {
+    let changed = 0;
+    itemList.forEach(item => {
+      if (item.type !== 'text') return;
+      const a3 = createA3TextImage(item.text);
+      const a4 = createA4TextImage(item.text);
+      item.imgObjA3 = a3.img; item.wA3 = a3.w; item.hA3 = a3.h;
+      item.imgObjA4 = a4.img; item.wA4 = a4.w; item.hA4 = a4.h;
+      delete item.inkProfile; delete item.blankFracs;   // 이미지가 바뀌었으므로 여백 분석 캐시도 버린다
+      changed++;
+    });
+    if (changed > 0) { markDirty(); renderGrid(); }
+  }
+
+  // 항목의 실제 픽셀 크기 반환 (Image 로드 완료 여부와 무관하게 안전)
+  function itemSize(item, kind) {
+    if (kind === 'A3') return { w: item.wA3, h: item.hA3 };
+    return { w: item.wA4, h: item.hA4 };
+  }
+
+// 1. PDF 첫 페이지 추가 & PPT 자동 검색 동시 실행 함수
+  function addTextBox() {
+    const text = document.getElementById('textInput').value.trim();
+    if (!text) { alert('내용을 입력해 주세요.'); return; }
+
+    // [1단계] PDF 첫 페이지용 이미지 생성 및 리스트에 추가
+    const a3 = createA3TextImage(text);
+    const a4 = createA4TextImage(text);
+    itemList.unshift({
+      id: uid(),
+      type: 'text',
+      text: text,
+      page: 1, split: false,   // 직접 지정 모드용 기본값
+      imgObjA3: a3.img, wA3: a3.w, hA3: a3.h,
+      imgObjA4: a4.img, wA4: a4.w, hA4: a4.h
+    });
+
+    markDirty();
+    renderGrid();
+
+    // 입력창은 비우되, 자동 검색 버튼을 다시 눌러도 되도록 원본 텍스트를 보관
+    lastConteText = text;
+    document.getElementById('textInput').value = '';
+
+    // [2단계] 입력했던 텍스트 데이터를 그대로 사용해 PPT 자동 검색 시작!
+    autoSearchPptFromText(text);
+  }
+
+  async function handleFileSelect(event) {
+    const files = Array.from(event.target.files);
+    for (const file of files) {
+      try {
+        const img = new Image();
+        const dataUrl = await new Promise((res, rej) => {
+          const reader = new FileReader();
+          reader.onload = e => res(e.target.result);
+          reader.onerror = () => rej(new Error(file.name + " 파일을 읽지 못했습니다."));
+          reader.readAsDataURL(file);
+        });
+        img.src = dataUrl;
+        await new Promise((res, rej) => { img.onload = res; img.onerror = () => rej(new Error(file.name + " 이미지를 열지 못했습니다.")); });
+        const w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+        // 업로드 순서를 그대로 유지하기 위해 항상 끝에 추가한다.
+        itemList.push({ id: uid(), type: 'image', page: 1, split: false, imgObjA3: img, wA3: w, hA3: h, imgObjA4: img, wA4: w, hA4: h });
+      } catch (e) {
+        alert("이미지 추가 실패: " + e.message);
+      }
+    }
+    event.target.value = ''; markDirty(); renderGrid();
+  }
+
+  // 생성 버튼 문구와 다운로드 영역 노출 여부를 현재 상태에 맞춘다.
+  function updateActionUI() {
+    const btn = document.getElementById('generateAllBtn');
+    const dl = document.getElementById('downloadGroup');
+    btn.style.display = 'inline-flex';
+    btn.disabled = (itemList.length === 0);
+    btn.innerHTML = hasGenerated ? 'PDF 다시 만들기' : 'PDF 만들기';
+    // 이미 만든 PDF는 항목을 바꿔도 계속 내려받을 수 있게 유지한다.
+    dl.style.display = (finalA3File && finalA4File) ? 'flex' : 'none';
+  }
+
+  // 항목이나 설정이 바뀌었을 때 호출. 입력값과 이미지는 그대로 두고 재생성만 안내한다.
+  function markDirty() {
+    const note = document.getElementById('staleNote');
+    if (hasGenerated) {
+      note.textContent = '⚠️ 설정 또는 항목이 변경되었습니다. 아래 다운로드 파일은 변경 전 내용이니 다시 생성해 주세요.';
+    }
+    updateActionUI();
+  }
+
+  function renderGrid() {
+    const grid = document.getElementById('imageGrid'); grid.innerHTML = '';
+    if(itemList.length === 0) {
+      grid.innerHTML = '<div class="empty-msg">아직 추가된 항목이 없습니다.</div>';
+      document.getElementById('file-count').innerText = '항목 0개'; updateActionUI(); return;
+    }
+    const manual = (getLayoutMode() === 'manual');
+    const pageLimit = getManualPageLimit();
+
+    itemList.forEach((item) => {
+      const cell = document.createElement('div'); cell.className = 'item-cell';
+
+      const card = document.createElement('div'); card.className = `image-card ${item.type==='text' ? 'text-type':''}`;
+      if (item.type === 'text') card.innerText = item.text; else { const img=document.createElement('img'); img.src=item.imgObjA3.src; card.appendChild(img); }
+      const delBtn = document.createElement('button'); delBtn.className = 'delete-btn'; delBtn.innerHTML = '✕';
+      // id 기준 삭제 (인덱스 기준 삭제 시 재정렬 후 잘못된 항목이 지워질 수 있음)
+      delBtn.onclick = () => { itemList = itemList.filter(x => x.id !== item.id); markDirty(); renderGrid(); };
+      card.appendChild(delBtn);
+      cell.appendChild(card);
+
+      if (manual) cell.appendChild(buildItemControls(item, pageLimit));
+      grid.appendChild(cell);
+    });
+    document.getElementById('file-count').innerText = `항목 ${itemList.length}개`; updateActionUI();
+  }
+
+  // 직접 지정 모드에서 항목마다 붙는 페이지 선택 / 분할 체크박스
+  function buildItemControls(item, pageLimit) {
+    const box = document.createElement('div'); box.className = 'item-controls';
+
+    const sel = document.createElement('select');
+    for (let p = 1; p <= pageLimit; p++) {
+      const opt = document.createElement('option');
+      opt.value = String(p); opt.textContent = p + '페이지';
+      if (item.page === p) opt.selected = true;
+      sel.appendChild(opt);
+    }
+    sel.onchange = () => { item.page = parseInt(sel.value, 10); markDirty(); };
+    box.appendChild(sel);
+
+    const label = document.createElement('label');
+    const chk = document.createElement('input');
+    chk.type = 'checkbox';
+    chk.checked = !!item.split;
+
+    // 텍스트 페이지와 여백을 찾지 못한 이미지는 자를 수 없다.
+    const splittable = canSplit(item);
+    if (!splittable) {
+      chk.checked = false; chk.disabled = true; item.split = false;
+      label.className = 'disabled';
+      if (item.type === 'text') {
+        label.title = '텍스트 페이지는 분할할 수 없습니다.';
+      } else {
+        const d = item.splitDebug;
+        label.title = d
+          ? `자를 위치를 찾지 못했습니다. (감지된 여백 ${d.gaps}곳 / 오선 ${d.spans}묶음) 분할 기준을 "느슨"으로 바꿔 보세요.`
+          : '여백을 찾지 못해 분할할 수 없습니다.';
+      }
+    }
+    chk.onchange = () => { item.split = chk.checked; markDirty(); };
+
+    label.appendChild(chk);
+    label.appendChild(document.createTextNode(splittable ? '분할' : '분할 불가'));
+    box.appendChild(label);
+
+    return box;
+  }
+
+  function getSafeDataUrl(imgObj, srcW, srcH) {
+    return getCroppedDataUrl(imgObj, srcW, srcH, 0, 1);
+  }
+
+  // 원본 이미지의 세로 구간 [fracStart, fracEnd] 만 잘라 JPEG 데이터 URL로 반환한다.
+  function getCroppedDataUrl(imgObj, srcW, srcH, fracStart, fracEnd) {
+    const MAX_SIZE = 2500;
+    const baseW = srcW || imgObj.naturalWidth || imgObj.width;
+    const baseH = srcH || imgObj.naturalHeight || imgObj.height;
+
+    const sy = Math.round(baseH * fracStart);
+    const sh = Math.max(1, Math.round(baseH * (fracEnd - fracStart)));
+
+    let w = baseW, h = sh;
+    if (w > MAX_SIZE || h > MAX_SIZE) { const ratio = Math.min(MAX_SIZE/w, MAX_SIZE/h); w = Math.round(w*ratio); h = Math.round(h*ratio); }
+
+    const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d'); ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0,0,w,h);
+    ctx.drawImage(imgObj, 0, sy, baseW, sh, 0, 0, w, h);
+    const url = canvas.toDataURL('image/jpeg', 0.8);
+    canvas.width = 0; canvas.height = 0;   // 아이폰 메모리 한계 대응
+    return url;
+  }
+
+  /* ---------------- 이미지 여백 분석 ---------------- */
+
+  /**
+   * 이미지를 가로 200px로 축소해 가로줄마다 '내용(어두운 픽셀) 비율'을 계산한다.
+   * 결과는 항목에 캐시하므로 배치를 여러 번 시도해도 한 번만 계산된다.
+   * @return {{rows: Float32Array, H: number}|null} 분석 실패 시 null
+   */
+  function getInkProfile(item) {
+    if (item.inkProfile !== undefined) return item.inkProfile;
+
+    try {
+      const srcW = item.wA3, srcH = item.hA3;
+      const W = INK_PROFILE_WIDTH;
+      const H = Math.max(20, Math.round(srcH * W / srcW));
+
+      const canvas = document.createElement('canvas');
+      canvas.width = W; canvas.height = H;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, W, H);
+      ctx.drawImage(item.imgObjA3, 0, 0, W, H);
+
+      const data = ctx.getImageData(0, 0, W, H).data;
+      const rows = new Float32Array(H);     // 줄마다 내용 픽셀 비율
+      const runs = new Float32Array(H);     // 줄마다 '가로로 연속된' 내용 픽셀의 최대 길이 비율
+
+      for (let y = 0; y < H; y++) {
+        let dark = 0, cur = 0, best = 0;
+        for (let x = 0; x < W; x++) {
+          const i = (y * W + x) * 4;
+          // 밝기 계산 (사람 눈 기준 가중치)
+          const lum = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+          if (lum < INK_DARK_LEVEL) {
+            dark++; cur++; if (cur > best) best = cur;
+          } else {
+            cur = 0;
+          }
+        }
+        rows[y] = dark / W;
+        runs[y] = best / W;
+      }
+
+      canvas.width = 0; canvas.height = 0;
+      item.inkProfile = { rows: rows, runs: runs, H: H };
+    } catch (e) {
+      // 캔버스 접근이 막히는 등 분석이 불가능하면 분할 자체를 포기한다.
+      console.error('이미지 여백 분석 실패:', e);
+      item.inkProfile = null;
+    }
+    return item.inkProfile;
+  }
+
+  /**
+   * 오선(五線) 묶음의 세로 범위를 찾는다.
+   * 오선은 가로로 길게 이어진 선이므로 '연속 검은 픽셀 길이'가 기준 비율을 넘는 줄로 판별한다.
+   */
+  function findStaffSpans(prof, staffRatio, minLines) {
+    const runs = prof.runs, H = prof.H;
+    if (!runs) return [];
+
+    const lineRows = [];
+    for (let y = 0; y < H; y++) if (runs[y] >= staffRatio) lineRows.push(y);
+    if (lineRows.length < minLines) return [];
+
+    // 가까이 붙어 있는 선들을 하나의 오선 묶음으로 만든다.
+    const groupGap = Math.max(3, Math.round(H * 0.025));
+    const spans = [];
+    let start = lineRows[0], prev = lineRows[0], count = 1;
+
+    for (let i = 1; i < lineRows.length; i++) {
+      if (lineRows[i] - prev <= groupGap) { count++; }
+      else {
+        if (count >= minLines) spans.push({ top: start, bottom: prev });
+        start = lineRows[i]; count = 1;
+      }
+      prev = lineRows[i];
+    }
+    if (count >= minLines) spans.push({ top: start, bottom: prev });
+
+    return spans;
+  }
+
+  /** 이미지 자체의 밝기 분포를 보고 '빈 줄' 판정 기준을 정한다. (스캔 배경이 회색이어도 대응) */
+  function blankLevelFor(rows, H, boost) {
+    const sorted = Array.from(rows).sort((a, b) => a - b);
+    const p05 = sorted[Math.floor(H * 0.05)];
+    const level = Math.max(INK_BLANK_RATIO, p05 + INK_BLANK_MARGIN) + boost;
+    return Math.min(level, INK_BLANK_CAP);
+  }
+
+  /** 기준 이하인 줄이 minRows 이상 연속된 구간(여백)을 모은다. */
+  function collectGaps(rows, H, level, minRows) {
+    const gaps = [];
+    let runStart = -1;
+    for (let y = 0; y <= H; y++) {
+      const blank = (y < H) && (rows[y] <= level);
+      if (blank) { if (runStart < 0) runStart = y; continue; }
+      if (runStart >= 0) {
+        const runEnd = y - 1;
+        if (runEnd - runStart + 1 >= minRows) gaps.push({ start: runStart, end: runEnd, thick: runEnd - runStart + 1 });
+        runStart = -1;
+      }
+    }
+    return gaps;
+  }
+
+  /** 사용자가 고른 분할 기준에 따라 시도할 단계 목록을 만든다. */
+  function buildSplitStages() {
+    const tol = getSplitTolerance();
+    if (tol === 'strict') return { stages: SPLIT_STAGES.slice(0, 2), useThicknessFallback: false };
+    if (tol === 'loose') return { stages: SPLIT_STAGES.concat([SPLIT_STAGE_LOOSE]), useThicknessFallback: true };
+    return { stages: SPLIT_STAGES, useThicknessFallback: true };   // 보통
+  }
+
+  /**
+   * 자를 수 있는 위치를 비율(0~1) 목록으로 만들어 캐시한다.
+   *
+   * 악보 한 단(段)은 [코드 - 오선 - 가사] 세 요소가 한 덩어리이며, 이것이 아래로 반복된다.
+   * 코드는 아래 오선에 딸린 내용이고, 가사는 위 오선에 딸린 내용이므로
+   * 자를 수 있는 자리는 '가사 끝 ~ 다음 코드 시작' 사이 한 곳뿐이다.
+   *
+   * 판정 방법
+   *   ① 오선 묶음을 먼저 찾아 단의 위치를 파악한다.
+   *   ② 오선과 오선 사이 구간에서 가장 두꺼운 여백 한 곳만 자를 위치로 삼는다.
+   *      → 코드↔오선, 오선↔가사 사이의 좁은 여백은 자동으로 제외된다.
+   *   ③ 오선 묶음 내부와 이미지 위아래 바깥 여백은 대상에서 제외한다.
+   *
+   * 스캔 품질에 따라 후보가 하나도 안 나올 수 있으므로, 기준을 단계적으로 완화하며 다시 찾는다.
+   */
+  function getBlankFracs(item) {
+    if (item.blankFracs !== undefined) return item.blankFracs;
+
+    const prof = getInkProfile(item);
+    if (!prof) { item.blankFracs = null; item.splitDebug = null; return null; }
+
+    const rows = prof.rows, H = prof.H;
+    const plan = buildSplitStages();
+    let lastInfo = { gaps: 0, spans: 0, level: 0 };
+    let fallback = null;   // 오선을 못 찾은 단계 중 여백이 가장 많이 잡힌 것
+
+    // 1차: 모든 단계를 돌며 '오선을 인식한 상태'의 후보를 먼저 찾는다.
+    for (let si = 0; si < plan.stages.length; si++) {
+      const st = plan.stages[si];
+      const level = blankLevelFor(rows, H, st.blankBoost);
+      const inner = collectGaps(rows, H, level, st.minRows)
+        .filter(g => g.start > 0 && g.end < H - 1);   // 이미지 위아래 바깥 여백은 제외
+
+      const spans = findStaffSpans(prof, st.staffRatio, st.minLines);
+      lastInfo = { gaps: inner.length, spans: spans.length, level: level };
+      if (inner.length === 0) continue;
+
+      if (spans.length === 0) {
+        // 오선을 못 찾았다면 일단 보류하고 다음(더 완화된) 단계를 계속 시도한다.
+        if (!fallback || inner.length > fallback.inner.length) fallback = { inner: inner, level: level, stage: si + 1 };
+        continue;
+      }
+
+      const blocked = spans.map(s => ({ top: s.top - STAFF_PAD_ROWS, bottom: s.bottom + STAFF_PAD_ROWS }));
+      const insideStaff = y => blocked.some(b => y >= b.top && y <= b.bottom);
+
+      const list = [];
+
+      // 오선과 오선 사이 구간마다 '가장 두꺼운 여백' 한 곳만 자를 위치로 채택한다.
+      // 그 구간에는 [위 오선의 가사] 와 [아래 오선의 코드] 가 들어 있고,
+      // 둘을 갈라 놓는 여백이 가장 두껍기 때문에 코드와 가사가 각각 자기 오선에 붙어 남는다.
+      for (let k = 0; k < spans.length - 1; k++) {
+        const regionTop = spans[k].bottom + 1;
+        const regionBottom = spans[k + 1].top - 1;
+        const regionMid = (regionTop + regionBottom) / 2;
+
+        let best = null;
+        for (let i = 0; i < inner.length; i++) {
+          const g = inner[i];
+          if (g.start < regionTop || g.end > regionBottom) continue;   // 구간 안에 온전히 들어온 여백만
+          const center = (g.start + g.end) / 2;
+          if (insideStaff(center)) continue;
+
+          // 점수 = 두께 - (구간 한가운데에서 벗어난 거리 × 가중치)
+          // 두께가 가장 큰 여백을 고르되, 오선 바로 위·아래에 붙은 여백은 감점으로 걸러진다.
+          const score = g.thick - Math.abs(center - regionMid) * GAP_CENTER_WEIGHT;
+          if (!best || score > best.score) best = { score: score, thick: g.thick, center: center };
+        }
+        if (best) list.push(best.center / H);
+      }
+
+      // '느슨' 단계에서는 위 규칙으로 찾은 자리에 더해 오선 밖의 여백도 모두 허용한다.
+      if (st.allowNonStaffNext) {
+        for (let i = 0; i < inner.length; i++) {
+          const center = (inner[i].start + inner[i].end) / 2;
+          if (insideStaff(center)) continue;
+          const frac = center / H;
+          if (list.indexOf(frac) < 0) list.push(frac);
+        }
+        list.sort((a, b) => a - b);
+      }
+
+      if (list.length > 0) {
+        item.splitDebug = { stage: si + 1, level: level, gaps: inner.length, spans: spans.length, found: list.length };
+        item.blankFracs = list;
+        return list;
+      }
+    }
+
+    // 2차: 어느 단계에서도 오선 기반 후보를 못 찾았을 때만 두께 기준 예비 판정을 쓴다.
+    if (plan.useThicknessFallback && fallback) {
+      let thickest = 0;
+      fallback.inner.forEach(g => { if (g.thick > thickest) thickest = g.thick; });
+      const minThick = Math.max(2, thickest * 0.5);
+      const list = [];
+      fallback.inner.forEach(g => { if (g.thick >= minThick) list.push(((g.start + g.end) / 2) / H); });
+
+      if (list.length > 0) {
+        item.splitDebug = { stage: fallback.stage, level: fallback.level, gaps: fallback.inner.length, spans: 0, found: list.length, fallback: true };
+        item.blankFracs = list;
+        return list;
+      }
+    }
+
+    item.splitDebug = { stage: 0, level: lastInfo.level, gaps: lastInfo.gaps, spans: lastInfo.spans, found: 0 };
+    item.blankFracs = [];
+    return item.blankFracs;
+  }
+
+  /**
+   * [fMin, fMax] 구간 안에서 악보/글자를 지나지 않는 여백 위치를 찾는다.
+   * 남은 공간을 최대한 쓰도록 fMax 에 가장 가까운 여백을 고른다.
+   * 여백을 못 찾으면 null 을 반환하고, 호출부는 그 조합을 포기한다.
+   */
+  function findSafeSplitFraction(item, fMin, fMax) {
+    const fracs = getBlankFracs(item);
+    if (!fracs || fracs.length === 0) return null;
+
+    let best = null;
+    for (let i = 0; i < fracs.length; i++) {
+      const f = fracs[i];
+      if (f < fMin || f > fMax) continue;
+      if (best === null || f > best) best = f;
+    }
+    return best;
+  }
+
+  /* ---------------- A3 배치 계산 ---------------- */
+
+  // 주어진 축소 비율에서 항목이 차지할 mm 크기
+  function sizeAt(item, scale) {
+    const sz = itemSize(item, 'A3');
+    const ratio = sz.w / sz.h;
+    let w = A3_COL_W * scale, h = w / ratio;
+    if (h > A3_COL_H) { h = A3_COL_H; w = A3_COL_H * ratio; }   // 단 높이를 넘으면 높이 기준으로 맞춤
+    return { w: w, h: h };
+  }
+
+  function makePlacement(item, part, f0, f1, col, y, w, h) {
+    let x = A3_START_X + col * A3_COL_STEP + (A3_COL_W - w) / 2;
+    // 계산 오차로도 인쇄 영역을 벗어나지 않도록 좌우를 한 번 더 잡아 준다.
+    if (x < A3_MARGIN) x = A3_MARGIN;
+    if (x + w > A3_PAGE_W - A3_MARGIN) x = A3_PAGE_W - A3_MARGIN - w;
+    return { item: item, part: part, f0: f0, f1: f1, col: col, x: x, y: y, w: w, h: h, page: 0 };
+  }
+
+  /**
+   * 분할하지 않는 이미지들을 업로드 순서 그대로 1단 → 2단 → 3단 순으로 채운다.
+   * @return {{ok:boolean, placements:Array, colY:Array}} 한 페이지에 다 못 넣으면 ok=false
+   */
+  function placeSequential(items, scale) {
+    const placements = [];
+    const colY = [A3_TOP, A3_TOP, A3_TOP];
+    let col = 0;
+
+    for (let i = 0; i < items.length; i++) {
+      const { w, h } = sizeAt(items[i], scale);
+      while (col < A3_COLS && colY[col] + h > A3_BOTTOM) col++;
+      if (col >= A3_COLS) return { ok: false };
+      placements.push(makePlacement(items[i], 'full', 0, 1, col, colY[col], w, h));
+      colY[col] += h + A3_GAP;
+    }
+    return { ok: true, placements: placements, colY: colY };
+  }
+
+  /**
+   * 분할 대상 이미지를 각 단의 남은 공간(꼬리 영역)에 배치한다.
+   * 상·하 2조각으로만 나누며, 두 조각은 서로 다른 단에 들어간다.
+   * 자를 위치는 두 조각이 각각 목표 공간에 들어가면서 여백을 지나는 지점으로 고른다.
+   */
+  function placeSplitItems(splitItems, scale, colY, placements) {
+    for (let s = 0; s < splitItems.length; s++) {
+      const item = splitItems[s];
+      const { w, h } = sizeAt(item, scale);
+      let best = null;
+
+      for (let i = 0; i < A3_COLS; i++) {
+        for (let j = 0; j < A3_COLS; j++) {
+          if (i === j) continue;
+          const gi = A3_BOTTOM - colY[i];   // 상단 조각이 들어갈 공간
+          const gj = A3_BOTTOM - colY[j];   // 하단 조각이 들어갈 공간
+          if (gi < A3_MIN_PIECE_MM || gj < A3_MIN_PIECE_MM) continue;
+
+          const fMin = Math.max(A3_MIN_PIECE_MM / h, 1 - gj / h);
+          const fMax = Math.min(gi / h, 1 - A3_MIN_PIECE_MM / h);
+          if (fMax <= fMin) continue;
+
+          const f = findSafeSplitFraction(item, fMin, fMax);
+          if (f === null) continue;
+
+          // 남는 공간이 가장 적은 조합을 고르고, 같으면 왼쪽 단이 위 조각이 되도록 한다.
+          let waste = (gi - h * f) + (gj - h * (1 - f));
+          if (i > j) waste += 0.001;
+          if (best === null || waste < best.waste) best = { i: i, j: j, f: f, waste: waste };
+        }
+      }
+
+      if (best === null) return false;
+
+      const topH = h * best.f, bottomH = h - topH;
+      placements.push(makePlacement(item, 'top', 0, best.f, best.i, colY[best.i], w, topH));
+      colY[best.i] += topH + A3_GAP;
+      placements.push(makePlacement(item, 'bottom', best.f, 1, best.j, colY[best.j], w, bottomH));
+      colY[best.j] += bottomH + A3_GAP;
+    }
+    return true;
+  }
+
+  /** 분할 대상 후보인지 (텍스트 페이지와 여백이 없는 이미지는 제외) */
+  function canSplit(item) {
+    if (item.type !== 'image') return false;
+    const fracs = getBlankFracs(item);
+    return !!(fracs && fracs.length > 0);
+  }
+
+  /** 지정한 인덱스들을 분할 대상으로 삼아 한 페이지를 구성해 본다. */
+  function tryWithSplitSet(list, splitIdx, scale) {
+    const keep = [], split = [];
+    for (let i = 0; i < list.length; i++) {
+      if (splitIdx.indexOf(i) >= 0) split.push(list[i]); else keep.push(list[i]);
+    }
+
+    const base = placeSequential(keep, scale);          // 분할하지 않는 이미지 먼저
+    if (!base.ok) return { ok: false };
+
+    const placements = base.placements.slice();
+    if (!placeSplitItems(split, scale, base.colY, placements)) return { ok: false };  // 나머지 영역에 분할 조각 배치
+
+    return { ok: true, placements: placements, splits: split.length };
+  }
+
+  /**
+   * 한 페이지에 들어갈 항목 목록을 받아 배치를 만든다.
+   * 분할이 필요 없으면 분할하지 않고, 필요하면 분할 대상을 1장 → 2장 순으로 늘려 시도한다.
+   */
+  function arrangePage(list, scale, allowSplit) {
+    const plain = placeSequential(list, scale);
+    if (plain.ok) return { ok: true, placements: plain.placements, splits: 0 };
+    if (!allowSplit) return { ok: false };
+
+    const cand = [];
+    for (let i = 0; i < list.length; i++) if (canSplit(list[i])) cand.push(i);
+
+    for (let a = 0; a < cand.length; a++) {
+      const r = tryWithSplitSet(list, [cand[a]], scale);
+      if (r.ok) return r;
+    }
+    for (let a = 0; a < cand.length; a++) {
+      for (let b = a + 1; b < cand.length; b++) {
+        const r = tryWithSplitSet(list, [cand[a], cand[b]], scale);
+        if (r.ok) return r;
+      }
+    }
+    return { ok: false };
+  }
+
+  /** startIdx 부터 한 페이지에 최대한 많은 항목을 담는다. (항목 순서는 유지) */
+  function fillOnePage(startIdx, scale, allowSplit) {
+    let best = null;
+    for (let n = 1; startIdx + n <= itemList.length; n++) {
+      const r = arrangePage(itemList.slice(startIdx, startIdx + n), scale, allowSplit);
+      if (!r.ok) break;      // 항목이 늘면 조건이 더 빡빡해지므로 여기서 멈춘다
+      best = { n: n, r: r };
+    }
+    return best;
+  }
+
+  /**
+   * 페이지 단위로 항목을 나눠 배치한다.
+   * 1) 각 페이지에 담을 이미지를 순서대로 선택 → 2) 그 페이지 안에서 분할할 이미지 선택
+   * → 3) 분할하지 않은 이미지를 먼저 배치하고, 분할 조각은 남은 영역에 채워 넣는다.
+   */
+  function tryPackA3(scale, allowSplit) {
+    const placements = [];
+    let idx = 0, page = 0, splits = 0;
+
+    while (idx < itemList.length) {
+      const fill = fillOnePage(idx, scale, allowSplit);
+      if (!fill) return { ok: false };          // 한 장도 배치하지 못하는 상태
+
+      fill.r.placements.forEach(p => { p.page = page; placements.push(p); });
+      splits += fill.r.splits;
+      idx += fill.n;
+      page++;
+      if (page > 60) return { ok: false };      // 무한 루프 방지
+    }
+
+    return { ok: true, scale: scale, splits: splits, placements: placements, pages: Math.max(page, 1) };
+  }
+
+  /**
+   * 최대 페이지 제한을 만족하는 배치를 찾는다.
+   * 1차: 축소만으로 시도 (100% → 90%)  2차: 축소 + 상·하 분할 허용
+   * → 불필요한 분할을 피하고 가능한 한 큰 크기를 유지한다.
+   */
+  function planA3Layout(maxPages) {
+    const scales = [];
+    for (let p = 100; p >= Math.round(A3_MIN_SCALE * 100); p--) scales.push(p / 100);
+
+    let best = null;
+    const track = r => { if (r.ok && (!best || r.pages < best.pages)) best = r; return r; };
+
+    for (const s of scales) {
+      const r = track(tryPackA3(s, false));
+      if (r.ok && (!maxPages || r.pages <= maxPages)) return { ok: true, layout: r };
+    }
+    for (const s of scales) {
+      const r = track(tryPackA3(s, true));
+      if (r.ok && (!maxPages || r.pages <= maxPages)) return { ok: true, layout: r };
+    }
+    return { ok: false, minPages: best ? best.pages : 0 };
+  }
+
+  /**
+   * [직접 지정 모드] 사용자가 항목마다 고른 페이지 / 분할 여부 그대로 배치한다.
+   * 크기만 100% → 90% 범위에서 자동으로 낮춰 맞춰 보고, 그래도 안 되면 실패 사유를 돌려준다.
+   */
+  function planManualLayout() {
+    clampItemPages();
+
+    const pageNums = [];
+    itemList.forEach(it => { if (pageNums.indexOf(it.page) < 0) pageNums.push(it.page); });
+    pageNums.sort((a, b) => a - b);
+    if (pageNums.length === 0) return { ok: false, message: '배치할 항목이 없습니다.' };
+
+    // 자를 수 없는 항목에 분할을 지정했는지 먼저 확인한다.
+    const bad = itemList.filter(it => it.split && !canSplit(it));
+    if (bad.length > 0) {
+      return { ok: false, message: `분할로 지정한 항목 ${bad.length}개는 자를 위치를 찾지 못했습니다. 분할 기준을 "느슨"으로 바꾸거나 분할 체크를 해제해 주세요.` };
+    }
+
+    const scales = [];
+    for (let p = 100; p >= Math.round(A3_MIN_SCALE * 100); p--) scales.push(p / 100);
+
+    let lastMessage = '';
+
+    for (const s of scales) {
+      const placements = [];
+      let splits = 0, pageIdx = 0, ok = true;
+
+      for (const pn of pageNums) {
+        const list = itemList.filter(it => it.page === pn);
+        const splitIdx = [];
+        list.forEach((it, i) => { if (it.split) splitIdx.push(i); });
+
+        const r = tryWithSplitSet(list, splitIdx, s);
+        if (!r.ok) {
+          lastMessage = `${pn}페이지에 지정한 ${list.length}개 항목(분할 ${splitIdx.length}개)이 한 장에 들어가지 않습니다.`;
+          ok = false;
+          break;
+        }
+        r.placements.forEach(p => { p.page = pageIdx; placements.push(p); });
+        splits += r.splits;
+        pageIdx++;
+      }
+
+      if (ok) {
+        return { ok: true, layout: { scale: s, splits: splits, placements: placements, pages: Math.max(pageIdx, 1) } };
+      }
+    }
+
+    return { ok: false, message: lastMessage || '지정한 대로 배치할 수 없습니다.' };
+  }
+
+  async function generateAllPDFs() {
+    if (itemList.length === 0) return;
+    let baseFileName = document.getElementById('fileNameInput').value.trim() || '문서';
+    const generateBtn = document.getElementById('generateAllBtn'), progressWrapper = document.getElementById('progressWrapper'), progressBar = document.getElementById('progressBar'), progressText = document.getElementById('progressText');
+    const infoText = document.getElementById('a3LayoutInfo');
+    infoText.textContent = '';
+
+    // 여백 분석과 배치 계산은 시간이 걸리므로 진행 표시를 먼저 띄운다.
+    generateBtn.disabled = true; generateBtn.innerHTML = '배치를 계산하는 중';
+    progressWrapper.style.display = 'block';
+    progressBar.style.width = '0%';
+    progressText.innerText = '이미지 여백을 살펴 배치를 계산하는 중';
+    await sleep(30);
+
+    // 렌더링을 시작하기 전에 배치가 가능한지부터 검사한다.
+    const mode = getLayoutMode();
+    const maxPages = getMaxA3Pages();
+    const plan = (mode === 'manual') ? planManualLayout() : planA3Layout(maxPages);
+
+    if (!plan.ok) {
+      progressWrapper.style.display = 'none';
+      infoText.style.color = 'var(--danger-text)';
+      updateActionUI();
+
+      if (mode === 'manual') {
+        infoText.textContent = plan.message;
+        alert(`${plan.message}\n\n해당 페이지의 항목을 다른 페이지로 옮기거나, 분할할 항목을 추가로 지정한 뒤 [다시 생성]을 눌러 주세요.`);
+      } else {
+        infoText.textContent = `선택한 최대 ${maxPages}페이지로는 배치할 수 없습니다. 최소 ${plan.minPages}페이지가 필요합니다. 최대 페이지를 다시 선택해 주세요.`;
+        alert(`선택한 최대 ${maxPages}페이지로는 배치할 수 없습니다.\n최소 ${plan.minPages}페이지가 필요합니다.\n\n악보가 잘리지 않는 여백을 찾지 못하면 분할하지 않으므로 페이지가 더 필요할 수 있습니다.\n최대 페이지를 다시 선택한 뒤 [다시 생성]을 눌러 주세요.`);
+      }
+      return;
+    }
+    const layout = plan.layout;
+
+    generateBtn.innerHTML = 'PDF를 만드는 중';
+
+    try {
+      const { jsPDF } = window.jspdf;
+      const totalCount = itemList.length;
+      const totalSteps = layout.placements.length + totalCount;
+      let step = 0;
+
+      // A3 생성 (가로 3단, 계산된 배치를 그대로 그린다)
+      const docA3 = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a3' });
+      let currentPage = 0;
+      for (let i = 0; i < layout.placements.length; i++) {
+        step++;
+        progressBar.style.width = `${Math.round((step/totalSteps)*100)}%`;
+        progressText.innerText = `A3 ${i+1} / ${layout.placements.length}`;
+        await sleep(20);
+
+        const p = layout.placements[i];
+        while (currentPage < p.page) { docA3.addPage('a3', 'landscape'); currentPage++; }
+
+        const sz = itemSize(p.item, 'A3');
+        if (p.item.type === 'text') {
+          docA3.addImage(p.item.imgObjA3.src, 'PNG', p.x, p.y, p.w, p.h);
+        } else {
+          docA3.addImage(getCroppedDataUrl(p.item.imgObjA3, sz.w, sz.h, p.f0, p.f1), 'JPEG', p.x, p.y, p.w, p.h);
+        }
+
+        // 잘린 조각은 한 장이 나뉜 것임을 알 수 있도록 가는 테두리를 두른다.
+        if (p.part === 'top' || p.part === 'bottom') {
+          docA3.setDrawColor(120, 120, 120);
+          docA3.setLineWidth(A3_SPLIT_BORDER);
+          docA3.rect(p.x, p.y, p.w, p.h);
+        }
+      }
+      finalA3File = new File([docA3.output('blob')], `${baseFileName}_A3.pdf`, { type: 'application/pdf' });
+
+      // A4 생성 (1장씩, 분할 없음)
+      const docA4 = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      for (let i = 0; i < totalCount; i++) {
+        step++;
+        progressBar.style.width = `${Math.round((step/totalSteps)*100)}%`;
+        progressText.innerText = `A4 ${i+1} / ${totalCount}`;
+        await sleep(20);
+        if (i > 0) docA4.addPage('a4', 'portrait');
+        const item = itemList[i], targetImg = item.imgObjA4, sz = itemSize(item, 'A4');
+        if (item.type === 'text') docA4.addImage(targetImg.src, 'PNG', 0, 0, 210, 297);
+        else {
+          let rW = 190, rH = 277, r = sz.w / sz.h;
+          if (r > 190/277) rH = 190/r; else rW = 277*r;
+          docA4.addImage(getSafeDataUrl(targetImg, sz.w, sz.h), 'JPEG', 10+(190-rW)/2, 10+(277-rH)/2, rW, rH);
+        }
+      }
+      finalA4File = new File([docA4.output('blob')], `${baseFileName}_A4.pdf`, { type: 'application/pdf' });
+
+      progressText.innerText = '완료'; await sleep(300);
+
+      infoText.style.color = 'var(--secondary)';
+      infoText.textContent =
+        `A3 배치 결과(${mode === 'manual' ? '직접 지정' : '자동'}): ${layout.pages}페이지 / 이미지 폭 ${Math.round(layout.scale*100)}% / 분할된 이미지 ${layout.splits}장`;
+
+      // 입력값과 이미지는 그대로 두고, 설정만 바꿔 바로 다시 만들 수 있도록 생성 버튼을 유지한다.
+      hasGenerated = true;
+      document.getElementById('staleNote').textContent = '';
+      updateActionUI();
+      document.getElementById('downloadA3Btn').onclick = () => triggerDownload(finalA3File);
+      document.getElementById('downloadA4Btn').onclick = () => triggerDownload(finalA4File);
+    } catch(e) {
+      console.error(e);
+      alert('PDF 생성 실패: ' + (e && e.message ? e.message : e));
+      markDirty();
+    } finally {
+      setTimeout(()=>{progressWrapper.style.display='none'; progressBar.style.width='0%';},2000);
+      updateActionUI();
+    }
+  }
+
+  // 다운로드 실행 후 생성한 objectURL을 반환 (아이폰 대체 링크용)
+  function triggerDownload(fileObj, keepAliveMs) {
+    const url = URL.createObjectURL(fileObj); const a = document.createElement('a');
+    a.href = url; a.download = fileObj.name; a.rel = 'noopener';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), keepAliveMs || 5000);
+    return url;
+  }
+
+  /* -----------------------------------------------------------------
+     [2] PPT 파일 업로드 → 구글 슬라이드 변환
+  ----------------------------------------------------------------- */
+
+  // File 객체를 base64 문자열로 변환 (data URL 헤더 제거)
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = String(reader.result);
+        const comma = result.indexOf(',');
+        if (comma < 0) { reject(new Error("파일 인코딩에 실패했습니다.")); return; }
+        resolve(result.substring(comma + 1));
+      };
+      reader.onerror = () => reject(new Error(file.name + " 파일을 읽지 못했습니다."));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function addUploadRow(fileName) {
+    const li = document.createElement('li');
+    li.className = 'up-item';
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'name'; nameSpan.textContent = fileName;
+    const stateSpan = document.createElement('span');
+    stateSpan.className = 'state text-muted'; stateSpan.textContent = '대기 중';
+    li.appendChild(nameSpan); li.appendChild(stateSpan);
+    document.getElementById('uploadList').appendChild(li);
+    return li;
+  }
+
+  function setUploadRow(li, text, color) {
+    const state = li.querySelector('.state');
+    state.textContent = text;
+    state.classList.remove('text-muted');
+    state.style.color = color;
+  }
+
+  async function handlePptUpload(event) {
+    const files = Array.from(event.target.files);
+    event.target.value = '';
+    if (files.length === 0) return;
+
+    const statusText = document.getElementById('uploadStatus');
+    let okCount = 0, failCount = 0, skipCount = 0;
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const li = addUploadRow(file.name);
+
+      try {
+        if (!/\.pptx?$/i.test(file.name)) throw new Error("PPT / PPTX 파일만 업로드할 수 있습니다.");
+        const sizeMb = file.size / (1024 * 1024);
+        if (sizeMb > MAX_UPLOAD_MB) throw new Error(`파일이 너무 큽니다 (${sizeMb.toFixed(1)}MB / 최대 ${MAX_UPLOAD_MB}MB)`);
+
+        statusText.style.color = "var(--text-main)";
+        statusText.innerText = `업로드 중... (${i + 1}/${files.length}) ${file.name}`;
+        setUploadRow(li, "인코딩 중", "var(--text-muted)");
+
+        const base64 = await fileToBase64(file);
+
+        setUploadRow(li, "변환 중", "var(--primary)");
+        let result = await postToGas({
+          action: "upload",
+          fileName: file.name,
+          fileData: base64,
+          overwrite: false
+        });
+
+        // 같은 이름의 구글 슬라이드가 이미 있으면 덮어쓸지 확인
+        if (result.duplicate) {
+          const yes = confirm(`"${result.name}" 은(는) 이미 변환되어 있습니다.\n덮어쓸까요?\n(확인: 기존 파일을 휴지통으로 보내고 새로 변환 / 취소: 건너뜀)`);
+          if (!yes) {
+            setUploadRow(li, "건너뜀 (이미 있음)", "var(--text-muted)");
+            attachAddButton(li, result.id, result.name);
+            skipCount++;
+            continue;
+          }
+          setUploadRow(li, "덮어쓰는 중", "var(--primary)");
+          result = await postToGas({
+            action: "upload",
+            fileName: file.name,
+            fileData: base64,
+            overwrite: true
+          });
+        }
+
+        setUploadRow(li, "✅ 변환 완료", "var(--secondary)");
+        attachAddButton(li, result.id, result.name);
+        okCount++;
+
+      } catch (e) {
+        setUploadRow(li, "❌ 실패", "var(--danger-text)");
+        const msg = document.createElement('div');
+        msg.className = 'hint text-danger up-error';
+        msg.textContent = e.message;
+        li.appendChild(msg);
+        failCount++;
+      }
+    }
+
+    statusText.style.color = failCount > 0 ? "var(--danger-text)" : "var(--secondary)";
+    statusText.innerText = `업로드 종료 (성공 ${okCount}개 / 건너뜀 ${skipCount}개 / 실패 ${failCount}개)`;
+  }
+
+  // 업로드된 파일을 바로 병합 목록에 넣을 수 있는 버튼
+  function attachAddButton(li, id, name) {
+    if (!id) return;
+    const btn = document.createElement('button');
+    btn.className = 'add'; btn.textContent = '합칠 목록에 넣기';
+    btn.onclick = () => { addPptToList(id, name, true); btn.disabled = true; btn.textContent = '넣었습니다'; };
+    li.appendChild(btn);
+  }
+
+  /* -----------------------------------------------------------------
+     [3] 구글 드라이브 PPT 검색 및 자동 병합 스크립트
+  ----------------------------------------------------------------- */
+  let pptMergeList = [];
+  let lastConteText = "";
+
+  // 선택된 병합 글꼴 반환 (라디오가 없거나 값이 이상하면 첫 번째 글꼴로 고정)
+  function getSelectedMergeFont() {
+    const checked = document.querySelector('input[name="mergeFont"]:checked');
+    const value = checked ? checked.value : "";
+    return MERGE_FONTS.indexOf(value) >= 0 ? value : MERGE_FONTS[0];
+  }
+
+  // 선택된 글자 크기 반환 (원본 유지면 null)
+  function getSelectedFontSize() {
+    const raw = document.getElementById('mergeFontSize').value;
+    if (!raw) return null;
+    const n = parseInt(raw, 10);
+    if (isNaN(n) || n < FONT_SIZE_MIN || n > FONT_SIZE_MAX) return null;
+    return n;
+  }
+
+  // 콘티 한 줄에서 뒤에 붙은 코드(예: "주 은혜임을 G", "은혜 (Am)")만 제거
+  // 괄호로 감싼 코드는 항상 제거하고, 괄호 없는 코드는 앞에 공백이 있을 때만 제거한다.
+  const CHORD_BODY = "[A-G][#b\\u266f\\u266d]?(?:maj|min|dim|aug|sus|add|m|M)?(?:[2-9]|1[13])?(?:\\/[A-G][#b\\u266f\\u266d]?)?";
+  const CHORD_REGEX = new RegExp(
+    "(?:\\s*[\\(\\[\\{]\\s*" + CHORD_BODY + "\\s*[\\)\\]\\}]|\\s+" + CHORD_BODY + ")\\s*$"
+  );
+
+  function stripChord(line) {
+    const stripped = line.replace(CHORD_REGEX, '').trim();
+    return stripped.length > 0 ? stripped : line.trim();   // 전부 지워지면 원본 유지
+  }
+
+  // 2. 텍스트 박스 입력값을 기반으로 PPT 다중 검색 (파라미터 지원)
+  async function autoSearchPptFromText(inputText = null) {
+    const text = (inputText || document.getElementById('textInput').value.trim() || lastConteText || "").trim();
+    if (!text) { alert('텍스트 페이지 입력창에 곡 제목들을 먼저 입력해 주세요.'); return; }
+
+    if (!inputText) { lastConteText = text; document.getElementById('textInput').value = ''; }
+
+    const lines = text.split('\n').map(l => l.trim()).filter(l => l !== '');
+    const pairs = lines.map(line => ({ raw: line, query: stripChord(line) }));
+    const queries = pairs.map(p => p.query);
+
+    const statusText = document.getElementById('pptStatus');
+    statusText.style.color = "var(--text-main)";
+    statusText.innerText = "입력된 곡으로 PPT를 검색 중입니다... 🔍\n검색어: " + queries.join(' / ');
+
+    try {
+      const result = await postToGas({ action: "batchSearch", queries: queries });
+
+      let notFound = [];
+      result.data.forEach(item => {
+        if (item.found) addPptToList(item.id, item.name, true);
+        else notFound.push(item.query);
+      });
+
+      // 1차에서 못 찾은 곡은 코드 제거 전 원본 제목으로 한 번 더 검색 (예: "Amazing Grace")
+      const retryPairs = pairs.filter(p => notFound.indexOf(p.query) >= 0 && p.raw !== p.query);
+      if (retryPairs.length > 0) {
+        statusText.innerText = "일부 곡을 원본 제목으로 재검색 중입니다... 🔁";
+        const retry = await postToGas({ action: "batchSearch", queries: retryPairs.map(p => p.raw) });
+        retry.data.forEach(item => {
+          if (item.found) {
+            addPptToList(item.id, item.name, true);
+            const pair = retryPairs.find(p => p.raw === item.query);
+            if (pair) notFound = notFound.filter(q => q !== pair.query);
+          }
+        });
+      }
+
+      if (notFound.length > 0) {
+        statusText.style.color = "var(--danger-text)";
+        statusText.innerText = `검색 완료! 다음 곡은 PPT를 찾지 못했습니다: [${notFound.join(', ')}]`;
+      } else {
+        statusText.style.color = "var(--secondary)";
+        statusText.innerText = `✅ 모든 곡을 성공적으로 찾아 병합 목록에 추가했습니다!`;
+      }
+    } catch (error) {
+      statusText.style.color = "var(--danger-text)";
+      statusText.innerText = "❌ 검색 오류: " + error.message;
+    }
+  }
+
+  // 단일 검색
+  async function searchPpt() {
+    const query = document.getElementById('pptSearchInput').value.trim();
+    const resultBox = document.getElementById('searchResults');
+    if (!query) return;
+    resultBox.innerHTML = '<span class="hint">검색 중...</span>';
+
+    try {
+      const result = await postToGas({ action: "search", query: query }, 60000);
+      resultBox.innerHTML = '';
+      if (result.data.length === 0) { resultBox.innerHTML = '<span class="hint text-danger">검색된 곡이 없습니다.</span>'; return; }
+      result.data.forEach(item => {
+        const btn = document.createElement('button'); btn.className = 'btn btn-secondary'; btn.style.padding = '8px 12px'; btn.style.fontSize = '0.9rem'; btn.style.justifyContent = 'flex-start';
+        btn.textContent = item.name; btn.onclick = () => addPptToList(item.id, item.name);
+        resultBox.appendChild(btn);
+      });
+    } catch (error) { resultBox.innerHTML = ''; const s = document.createElement('span'); s.className = 'hint text-danger'; s.textContent = "오류: " + error.message; resultBox.appendChild(s); }
+  }
+
+  // skipDuplicate = true 이면 자동 검색 중복 추가를 막는다 (수동 추가는 같은 곡 반복 허용)
+  function addPptToList(id, name, skipDuplicate) {
+    if (skipDuplicate && pptMergeList.some(x => x.id === id)) return;
+    pptMergeList.push({ id: id, name: name });
+    document.getElementById('pptSearchInput').value = ''; document.getElementById('searchResults').innerHTML = '';
+    renderPptList();
+  }
+
+  // 📋 대기 목록 렌더링 (순서 이동 버튼 포함)
+  function renderPptList() {
+    const ul = document.getElementById('pptList');
+    ul.innerHTML = '';
+
+    pptMergeList.forEach((item, index) => {
+      const li = document.createElement('li');
+      li.className = 'ppt-item';
+
+      const label = document.createElement('span');
+      label.className = 'ppt-name';
+      const num = document.createElement('strong');
+      num.textContent = (index + 1) + '. ';
+      label.appendChild(num);
+      label.appendChild(document.createTextNode(item.name));
+
+      const actions = document.createElement('div');
+      actions.className = 'ppt-actions';
+
+      // 첫 번째 항목은 '위로', 마지막 항목은 '아래로' 버튼 비활성화
+      const upBtn = document.createElement('button');
+      upBtn.className = 'move-btn'; upBtn.textContent = '↑'; upBtn.title = '위로';
+      upBtn.disabled = (index === 0);
+      upBtn.onclick = () => movePptId(index, -1);
+
+      const downBtn = document.createElement('button');
+      downBtn.className = 'move-btn'; downBtn.textContent = '↓'; downBtn.title = '아래로';
+      downBtn.disabled = (index === pptMergeList.length - 1);
+      downBtn.onclick = () => movePptId(index, 1);
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'del-btn'; delBtn.textContent = '✕'; delBtn.title = '목록에서 빼기';
+      delBtn.onclick = () => removePptId(index);
+
+      actions.appendChild(upBtn); actions.appendChild(downBtn); actions.appendChild(delBtn);
+      li.appendChild(label); li.appendChild(actions);
+      ul.appendChild(li);
+    });
+  }
+
+  // 🔄 순서 위/아래 이동 처리 함수
+  function movePptId(index, direction) {
+    if (index + direction < 0 || index + direction >= pptMergeList.length) return;
+    const temp = pptMergeList[index];
+    pptMergeList[index] = pptMergeList[index + direction];
+    pptMergeList[index + direction] = temp;
+    renderPptList();
+  }
+
+  function removePptId(index) { pptMergeList.splice(index, 1); renderPptList(); }
+
+  function base64ToBlob(base64, mimeType) {
+    const byteCharacters = atob(base64); const byteArrays = [];
+    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+      const slice = byteCharacters.slice(offset, offset + 512); const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) byteNumbers[i] = slice.charCodeAt(i);
+      byteArrays.push(new Uint8Array(byteNumbers));
+    }
+    return new Blob(byteArrays, { type: mimeType });
+  }
+
+  async function requestPptMerge() {
+    if(pptMergeList.length < 1) { alert("병합할 곡이 없습니다."); return; }
+    const mergedName = document.getElementById('pptMergedName').value.trim() || "통합_악보_PPT";
+    const fontName = getSelectedMergeFont();
+    const fontSize = getSelectedFontSize();
+    const statusText = document.getElementById('pptStatus'), btn = document.getElementById('mergePptBtn');
+    const fallbackBox = document.getElementById('pptFallback');
+    fallbackBox.innerHTML = '';
+    btn.disabled = true; statusText.style.color = "var(--text-main)";
+    statusText.innerText = `PPT 병합 중입니다 (글꼴: ${fontName} / 크기: ${fontSize ? fontSize + 'pt' : '원본 유지'})... ⏳`;
+
+    try {
+      const result = await postToGas({
+        action: "merge",
+        fileIds: pptMergeList.map(i => i.id),
+        mergedName: mergedName,
+        fontName: fontName,
+        fontSize: fontSize
+      });
+
+      const mimeType = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+      const file = new File([base64ToBlob(result.fileData, mimeType)], result.fileName, { type: mimeType });
+      const url = triggerDownload(file, 180000);
+
+      statusText.style.color = "var(--secondary)";
+      statusText.innerText = `✅ 병합 완료 (글꼴: ${result.fontApplied || fontName} / 크기: ${result.fontSizeApplied ? result.fontSizeApplied + 'pt' : '원본 유지'}) — 다운로드가 시작되었습니다.`;
+
+      // 아이폰 사파리에서 자동 다운로드가 막히는 경우를 위한 수동 링크 (3분간 유지)
+      const a = document.createElement('a');
+      a.className = 'fallback-link'; a.href = url; a.download = file.name;
+      a.innerText = '다운로드가 시작되지 않으면 여기를 누르세요';
+      fallbackBox.appendChild(a);
+
+      // 서버가 폰트 적용 결과를 돌려주면 그대로 표시 (미적용 개체 추적용)
+      if (result.fontReport && result.fontReport.skipped > 0) {
+        const p = document.createElement('p');
+        p.className = 'hint';
+        p.innerText = `글꼴을 적용하지 못한 개체 ${result.fontReport.skipped}개가 있습니다. (이미지로 변환된 텍스트일 수 있음)`;
+        fallbackBox.appendChild(p);
+      }
+
+      pptMergeList = []; renderPptList();
+    } catch(error) {
+      statusText.style.color = "var(--danger-text)";
+      statusText.innerText = "❌ 오류: " + error.message;
+    } finally { btn.disabled = false; }
+  }
+</script>
+</body>
+</html>
