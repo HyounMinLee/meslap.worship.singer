@@ -504,12 +504,87 @@
     .search-row .form-input { margin: 0; }
     .search-row .btn { width: auto; flex: 0 0 88px; }
 
+    /* ---------- 페이지 전환 탭 ---------- */
+    .page-tabs {
+      display: flex; gap: 3px; padding: 4px; margin: 0 auto 34px;
+      width: fit-content; background: var(--surface-2);
+      border: 1px solid var(--rule); border-radius: 999px;
+    }
+    .page-tab {
+      background: transparent; color: var(--text-muted); border: none; border-radius: 999px;
+      padding: 9px 24px; font-size: .92rem; font-weight: 700; letter-spacing: -.01em; cursor: pointer;
+      transition: background-color .15s ease, color .15s ease;
+    }
+    .page-tab:hover { color: var(--text-main); }
+    .page-tab[aria-selected="true"] {
+      background: var(--accent); color: #fff;
+    }
+    .page[hidden] { display: none; }
+
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .field { margin-bottom: 10px; }
+    .field .form-input { margin-bottom: 0; }
+    .btn-ghost {
+      background: transparent; color: var(--accent);
+      border: 1px solid var(--rule); font-weight: 700;
+    }
+    .btn-ghost:hover:not(:disabled) { background: var(--accent-soft); }
+    .json-view {
+      background: var(--surface-3); border: 1px solid var(--rule); border-radius: var(--radius-sm);
+      padding: 14px; margin-top: 14px; font-size: .78rem; line-height: 1.55;
+      max-height: 320px; overflow: auto; white-space: pre;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .conte-item { display: flex; align-items: center; gap: 10px; }
+    .conte-item .mark { font-weight: 700; font-size: .8rem; white-space: nowrap; }
+    .conte-item .found { color: var(--sage); }
+    .conte-item .miss { color: var(--danger-text); }
+    .conte-item .q { flex: 1; word-break: break-all; }
+    .conte-item .file { color: var(--text-muted); font-size: .8rem; word-break: break-all; }
+
+    /* ---------- 파일 고르기 / 변환 목록 ---------- */
+    .drop {
+      border: 1px dashed var(--dashed-border);
+      background: var(--surface-3);
+      border-radius: var(--radius);
+      padding: 26px 18px; text-align: center; cursor: pointer;
+      transition: border-color .15s ease, background-color .15s ease;
+    }
+    .drop:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .drop-mark {
+      display: block; font-family: var(--display);
+      font-size: 1.5rem; color: var(--gold); margin-bottom: 5px;
+    }
+    .drop-title { font-weight: 700; letter-spacing: -.01em; }
+    .drop .hint { margin-top: 3px; }
+
+    .conv-list { list-style: none; margin-top: 14px; max-height: 420px; overflow: auto; }
+    .conv-item {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 8px; flex-wrap: wrap;
+      background: var(--surface-3); border: 1px solid var(--rule);
+      border-radius: var(--radius-sm); padding: 9px 12px; margin-bottom: 6px;
+      font-size: .86rem;
+    }
+    .conv-item .n { flex: 1 1 180px; word-break: break-all; }
+    .conv-item .s { font-weight: 700; font-size: .8rem; white-space: nowrap; }
+    .conv-item .err { flex-basis: 100%; color: var(--danger-text); font-size: .78rem; }
+    .conv-item button {
+      background: transparent; color: var(--accent);
+      border: 1px solid var(--rule); border-radius: 5px;
+      padding: 5px 9px; font-size: .78rem; cursor: pointer;
+    }
+    .conv-item button:hover { background: var(--accent-soft); }
+
     /* ---------- 반응형 ---------- */
     @media (max-width: 600px) {
       body { padding: 18px 12px 40px; }
       .app-wrapper { padding: 20px 16px 30px; border-radius: 8px; }
       .section-head { margin-top: 40px; }
       .btn-row .btn { flex: 1 1 100%; }
+      .grid2, .grid3 { grid-template-columns: 1fr; }
+      .page-tab { padding: 9px 16px; font-size: .86rem; }
       .search-row { flex-wrap: wrap; }
       .search-row .btn { flex: 1 1 100%; }
     }
@@ -535,8 +610,43 @@
     <p>콘티와 악보를 인쇄용 PDF로, 곡 목록을 하나의 발표 파일로</p>
   </div>
 
+  <nav class="page-tabs" role="tablist" aria-label="작업 선택">
+    <button type="button" class="page-tab" id="tabPdf" role="tab" onclick="showPage('pdf')">PDF 만들기</button>
+    <button type="button" class="page-tab" id="tabPpt" role="tab" onclick="showPage('ppt')">PPT 만들기</button>
+    <button type="button" class="page-tab" id="tabSong" role="tab" onclick="showPage('song')">가사 등록</button>
+  </nav>
+
+<div id="connectBar" hidden>
   <!-- ============================================== -->
-  <!-- 1. 이미지 PDF 변환 섹션 -->
+  <!-- 접속 -->
+  <!-- ============================================== -->
+  <header class="section-head">
+    <div class="staff-rule"></div>
+    <span class="eyebrow">접속</span>
+    <h2 class="section-title">가사 저장소 연결</h2>
+    <p class="section-note">관리자가 정해 둔 저장소에 연결합니다. 처음 한 번만 암호를 넣으면 다음부터는 바로 열립니다.</p>
+  </header>
+
+  <div class="input-box block">
+    <label class="field-label" for="accessKey">접속 암호</label>
+    <div class="search-row">
+      <input type="password" id="accessKey" class="form-input" placeholder="담당자에게 받은 암호" autocomplete="current-password">
+      <button class="btn btn-primary" onclick="connectProxy()">연결</button>
+    </div>
+    <p id="ghStatus" class="layout-info"></p>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="clearAccessKey()">이 기기에서 암호 지우기</button>
+    </div>
+    <p class="hint">
+      저장소 주소와 GitHub 토큰은 중계 서버에만 있고 이 화면으로 내려오지 않습니다.
+      공용 PC에서 쓰셨다면 사용 후 암호를 지워 주세요.
+    </p>
+  </div>
+</div>
+
+<section id="pagePdf" class="page">
+  <!-- ============================================== -->
+  <!-- 악보 이미지 PDF 변환 -->
   <!-- ============================================== -->
   <header class="section-head">
     <div class="staff-rule"></div>
@@ -549,7 +659,7 @@
     <div class="input-box">
       <label class="field-label">파일 이름과 콘티</label>
       <input type="text" id="fileNameInput" class="form-input" placeholder="저장할 파일 이름 (예: 찬양악보)">
-      <textarea id="textInput" class="mt-s" placeholder="입력한 텍스트로 첫 페이지를 생성하거나, 아래 버튼을 눌러 PPT를 자동 검색할 수 있습니다."></textarea>
+      <textarea id="textInput" class="mt-s" placeholder="한 줄에 한 곡씩 콘티를 입력하세요. 첫 페이지로 만들어집니다."></textarea>
 
       <label class="field-label stacked">콘티 글자 크기</label>
       <select id="conteFontSize" class="form-select" onchange="refreshTextItems()"></select>
@@ -557,7 +667,6 @@
 
       <div class="btn-row">
         <button class="btn btn-secondary" onclick="addTextBox()">콘티를 첫 페이지로 넣기</button>
-        <button class="btn btn-orange" onclick="autoSearchPptFromText()">콘티에서 곡 찾기</button>
       </div>
     </div>
 
@@ -620,105 +729,222 @@
     <button id="downloadA3Btn" class="btn btn-secondary">A3 내려받기 · 3단 배치</button>
     <button id="downloadA4Btn" class="btn btn-purple">A4 내려받기 · 한 장씩</button>
   </div>
+</section>
 
-
+<section id="pagePpt" class="page" hidden>
   <!-- ============================================== -->
-  <!-- 2. PPT 파일 업로드 (구글 슬라이드 변환) -->
-  <!-- ============================================== -->
-  <header class="section-head">
-    <div class="staff-rule"></div>
-    <span class="eyebrow">자료</span>
-    <h2 class="section-title">곡 파일 올리기</h2>
-    <p class="section-note">PPT 파일을 구글 슬라이드로 바꿔 검색 폴더에 넣습니다.</p>
-  </header>
-
-  <div class="input-box block">
-    <div class="upload-box ppt" onclick="document.getElementById('pptFileInput').click();">
-      <span class="up-mark">↑</span>
-      <div class="up-title">PPT 파일 고르기</div>
-      <p class="hint">파일당 20MB까지. 같은 이름이 이미 있으면 덮어쓸지 물어봅니다.</p>
-    </div>
-    <input type="file" id="pptFileInput" multiple
-           accept=".ppt,.pptx,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"
-           onchange="handlePptUpload(event)">
-
-    <ul class="up-list" id="uploadList"></ul>
-    <p id="uploadStatus" class="text-muted"></p>
-  </div>
-
-
-  <!-- ============================================== -->
-  <!-- 3. 구글 드라이브 PPT 자동 병합 섹션 -->
+  <!-- 콘티로 PPT 만들기 -->
   <!-- ============================================== -->
   <header class="section-head">
     <div class="staff-rule"></div>
     <span class="eyebrow">발표</span>
-    <h2 class="section-title">곡 PPT 합치기</h2>
-    <p class="section-note">콘티 순서대로 찾아 하나의 파일로 만들고 내려받습니다.</p>
+    <h2 class="section-title">콘티로 PPT 만들기</h2>
+    <p class="section-note">한 줄에 한 곡씩 적으면 저장소에서 가사를 찾아 하나의 발표 파일로 만듭니다.</p>
   </header>
 
   <div class="input-box block">
-    <input type="text" id="pptMergedName" class="form-input" placeholder="통합될 새 PPT 파일 이름 (예: 2026-08-16 예배PPT)">
+    <label class="field-label" for="conteInput">콘티</label>
+    <textarea id="conteInput" placeholder="감사로 주님께 나가세
+주 은혜임을
+Amazing Grace"></textarea>
+    <p class="hint">띄어쓰기와 대소문자는 무시하고 파일 이름으로 찾습니다. 뒤에 붙은 코드(예: “(G)”)도 자동으로 뗍니다.</p>
 
-    <hr class="divider">
-
-    <label class="field-label">합칠 때 쓸 글꼴</label>
-    <div class="font-group" id="fontGroup">
-      <label class="font-chip"><input type="radio" name="mergeFont" value="DX시인과나" checked> DX시인과나</label>
-      <label class="font-chip"><input type="radio" name="mergeFont" value="맑은 고딕"> 맑은 고딕</label>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="findSongsBtn" onclick="findConteSongs()">곡 찾기</button>
     </div>
-
-    <label class="field-label stacked">글자 크기</label>
-    <select id="mergeFontSize" class="form-select">
-      <option value="">원본 크기 유지</option>
-    </select>
-    <p class="hint">크기를 지정하면 모든 텍스트가 같은 크기로 통일됩니다. 제목과 가사의 크기 차이가 필요하면 “원본 크기 유지”를 선택하세요.</p>
-
-    <hr class="divider">
-
-    <label class="field-label">곡 하나 찾아 넣기</label>
-    <div class="search-row">
-      <input type="text" id="pptSearchInput" class="form-input" placeholder="곡 제목 (예: 은혜)">
-      <button class="btn btn-primary" onclick="searchPpt()">찾기</button>
-    </div>
-    <div id="searchResults"></div>
-
-    <hr class="divider">
-
-    <label class="field-label">합칠 순서</label>
-    <ul class="ppt-list" id="pptList"></ul>
-
-    <button id="mergePptBtn" class="btn btn-orange" onclick="requestPptMerge()">
-      순서대로 합쳐서 내려받기
-    </button>
-    <p id="pptStatus" class="text-muted"></p>
-    <div id="pptFallback" class="center"></div>
+    <p id="findStatus" class="layout-info"></p>
+    <ul class="ppt-list" id="conteList"></ul>
   </div>
+
+  <div class="input-box block">
+    <label class="field-label">글꼴</label>
+    <div class="font-group">
+      <label class="font-chip"><input type="radio" name="deckFont" value="DX시인과나" checked> DX시인과나</label>
+      <label class="font-chip"><input type="radio" name="deckFont" value="맑은 고딕"> 맑은 고딕</label>
+    </div>
+
+    <label class="field-label stacked">표시 언어</label>
+    <div class="font-group">
+      <label class="font-chip"><input type="radio" name="deckLang" value="ko" checked> 한글만</label>
+      <label class="font-chip"><input type="radio" name="deckLang" value="en"> 영어만</label>
+      <label class="font-chip"><input type="radio" name="deckLang" value="both"> 한글 + 영어</label>
+    </div>
+
+    <div class="grid3" style="margin-top:16px">
+      <div class="field"><label class="field-label" for="deckFontSize">글자 크기</label>
+        <select id="deckFontSize" class="form-select"></select></div>
+      <div class="field"><label class="field-label" for="deckBg">배경</label>
+        <select id="deckBg" class="form-select">
+          <option value="dark" selected>검정 바탕 · 흰 글자</option>
+          <option value="light">흰 바탕 · 검정 글자</option>
+        </select></div>
+      <div class="field"><label class="field-label" for="deckTitle">곡 제목 슬라이드</label>
+        <select id="deckTitle" class="form-select">
+          <option value="on" selected>곡마다 넣기</option>
+          <option value="off">넣지 않기</option>
+        </select></div>
+    </div>
+
+    <label class="field-label stacked" for="deckName">파일 이름</label>
+    <input type="text" id="deckName" class="form-input" placeholder="예) 2026-08-23 주일예배">
+
+    <p id="libStatus" class="layout-info"></p>
+    <div class="btn-row" id="libActions" hidden>
+      <button class="btn btn-ghost" onclick="loadLibraries(true)">라이브러리 다시 시도</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('libFile').click()">파일 직접 선택</button>
+    </div>
+    <input type="file" id="libFile" accept=".js" multiple hidden onchange="loadFromFiles(event)">
+
+    <div class="btn-row">
+      <button class="btn btn-orange" id="makeDeckBtn" onclick="makeDeck()" disabled>PPT 만들기</button>
+      <button class="btn btn-secondary" id="saveDeckBtn" onclick="saveDeckToGit()" disabled>Git에 저장</button>
+    </div>
+    <p id="deckStatus" class="layout-info"></p>
+  </div>
+
+</section>
+
+<section id="pageSong" class="page" hidden>
+  <!-- ============================================== -->
+  <!-- 가사 등록 -->
+  <!-- ============================================== -->
+  <header class="section-head">
+    <div class="staff-rule"></div>
+    <span class="eyebrow">자료</span>
+    <h2 class="section-title">가사 등록하기</h2>
+    <p class="section-note">가사를 붙여넣으면 JSON으로 바꿔 저장소에 올립니다. 한글 줄과 영어 줄을 자동으로 나눕니다.</p>
+  </header>
+
+  <div class="input-box block">
+    <div class="grid2">
+      <div class="field"><label class="field-label" for="songTitle">곡 제목 (파일 이름이 됩니다)</label>
+        <input type="text" id="songTitle" class="form-input" placeholder="예) 감사로 주님께 나가세" oninput="buildSongJson()"></div>
+      <div class="field"><label class="field-label" for="songAliases">별칭 (쉼표로 구분)</label>
+        <input type="text" id="songAliases" class="form-input" placeholder="예) Come to the Lord with thanks" oninput="buildSongJson()"></div>
+    </div>
+
+    <label class="field-label" for="lyricsInput">가사</label>
+    <textarea id="lyricsInput" placeholder="한글 가사 첫째 줄
+한글 가사 둘째 줄
+English line for the block above
+
+한글 가사 셋째 줄
+한글 가사 넷째 줄
+Another English line"></textarea>
+    <p class="hint">빈 줄로 슬라이드를 나눕니다. 한글이 이어지다 영어가 나와도 한 덩어리로 봅니다. 붙여넣은 내용은 이 브라우저 안에서만 처리됩니다.</p>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="parseLyrics()">가사 분석</button>
+    </div>
+    <p id="parseStatus" class="layout-info"></p>
+
+    <pre class="json-view" id="jsonOut" hidden></pre>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" id="dlJsonBtn" onclick="downloadSongJson()" disabled>JSON 내려받기</button>
+      <button class="btn btn-orange" id="pushJsonBtn" onclick="pushSongToGit()" disabled>Git에 올리기</button>
+    </div>
+    <p id="pushStatus" class="layout-info"></p>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- PPT 파일에서 가사 뽑기 -->
+  <!-- ============================================== -->
+  <header class="section-head">
+    <div class="staff-rule"></div>
+    <span class="eyebrow">변환</span>
+    <h2 class="section-title">PPT에서 가사 뽑기</h2>
+    <p class="section-note">이미 만들어 둔 발표 파일에서 가사만 뽑아 JSON으로 바꿉니다. 폴더째 한 번에 처리할 수 있습니다.</p>
+  </header>
+
+  <div class="input-box block">
+    <div class="grid2">
+      <div class="drop" onclick="document.getElementById('convFileInput').click()">
+        <span class="drop-mark">＋</span>
+        <div class="drop-title">파일 고르기</div>
+        <p class="hint">.pptx 여러 개</p>
+      </div>
+      <div class="drop" onclick="document.getElementById('convDirInput').click()">
+        <span class="drop-mark">▤</span>
+        <div class="drop-title">폴더 고르기</div>
+        <p class="hint">하위 폴더까지 훑습니다</p>
+      </div>
+    </div>
+    <input type="file" id="convFileInput" multiple accept=".pptx" onchange="handleConvFiles(event)" hidden>
+    <input type="file" id="convDirInput" webkitdirectory directory multiple onchange="handleConvFiles(event)" hidden>
+
+    <p class="hint">
+      옛 형식인 <code>.ppt</code>는 읽을 수 없습니다. PowerPoint에서 <code>.pptx</code>로 다시 저장한 뒤 사용해 주세요.
+      그림으로 만들어진 슬라이드는 글자가 없어 건너뜁니다. 모든 처리는 이 브라우저 안에서만 이뤄집니다.
+    </p>
+
+    <hr class="divider">
+
+    <div class="grid2">
+      <div>
+        <label class="field-label" for="titleMode">곡 제목</label>
+        <select id="titleMode" class="form-select">
+          <option value="filename" selected>파일 이름을 제목으로</option>
+          <option value="firstslide">첫 슬라이드 글자를 제목으로</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label" for="skipFirst">첫 슬라이드</label>
+        <select id="skipFirst" class="form-select">
+          <option value="keep" selected>가사에 포함</option>
+          <option value="skip">제목 슬라이드로 보고 제외</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div>
+        <label class="field-label" for="headerMode">곡 제목·머리글 글상자</label>
+        <select id="headerMode" class="form-select">
+          <option value="auto" selected>자동으로 걸러내기</option>
+          <option value="keep">가사에 포함</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label" for="mixedLine">한 줄에 한글·영어가 섞였을 때</label>
+        <select id="mixedLine" class="form-select">
+          <option value="split" selected>뒤쪽 영어를 떼어내기</option>
+          <option value="keep">한 줄 그대로 두기</option>
+        </select>
+      </div>
+    </div>
+    <p class="hint">
+      슬라이드 한 장이 가사 한 덩어리가 됩니다. 한글이 든 줄은 <code>ko</code>, 그렇지 않은 줄은 <code>en</code>입니다.
+      슬라이드 번호·바닥글과 숫자만 있는 줄은 자동으로 빠집니다.
+    </p>
+
+    <div class="progress-wrapper" id="convProgress">
+      <div class="progress-container"><div class="progress-bar" id="convProgressBar"></div></div>
+      <div class="progress-text" id="convProgressText"></div>
+    </div>
+    <p id="convStatus" class="layout-info"></p>
+
+    <div class="btn-row">
+      <button class="btn btn-purple" id="convZipBtn" onclick="downloadConvZip()" disabled>JSON 전체를 ZIP으로 내려받기</button>
+      <button class="btn btn-orange" id="convUploadBtn" onclick="uploadConvAll()" disabled>저장소에 모두 올리기</button>
+    </div>
+
+    <ul class="conv-list" id="convList"></ul>
+    <pre class="json-view" id="convPreview" hidden></pre>
+  </div>
+</section>
+
 </div>
 
 <script>
-  // ========================================================
-  // ★ 본인의 구글 앱스 스크립트 웹 앱 URL을 반드시 여기에 넣으세요! ★
-  // ========================================================
-  const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw0r6Gt6FMwJbjdEKbAINkdzBXEyktdfuXuoo2X8gwxNfcCG4FffExpJr-liM1asIvz/exec";
 
-  // 병합 PPT에 적용할 수 있는 글꼴 (Apps Script 화이트리스트와 반드시 동일해야 함)
-  const MERGE_FONTS = ["DX시인과나", "맑은 고딕"];
-
-  // 병합 PPT 글자 크기 선택 범위 (pt)
-  const FONT_SIZE_MIN = 10, FONT_SIZE_MAX = 40;
 
   // 콘티(첫 페이지) 텍스트 크기 선택 범위 및 기본값
   const CONTE_FONT_MIN = 18, CONTE_FONT_MAX = 30, CONTE_FONT_DEFAULT = 22;
 
-  // 업로드 파일 1개당 크기 상한. base64 인코딩 시 약 1.33배로 커지므로 여유를 둔다.
-  const MAX_UPLOAD_MB = 20;
 
   // 캔버스에서 사용할 대체 글꼴 체인 (아이폰에는 맑은 고딕이 없어 Apple SD Gothic Neo로 대체)
   const CANVAS_FONT_STACK = "'Malgun Gothic', 'Apple SD Gothic Neo', 'Pretendard', sans-serif";
 
-  // Apps Script 실행 제한(6분)을 고려한 요청 타임아웃
-  const GAS_TIMEOUT_MS = 330000;
 
   /* ---------------- A3 배치 상수 (mm 단위, A3 가로 = 420 x 297) ---------------- */
   const A3_PAGE_W = 420;          // A3 가로 폭
@@ -821,42 +1047,6 @@
   function uid() { uidSeq += 1; return Date.now() + "_" + uidSeq; }
 
   const sleep = ms => new Promise(r => setTimeout(r, ms));
-
-  // GAS 통신 공통 함수 (text/plain 유지 → CORS 사전요청 회피, 아이폰 호환)
-  async function postToGas(payload, timeoutMs) {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeoutMs || GAS_TIMEOUT_MS);
-    try {
-      const response = await fetch(GAS_WEB_APP_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(payload),
-        signal: controller.signal
-      });
-      if (!response.ok) throw new Error("서버 응답 코드 " + response.status);
-      const raw = await response.text();
-      let result;
-      try { result = JSON.parse(raw); }
-      catch (e) { throw new Error("서버가 JSON이 아닌 응답을 보냈습니다. (배포 권한 또는 스크립트 오류 확인 필요)"); }
-      if (result.status !== "success") throw new Error(result.message || "서버에서 실패를 반환했습니다.");
-      return result;
-    } catch (e) {
-      if (e.name === "AbortError") throw new Error("응답 시간이 초과되었습니다. 파일 크기나 곡 수를 줄여서 다시 시도해 주세요.");
-      throw e;
-    } finally {
-      clearTimeout(timer);
-    }
-  }
-
-  // 병합 PPT 글자 크기 선택 목록 (10 ~ 40)
-  (function buildFontSizeOptions() {
-    const sel = document.getElementById('mergeFontSize');
-    for (let s = FONT_SIZE_MIN; s <= FONT_SIZE_MAX; s++) {
-      const opt = document.createElement('option');
-      opt.value = String(s); opt.textContent = s + " pt";
-      sel.appendChild(opt);
-    }
-  })();
 
   // 콘티 텍스트 크기 선택 목록 (18 ~ 30)
   (function buildConteFontOptions() {
@@ -1020,12 +1210,7 @@
     markDirty();
     renderGrid();
 
-    // 입력창은 비우되, 자동 검색 버튼을 다시 눌러도 되도록 원본 텍스트를 보관
-    lastConteText = text;
     document.getElementById('textInput').value = '';
-
-    // [2단계] 입력했던 텍스트 데이터를 그대로 사용해 PPT 자동 검색 시작!
-    autoSearchPptFromText(text);
   }
 
   async function handleFileSelect(event) {
@@ -1760,340 +1945,1023 @@
     return url;
   }
 
-  /* -----------------------------------------------------------------
-     [2] PPT 파일 업로드 → 구글 슬라이드 변환
-  ----------------------------------------------------------------- */
 
-  // File 객체를 base64 문자열로 변환 (data URL 헤더 제거)
-  function fileToBase64(file) {
+  /* =====================================================================
+     [2] PPT 만들기 — Git 저장소의 가사 JSON으로 발표 파일 만들기
+     ===================================================================== */
+
+  const SONG_SCHEMA = 'worship-song/2.0';
+  let convResults = [];   // PPT → JSON 변환 결과 (가사 등록 탭)
+  const HANGUL = /[\u3131-\u318E\uAC00-\uD7A3]/;
+  const PPTX_MIME = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+
+  /* ---------------- 페이지 전환 ---------------- */
+  const PAGES = ['pdf', 'ppt', 'song'];
+
+  function showPage(name){
+    const page = (PAGES.indexOf(name) >= 0) ? name : 'pdf';
+
+    document.getElementById('pagePdf').hidden  = (page !== 'pdf');
+    document.getElementById('pagePpt').hidden  = (page !== 'ppt');
+    document.getElementById('pageSong').hidden = (page !== 'song');
+
+    document.getElementById('tabPdf').setAttribute('aria-selected',  page === 'pdf'  ? 'true' : 'false');
+    document.getElementById('tabPpt').setAttribute('aria-selected',  page === 'ppt'  ? 'true' : 'false');
+    document.getElementById('tabSong').setAttribute('aria-selected', page === 'song' ? 'true' : 'false');
+
+    // 저장소 연결은 PPT·가사 등록 두 곳에서 함께 쓰므로 탭 위에 두고 PDF 화면에서만 감춘다
+    document.getElementById('connectBar').hidden = (page === 'pdf');
+
+    try { localStorage.setItem('worship-page', page); } catch (e) {}
+    if (page !== 'pdf') loadLibraries(false);
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+
+  /* ---------------- 중계 서버 접속 ----------------
+     GitHub 토큰과 저장소 주소는 중계 서버(Apps Script)에만 있다.
+     이 화면은 중계 서버 주소와 접속 암호만 안다.
+  ------------------------------------------------ */
+
+  // ★ 관리자가 배포한 Apps Script 웹 앱 주소를 여기에 넣으세요 ★
+  const PROXY_URL = "https://script.google.com/macros/s/AKfycbzp4G2CZ8zB4dN8nJ0BHrJCzkeZY5Y4pOu0UBIOJ0esnZ9eVruZopp9BSZsXawamSpoMQ/exec";
+
+  const KEY_STORAGE = 'worship-access-key';
+  let accessKey = '';
+  let serverInfo = null;   // { repo, branch, canWrite, songCount }
+
+  function loadAccessKey(){
+    try { accessKey = localStorage.getItem(KEY_STORAGE) || ''; } catch (e) { accessKey = ''; }
+    const el = document.getElementById('accessKey');
+    if (el) el.value = accessKey;
+  }
+
+  function clearAccessKey(){
+    accessKey = '';
+    try { localStorage.removeItem(KEY_STORAGE); } catch (e) {}
+    const el = document.getElementById('accessKey');
+    if (el) el.value = '';
+    serverInfo = null;
+    songNames = null;
+    const st = document.getElementById('ghStatus');
+    st.className = 'layout-info text-muted'; st.style.color = '';
+    st.textContent = '암호를 지웠습니다.';
+    updateWriteButtons();
+  }
+
+  /** 중계 서버 호출 — text/plain 으로 보내 사전요청(preflight)을 피한다 */
+  async function proxyCall(action, payload, timeoutMs){
+    if (!PROXY_URL || PROXY_URL.indexOf('여기에_배포_ID') >= 0){
+      throw new Error('중계 서버 주소가 설정되지 않았습니다. 관리자에게 문의해 주세요.');
+    }
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs || 120000);
+    try {
+      const res = await fetch(PROXY_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(Object.assign({ action: action, key: accessKey }, payload || {})),
+        signal: controller.signal
+      });
+      if (!res.ok) throw new Error('중계 서버 응답 ' + res.status);
+      const raw = await res.text();
+      let j;
+      try { j = JSON.parse(raw); }
+      catch (e) { throw new Error('중계 서버가 JSON이 아닌 응답을 보냈습니다. 배포 설정(액세스 권한: 모든 사용자)을 확인해 주세요.'); }
+      if (j.status !== 'success') throw new Error(j.message || '중계 서버 오류');
+      return j;
+    } catch (e) {
+      if (e.name === 'AbortError') throw new Error('응답 시간이 초과되었습니다. 잠시 뒤 다시 시도해 주세요.');
+      if (e instanceof TypeError) throw new Error('중계 서버에 연결하지 못했습니다. 주소와 네트워크를 확인해 주세요.');
+      throw e;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  async function connectProxy(silent){
+    const st = document.getElementById('ghStatus');
+    const typed = document.getElementById('accessKey').value.trim();
+    if (typed) accessKey = typed;
+
+    if (!accessKey){
+      if (silent) return false;
+      st.className = 'layout-info text-danger'; st.style.color = '';
+      st.textContent = '접속 암호를 입력해 주세요.';
+      return false;
+    }
+
+    st.className = 'layout-info text-muted'; st.style.color = '';
+    st.textContent = '연결하는 중입니다';
+    try {
+      const r = await proxyCall('ping', {}, 60000);
+      serverInfo = r;
+      songNames = null;
+      try { localStorage.setItem(KEY_STORAGE, accessKey); } catch (e) {}
+
+      st.className = 'layout-info'; st.style.color = 'var(--secondary)';
+      st.textContent = `연결되었습니다. ${r.repo} · 가사 ${r.songCount}곡`
+        + (r.canWrite ? '' : ' · 읽기 전용');
+      updateWriteButtons();
+      return true;
+    } catch (e) {
+      serverInfo = null;
+      st.className = 'layout-info text-danger'; st.style.color = '';
+      st.textContent = '연결 실패: ' + e.message;
+      updateWriteButtons();
+      return false;
+    }
+  }
+
+  /** 쓰기 권한이 없으면 저장 버튼을 잠근다 */
+  function updateWriteButtons(){
+    const canWrite = !!(serverInfo && serverInfo.canWrite);
+    const push = document.getElementById('pushJsonBtn');
+    const save = document.getElementById('saveDeckBtn');
+    const upload = document.getElementById('convUploadBtn');
+    if (push && !canWrite) push.disabled = true;
+    if (save && !canWrite) save.disabled = true;
+    if (upload) upload.disabled = !(canWrite && convResults.some(r => r.json && !r.uploaded));
+  }
+
+  // 파일 이름 비교용 정규화: 유니코드 정규화 → 소문자 → 공백·문장부호 제거
+  function normalizeName(text){
+    let t = String(text || '');
+    try { t = t.normalize('NFC'); } catch (e) {}
+    return t.toLowerCase().replace(/\.json$/,'').replace(/[\s\-_.,'"()\[\]{}!?~]/g, '');
+  }
+
+  // 콘티 한 줄에서 뒤에 붙은 코드만 떼어낸다
+  const CHORD_BODY = "[A-G][#b\u266f\u266d]?(?:maj|min|dim|aug|sus|add|m|M)?(?:[2-9]|1[13])?(?:\\/[A-G][#b\u266f\u266d]?)?";
+  const CHORD_REGEX = new RegExp("(?:\\s*[\\(\\[\\{]\\s*" + CHORD_BODY + "\\s*[\\)\\]\\}]|\\s+" + CHORD_BODY + ")\\s*$");
+  function stripChord(line){
+    const t = line.replace(CHORD_REGEX, '').trim();
+    return t.length > 0 ? t : line.trim();
+  }
+
+  let songNames = null;   // [{name, norm}]
+
+  async function listSongs(force){
+    if (songNames && !force) return songNames;
+    const r = await proxyCall('listSongs', { refresh: !!force });
+    songNames = r.names.map(n => ({ name: n, norm: normalizeName(n) }));
+    return songNames;
+  }
+
+  // 문자열을 UTF-8 기준 base64로 (한글 포함 대응)
+  function blobToBase64(blob){
     return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = String(reader.result);
-        const comma = result.indexOf(',');
-        if (comma < 0) { reject(new Error("파일 인코딩에 실패했습니다.")); return; }
-        resolve(result.substring(comma + 1));
-      };
-      reader.onerror = () => reject(new Error(file.name + " 파일을 읽지 못했습니다."));
-      reader.readAsDataURL(file);
+      const r = new FileReader();
+      r.onload = () => { const s = String(r.result); const c = s.indexOf(','); resolve(c >= 0 ? s.slice(c+1) : ''); };
+      r.onerror = () => reject(new Error('파일을 읽지 못했습니다.'));
+      r.readAsDataURL(blob);
     });
   }
 
-  function addUploadRow(fileName) {
-    const li = document.createElement('li');
-    li.className = 'up-item';
-    const nameSpan = document.createElement('span');
-    nameSpan.className = 'name'; nameSpan.textContent = fileName;
-    const stateSpan = document.createElement('span');
-    stateSpan.className = 'state text-muted'; stateSpan.textContent = '대기 중';
-    li.appendChild(nameSpan); li.appendChild(stateSpan);
-    document.getElementById('uploadList').appendChild(li);
-    return li;
-  }
+  /* ---------------- 콘티 곡 찾기 ---------------- */
+  let conteResults = [];   // [{query, file, song}]
 
-  function setUploadRow(li, text, color) {
-    const state = li.querySelector('.state');
-    state.textContent = text;
-    state.classList.remove('text-muted');
-    state.style.color = color;
-  }
-
-  async function handlePptUpload(event) {
-    const files = Array.from(event.target.files);
-    event.target.value = '';
-    if (files.length === 0) return;
-
-    const statusText = document.getElementById('uploadStatus');
-    let okCount = 0, failCount = 0, skipCount = 0;
-
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const li = addUploadRow(file.name);
-
-      try {
-        if (!/\.pptx?$/i.test(file.name)) throw new Error("PPT / PPTX 파일만 업로드할 수 있습니다.");
-        const sizeMb = file.size / (1024 * 1024);
-        if (sizeMb > MAX_UPLOAD_MB) throw new Error(`파일이 너무 큽니다 (${sizeMb.toFixed(1)}MB / 최대 ${MAX_UPLOAD_MB}MB)`);
-
-        statusText.style.color = "var(--text-main)";
-        statusText.innerText = `업로드 중... (${i + 1}/${files.length}) ${file.name}`;
-        setUploadRow(li, "인코딩 중", "var(--text-muted)");
-
-        const base64 = await fileToBase64(file);
-
-        setUploadRow(li, "변환 중", "var(--primary)");
-        let result = await postToGas({
-          action: "upload",
-          fileName: file.name,
-          fileData: base64,
-          overwrite: false
-        });
-
-        // 같은 이름의 구글 슬라이드가 이미 있으면 덮어쓸지 확인
-        if (result.duplicate) {
-          const yes = confirm(`"${result.name}" 은(는) 이미 변환되어 있습니다.\n덮어쓸까요?\n(확인: 기존 파일을 휴지통으로 보내고 새로 변환 / 취소: 건너뜀)`);
-          if (!yes) {
-            setUploadRow(li, "건너뜀 (이미 있음)", "var(--text-muted)");
-            attachAddButton(li, result.id, result.name);
-            skipCount++;
-            continue;
-          }
-          setUploadRow(li, "덮어쓰는 중", "var(--primary)");
-          result = await postToGas({
-            action: "upload",
-            fileName: file.name,
-            fileData: base64,
-            overwrite: true
-          });
-        }
-
-        setUploadRow(li, "✅ 변환 완료", "var(--secondary)");
-        attachAddButton(li, result.id, result.name);
-        okCount++;
-
-      } catch (e) {
-        setUploadRow(li, "❌ 실패", "var(--danger-text)");
-        const msg = document.createElement('div');
-        msg.className = 'hint text-danger up-error';
-        msg.textContent = e.message;
-        li.appendChild(msg);
-        failCount++;
+  async function findConteSongs(){
+    const st = document.getElementById('findStatus');
+    const btn = document.getElementById('findSongsBtn');
+    const lines = document.getElementById('conteInput').value
+      .split('\n').map(l => l.trim()).filter(l => l !== '');
+    if (lines.length === 0){
+      st.className = 'layout-info text-danger'; st.style.color = ''; st.textContent = '콘티를 입력해 주세요.'; return;
+    }
+    if (!serverInfo){
+      const ok = await connectProxy(true);
+      if (!ok){
+        st.className = 'layout-info text-danger'; st.style.color = '';
+        st.textContent = '먼저 위에서 접속 암호를 넣고 연결해 주세요.'; return;
       }
     }
 
-    statusText.style.color = failCount > 0 ? "var(--danger-text)" : "var(--secondary)";
-    statusText.innerText = `업로드 종료 (성공 ${okCount}개 / 건너뜀 ${skipCount}개 / 실패 ${failCount}개)`;
-  }
-
-  // 업로드된 파일을 바로 병합 목록에 넣을 수 있는 버튼
-  function attachAddButton(li, id, name) {
-    if (!id) return;
-    const btn = document.createElement('button');
-    btn.className = 'add'; btn.textContent = '합칠 목록에 넣기';
-    btn.onclick = () => { addPptToList(id, name, true); btn.disabled = true; btn.textContent = '넣었습니다'; };
-    li.appendChild(btn);
-  }
-
-  /* -----------------------------------------------------------------
-     [3] 구글 드라이브 PPT 검색 및 자동 병합 스크립트
-  ----------------------------------------------------------------- */
-  let pptMergeList = [];
-  let lastConteText = "";
-
-  // 선택된 병합 글꼴 반환 (라디오가 없거나 값이 이상하면 첫 번째 글꼴로 고정)
-  function getSelectedMergeFont() {
-    const checked = document.querySelector('input[name="mergeFont"]:checked');
-    const value = checked ? checked.value : "";
-    return MERGE_FONTS.indexOf(value) >= 0 ? value : MERGE_FONTS[0];
-  }
-
-  // 선택된 글자 크기 반환 (원본 유지면 null)
-  function getSelectedFontSize() {
-    const raw = document.getElementById('mergeFontSize').value;
-    if (!raw) return null;
-    const n = parseInt(raw, 10);
-    if (isNaN(n) || n < FONT_SIZE_MIN || n > FONT_SIZE_MAX) return null;
-    return n;
-  }
-
-  // 콘티 한 줄에서 뒤에 붙은 코드(예: "주 은혜임을 G", "은혜 (Am)")만 제거
-  // 괄호로 감싼 코드는 항상 제거하고, 괄호 없는 코드는 앞에 공백이 있을 때만 제거한다.
-  const CHORD_BODY = "[A-G][#b\\u266f\\u266d]?(?:maj|min|dim|aug|sus|add|m|M)?(?:[2-9]|1[13])?(?:\\/[A-G][#b\\u266f\\u266d]?)?";
-  const CHORD_REGEX = new RegExp(
-    "(?:\\s*[\\(\\[\\{]\\s*" + CHORD_BODY + "\\s*[\\)\\]\\}]|\\s+" + CHORD_BODY + ")\\s*$"
-  );
-
-  function stripChord(line) {
-    const stripped = line.replace(CHORD_REGEX, '').trim();
-    return stripped.length > 0 ? stripped : line.trim();   // 전부 지워지면 원본 유지
-  }
-
-  // 2. 텍스트 박스 입력값을 기반으로 PPT 다중 검색 (파라미터 지원)
-  async function autoSearchPptFromText(inputText = null) {
-    const text = (inputText || document.getElementById('textInput').value.trim() || lastConteText || "").trim();
-    if (!text) { alert('텍스트 페이지 입력창에 곡 제목들을 먼저 입력해 주세요.'); return; }
-
-    if (!inputText) { lastConteText = text; document.getElementById('textInput').value = ''; }
-
-    const lines = text.split('\n').map(l => l.trim()).filter(l => l !== '');
-    const pairs = lines.map(line => ({ raw: line, query: stripChord(line) }));
-    const queries = pairs.map(p => p.query);
-
-    const statusText = document.getElementById('pptStatus');
-    statusText.style.color = "var(--text-main)";
-    statusText.innerText = "입력된 곡으로 PPT를 검색 중입니다... 🔍\n검색어: " + queries.join(' / ');
+    btn.disabled = true;
+    st.className = 'layout-info text-muted';
+    st.textContent = '저장소에서 곡을 찾는 중입니다';
 
     try {
-      const result = await postToGas({ action: "batchSearch", queries: queries });
+      const index = await listSongs(true);
+      conteResults = [];
+      let missing = 0;
 
-      let notFound = [];
-      result.data.forEach(item => {
-        if (item.found) addPptToList(item.id, item.name, true);
-        else notFound.push(item.query);
-      });
+      for (const line of lines){
+        const query = stripChord(line);
+        const q = normalizeName(query);
+        const qRaw = normalizeName(line);
 
-      // 1차에서 못 찾은 곡은 코드 제거 전 원본 제목으로 한 번 더 검색 (예: "Amazing Grace")
-      const retryPairs = pairs.filter(p => notFound.indexOf(p.query) >= 0 && p.raw !== p.query);
-      if (retryPairs.length > 0) {
-        statusText.innerText = "일부 곡을 원본 제목으로 재검색 중입니다... 🔁";
-        const retry = await postToGas({ action: "batchSearch", queries: retryPairs.map(p => p.raw) });
-        retry.data.forEach(item => {
-          if (item.found) {
-            addPptToList(item.id, item.name, true);
-            const pair = retryPairs.find(p => p.raw === item.query);
-            if (pair) notFound = notFound.filter(q => q !== pair.query);
-          }
-        });
+        // 완전일치 → 부분일치 순으로 찾는다
+        let hit = index.find(f => f.norm === q) || index.find(f => f.norm === qRaw)
+               || index.find(f => f.norm.indexOf(q) >= 0) || index.find(f => q.indexOf(f.norm) >= 0);
+
+        if (!hit){ conteResults.push({ query: line, file: null, song: null }); missing++; continue; }
+
+        let song = null;
+        try { const r = await proxyCall('getSong', { name: hit.name }); song = r.song; }
+        catch (e) { conteResults.push({ query: line, file: hit.name, song: null, error: e.message }); missing++; continue; }
+        conteResults.push({ query: line, file: hit.name, song: song });
       }
 
-      if (notFound.length > 0) {
-        statusText.style.color = "var(--danger-text)";
-        statusText.innerText = `검색 완료! 다음 곡은 PPT를 찾지 못했습니다: [${notFound.join(', ')}]`;
-      } else {
-        statusText.style.color = "var(--secondary)";
-        statusText.innerText = `✅ 모든 곡을 성공적으로 찾아 병합 목록에 추가했습니다!`;
-      }
-    } catch (error) {
-      statusText.style.color = "var(--danger-text)";
-      statusText.innerText = "❌ 검색 오류: " + error.message;
+      renderConteList();
+      const ok = conteResults.length - missing;
+      st.className = 'layout-info';
+      st.style.color = missing ? 'var(--danger-text)' : 'var(--secondary)';
+      st.textContent = `찾음 ${ok}곡 / 못 찾음 ${missing}곡`;
+      document.getElementById('makeDeckBtn').disabled = !(ok > 0 && hasPptx());
+      document.getElementById('saveDeckBtn').disabled = true;
+      deckBlob = null;
+    } catch (e) {
+      st.className = 'layout-info text-danger'; st.style.color = '';
+      st.textContent = '오류: ' + e.message;
+    } finally {
+      btn.disabled = false;
     }
   }
 
-  // 단일 검색
-  async function searchPpt() {
-    const query = document.getElementById('pptSearchInput').value.trim();
-    const resultBox = document.getElementById('searchResults');
-    if (!query) return;
-    resultBox.innerHTML = '<span class="hint">검색 중...</span>';
-
-    try {
-      const result = await postToGas({ action: "search", query: query }, 60000);
-      resultBox.innerHTML = '';
-      if (result.data.length === 0) { resultBox.innerHTML = '<span class="hint text-danger">검색된 곡이 없습니다.</span>'; return; }
-      result.data.forEach(item => {
-        const btn = document.createElement('button'); btn.className = 'btn btn-secondary'; btn.style.padding = '8px 12px'; btn.style.fontSize = '0.9rem'; btn.style.justifyContent = 'flex-start';
-        btn.textContent = item.name; btn.onclick = () => addPptToList(item.id, item.name);
-        resultBox.appendChild(btn);
-      });
-    } catch (error) { resultBox.innerHTML = ''; const s = document.createElement('span'); s.className = 'hint text-danger'; s.textContent = "오류: " + error.message; resultBox.appendChild(s); }
-  }
-
-  // skipDuplicate = true 이면 자동 검색 중복 추가를 막는다 (수동 추가는 같은 곡 반복 허용)
-  function addPptToList(id, name, skipDuplicate) {
-    if (skipDuplicate && pptMergeList.some(x => x.id === id)) return;
-    pptMergeList.push({ id: id, name: name });
-    document.getElementById('pptSearchInput').value = ''; document.getElementById('searchResults').innerHTML = '';
-    renderPptList();
-  }
-
-  // 📋 대기 목록 렌더링 (순서 이동 버튼 포함)
-  function renderPptList() {
-    const ul = document.getElementById('pptList');
+  function renderConteList(){
+    const ul = document.getElementById('conteList');
     ul.innerHTML = '';
-
-    pptMergeList.forEach((item, index) => {
+    conteResults.forEach((r, i) => {
       const li = document.createElement('li');
-      li.className = 'ppt-item';
+      li.className = 'ppt-item conte-item';
 
-      const label = document.createElement('span');
-      label.className = 'ppt-name';
-      const num = document.createElement('strong');
-      num.textContent = (index + 1) + '. ';
-      label.appendChild(num);
-      label.appendChild(document.createTextNode(item.name));
+      const num = document.createElement('strong'); num.textContent = (i + 1) + '.';
+      const q = document.createElement('span'); q.className = 'q'; q.textContent = r.query;
 
-      const actions = document.createElement('div');
-      actions.className = 'ppt-actions';
+      const mark = document.createElement('span');
+      if (r.song){
+        const n = (r.song.blocks || []).length;
+        mark.className = 'mark found'; mark.textContent = '찾음 · ' + n + '장';
+      } else {
+        mark.className = 'mark miss'; mark.textContent = r.error ? '읽기 실패' : '없음';
+      }
 
-      // 첫 번째 항목은 '위로', 마지막 항목은 '아래로' 버튼 비활성화
-      const upBtn = document.createElement('button');
-      upBtn.className = 'move-btn'; upBtn.textContent = '↑'; upBtn.title = '위로';
-      upBtn.disabled = (index === 0);
-      upBtn.onclick = () => movePptId(index, -1);
+      const file = document.createElement('span');
+      file.className = 'file'; file.textContent = r.file || '';
 
-      const downBtn = document.createElement('button');
-      downBtn.className = 'move-btn'; downBtn.textContent = '↓'; downBtn.title = '아래로';
-      downBtn.disabled = (index === pptMergeList.length - 1);
-      downBtn.onclick = () => movePptId(index, 1);
-
-      const delBtn = document.createElement('button');
-      delBtn.className = 'del-btn'; delBtn.textContent = '✕'; delBtn.title = '목록에서 빼기';
-      delBtn.onclick = () => removePptId(index);
-
-      actions.appendChild(upBtn); actions.appendChild(downBtn); actions.appendChild(delBtn);
-      li.appendChild(label); li.appendChild(actions);
+      li.appendChild(num); li.appendChild(q); li.appendChild(file); li.appendChild(mark);
       ul.appendChild(li);
     });
   }
 
-  // 🔄 순서 위/아래 이동 처리 함수
-  function movePptId(index, direction) {
-    if (index + direction < 0 || index + direction >= pptMergeList.length) return;
-    const temp = pptMergeList[index];
-    pptMergeList[index] = pptMergeList[index + direction];
-    pptMergeList[index + direction] = temp;
-    renderPptList();
+  /* ---------------- 라이브러리 불러오기 ----------------
+     PptxGenJS 4.x 는 ESM/CJS 빌드만 배포해 스크립트 태그로는 전역 객체가 생기지 않는다.
+     브라우저용 묶음 파일이 있는 3.12.0 을 여러 경로로 시도한다.
+  ---------------------------------------------------- */
+  const PPTX_VER = '3.12.0', JSZIP_VER = '3.10.1';
+  const PPTX_SOURCES = [
+    './pptxgen.bundle.js',
+    'https://cdn.jsdelivr.net/npm/pptxgenjs@' + PPTX_VER + '/dist/pptxgen.bundle.js',
+    'https://unpkg.com/pptxgenjs@' + PPTX_VER + '/dist/pptxgen.bundle.js',
+    'https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@' + PPTX_VER + '/dist/pptxgen.bundle.js'
+  ];
+  const JSZIP_SOURCES = [
+    './jszip.min.js',
+    'https://cdn.jsdelivr.net/npm/jszip@' + JSZIP_VER + '/dist/jszip.min.js',
+    'https://unpkg.com/jszip@' + JSZIP_VER + '/dist/jszip.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/jszip/' + JSZIP_VER + '/jszip.min.js'
+  ];
+  let libTried = [], libLoading = false;
+
+  const hasPptx = () => typeof window.PptxGenJS !== 'undefined';
+  const hasJszip = () => typeof window.JSZip !== 'undefined';
+
+  function loadScript(src){
+    return new Promise((resolve, reject) => {
+      const el = document.createElement('script');
+      el.src = src; el.async = false;
+      el.onload = () => resolve(src);
+      el.onerror = () => { el.remove(); reject(new Error(src)); };
+      document.head.appendChild(el);
+    });
   }
 
-  function removePptId(index) { pptMergeList.splice(index, 1); renderPptList(); }
-
-  function base64ToBlob(base64, mimeType) {
-    const byteCharacters = atob(base64); const byteArrays = [];
-    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-      const slice = byteCharacters.slice(offset, offset + 512); const byteNumbers = new Array(slice.length);
-      for (let i = 0; i < slice.length; i++) byteNumbers[i] = slice.charCodeAt(i);
-      byteArrays.push(new Uint8Array(byteNumbers));
+  async function loadFirstAvailable(sources, isReady){
+    if (isReady()) return 'already';
+    for (const src of sources){
+      try {
+        await loadScript(src);
+        if (isReady()) return src;
+        libTried.push(src + ' (읽었으나 전역 객체 없음)');
+      } catch (e) { libTried.push(src + ' (불러오기 실패)'); }
     }
-    return new Blob(byteArrays, { type: mimeType });
+    return null;
   }
 
-  async function requestPptMerge() {
-    if(pptMergeList.length < 1) { alert("병합할 곡이 없습니다."); return; }
-    const mergedName = document.getElementById('pptMergedName').value.trim() || "통합_악보_PPT";
-    const fontName = getSelectedMergeFont();
-    const fontSize = getSelectedFontSize();
-    const statusText = document.getElementById('pptStatus'), btn = document.getElementById('mergePptBtn');
-    const fallbackBox = document.getElementById('pptFallback');
-    fallbackBox.innerHTML = '';
-    btn.disabled = true; statusText.style.color = "var(--text-main)";
-    statusText.innerText = `PPT 병합 중입니다 (글꼴: ${fontName} / 크기: ${fontSize ? fontSize + 'pt' : '원본 유지'})... ⏳`;
+  async function loadLibraries(isRetry){
+    if (libLoading) return;
+    if (hasPptx() && hasJszip() && !isRetry){ setLibStatus(true, true); return; }
+    libLoading = true; libTried = [];
+
+    const st = document.getElementById('libStatus');
+    st.className = 'layout-info text-muted';
+    st.textContent = isRetry ? 'PPT 라이브러리를 다시 불러오는 중입니다' : 'PPT 라이브러리를 불러오는 중입니다';
+
+    const p = await loadFirstAvailable(PPTX_SOURCES, hasPptx);
+    const z = await loadFirstAvailable(JSZIP_SOURCES, hasJszip);
+    libLoading = false;
+    setLibStatus(!!p, !!z);
+  }
+
+  function setLibStatus(pptxOk, zipOk){
+    const st = document.getElementById('libStatus');
+    const actions = document.getElementById('libActions');
+    if (pptxOk){
+      st.className = 'layout-info'; st.style.color = 'var(--secondary)';
+      st.textContent = zipOk ? 'PPT 라이브러리 준비 완료' : 'PPT 라이브러리 준비 완료 (JSZip 없음 · 한글 글꼴 보정 생략)';
+      actions.hidden = zipOk;
+    } else {
+      st.className = 'layout-info text-danger'; st.style.color = '';
+      st.textContent = 'PPT 라이브러리를 불러오지 못했습니다.\n시도한 경로:\n· ' + libTried.join('\n· ')
+        + '\n\npptxgen.bundle.js 와 jszip.min.js 를 내려받아 이 파일과 같은 폴더에 두고 다시 시도해 주세요.';
+      actions.hidden = false;
+    }
+    const anyFound = conteResults.some(r => r.song);
+    document.getElementById('makeDeckBtn').disabled = !(pptxOk && anyFound);
+  }
+
+  async function loadFromFiles(event){
+    const files = Array.from(event.target.files);
+    event.target.value = '';
+    for (const f of files){
+      try {
+        const text = await f.text();
+        const url = URL.createObjectURL(new Blob([text], { type: 'text/javascript' }));
+        await loadScript(url);
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+      } catch (e) { console.error(f.name, e); }
+    }
+    await loadLibraries(true);
+  }
+
+  /* ---------------- PPT 만들기 ---------------- */
+  let deckBlob = null, deckFileName = '';
+
+  function pickedValue(name){
+    const el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : '';
+  }
+
+  (function buildDeckSizes(){
+    const sel = document.getElementById('deckFontSize');
+    for (let s = 20; s <= 60; s += 2){
+      const o = document.createElement('option');
+      o.value = String(s); o.textContent = s + ' pt';
+      if (s === 40) o.selected = true;
+      sel.appendChild(o);
+    }
+  })();
+
+  /**
+   * PowerPoint 는 라틴·동아시아·기호 글꼴을 따로 관리한다.
+   * 생성된 파일에 라틴 글꼴만 기록되면 한글이 다른 글꼴로 보이므로 같은 글꼴을 함께 써 넣는다.
+   */
+  async function injectEastAsianFont(blob, JSZipRef){
+    const zip = await JSZipRef.loadAsync(blob);
+    const targets = Object.keys(zip.files).filter(p => /^ppt\/(slides|slideLayouts|slideMasters)\/[^/]+\.xml$/.test(p));
+    for (const path of targets){
+      let xml = await zip.file(path).async('string');
+      xml = xml
+        .replace(/<a:ea[^>]*\/>/g, '')
+        .replace(/<a:cs[^>]*\/>/g, '')
+        .replace(/<a:latin([^>]*)\/>/g, function(m, attrs){
+          const t = /typeface="([^"]*)"/.exec(attrs);
+          if (!t) return m;
+          return m + '<a:ea typeface="' + t[1] + '"/><a:cs typeface="' + t[1] + '"/>';
+        });
+      zip.file(path, xml);
+    }
+    return zip.generateAsync({ type: 'blob', mimeType: PPTX_MIME, compression: 'DEFLATE' });
+  }
+
+  async function makeDeck(){
+    const st = document.getElementById('deckStatus');
+    const btn = document.getElementById('makeDeckBtn');
+    const songs = conteResults.filter(r => r.song);
+
+    if (songs.length === 0){ st.className='layout-info text-danger'; st.textContent='먼저 곡을 찾아 주세요.'; return; }
+    if (!hasPptx()){ st.className='layout-info text-danger'; st.textContent='PPT 라이브러리가 준비되지 않았습니다.'; return; }
+
+    const font = pickedValue('deckFont') || 'DX시인과나';
+    const lang = pickedValue('deckLang') || 'ko';
+    const sizeKo = parseInt(document.getElementById('deckFontSize').value, 10) || 40;
+    const sizeEn = Math.max(12, Math.round(sizeKo * 0.6));
+    const dark = document.getElementById('deckBg').value === 'dark';
+    const withTitle = document.getElementById('deckTitle').value === 'on';
+
+    const bg = dark ? '000000' : 'FFFFFF';
+    const fgKo = dark ? 'FFFFFF' : '111111';
+    const fgEn = dark ? 'B9BBAF' : '555555';
+
+    btn.disabled = true;
+    st.className = 'layout-info text-muted'; st.style.color = '';
+    st.textContent = 'PPT를 만드는 중입니다';
 
     try {
-      const result = await postToGas({
-        action: "merge",
-        fileIds: pptMergeList.map(i => i.id),
-        mergedName: mergedName,
-        fontName: fontName,
-        fontSize: fontSize
+      const pptx = new PptxGenJS();
+      pptx.layout = 'LAYOUT_16x9';
+
+      let slideCount = 0;
+      const addSlide = (runs) => {
+        const slide = pptx.addSlide();
+        slide.background = { color: bg, fill: bg };
+        slide.addText(runs, {
+          x: 0.4, y: 0.4, w: 9.2, h: 4.8,
+          align: 'center', valign: 'middle',
+          lineSpacingMultiple: 1.25, fontFace: font, shrinkText: true
+        });
+        slideCount++;
+      };
+
+      songs.forEach(r => {
+        const song = r.song;
+        if (withTitle){
+          addSlide([{ text: song.title || r.query,
+                      options: { fontSize: Math.round(sizeKo * 0.9), color: fgKo, fontFace: font, bold: true, breakLine: true } }]);
+        }
+        (song.blocks || []).forEach(b => {
+          const runs = [];
+          const push = (arr, size, color) => (arr || []).forEach(t => runs.push({
+            text: t, options: { fontSize: size, color: color, fontFace: font, breakLine: true }
+          }));
+          if (lang === 'ko' || lang === 'both') push(b.ko, sizeKo, fgKo);
+          if (lang === 'both' && (b.ko || []).length && (b.en || []).length){
+            runs.push({ text: ' ', options: { fontSize: Math.round(sizeEn * 0.5), fontFace: font, breakLine: true } });
+          }
+          if (lang === 'en' || lang === 'both') push(b.en, lang === 'en' ? sizeKo : sizeEn, lang === 'en' ? fgKo : fgEn);
+          if (runs.length) addSlide(runs);
+        });
       });
 
-      const mimeType = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
-      const file = new File([base64ToBlob(result.fileData, mimeType)], result.fileName, { type: mimeType });
-      const url = triggerDownload(file, 180000);
+      if (slideCount === 0) throw new Error('만들 슬라이드가 없습니다. 표시 언어 설정을 확인해 주세요.');
 
-      statusText.style.color = "var(--secondary)";
-      statusText.innerText = `✅ 병합 완료 (글꼴: ${result.fontApplied || fontName} / 크기: ${result.fontSizeApplied ? result.fontSizeApplied + 'pt' : '원본 유지'}) — 다운로드가 시작되었습니다.`;
+      let out;
+      try { out = await pptx.write({ outputType: 'blob' }); }
+      catch (e1) { out = await pptx.write('blob'); }
 
-      // 아이폰 사파리에서 자동 다운로드가 막히는 경우를 위한 수동 링크 (3분간 유지)
-      const a = document.createElement('a');
-      a.className = 'fallback-link'; a.href = url; a.download = file.name;
-      a.innerText = '다운로드가 시작되지 않으면 여기를 누르세요';
-      fallbackBox.appendChild(a);
+      let blob = (out instanceof Blob) ? out : new Blob([out], { type: PPTX_MIME });
+      let fixed = false;
+      if (hasJszip()){ blob = await injectEastAsianFont(blob, window.JSZip); fixed = true; }
 
-      // 서버가 폰트 적용 결과를 돌려주면 그대로 표시 (미적용 개체 추적용)
-      if (result.fontReport && result.fontReport.skipped > 0) {
-        const p = document.createElement('p');
-        p.className = 'hint';
-        p.innerText = `글꼴을 적용하지 못한 개체 ${result.fontReport.skipped}개가 있습니다. (이미지로 변환된 텍스트일 수 있음)`;
-        fallbackBox.appendChild(p);
-      }
+      deckBlob = new Blob([blob], { type: PPTX_MIME });
+      const base = document.getElementById('deckName').value.trim() || ('예배PPT_' + new Date().toISOString().slice(0,10));
+      deckFileName = base.replace(/\.pptx$/i,'') + '.pptx';
 
-      pptMergeList = []; renderPptList();
-    } catch(error) {
-      statusText.style.color = "var(--danger-text)";
-      statusText.innerText = "❌ 오류: " + error.message;
-    } finally { btn.disabled = false; }
+      triggerDownload(deckBlob, deckFileName, 180000);
+
+      st.className = 'layout-info'; st.style.color = 'var(--secondary)';
+      st.textContent = `${songs.length}곡 · 슬라이드 ${slideCount}장을 만들어 내려받았습니다.`
+        + (fixed ? '' : ' (JSZip이 없어 한글 글꼴 보정은 건너뛰었습니다)');
+      const canWrite = !!(serverInfo && serverInfo.canWrite);
+      document.getElementById('saveDeckBtn').disabled = !canWrite;
+      if (!canWrite) st.textContent += '\n저장소에 올리려면 먼저 연결해야 합니다.';
+    } catch (e) {
+      console.error(e);
+      st.className = 'layout-info text-danger'; st.style.color = '';
+      st.textContent = '실패: ' + (e && e.message ? e.message : e);
+    } finally {
+      btn.disabled = false;
+    }
   }
+
+  async function saveDeckToGit(){
+    const st = document.getElementById('deckStatus');
+    const btn = document.getElementById('saveDeckBtn');
+    if (!deckBlob){ st.className='layout-info text-danger'; st.textContent='먼저 PPT를 만들어 주세요.'; return; }
+
+    btn.disabled = true;
+    st.className = 'layout-info text-muted'; st.style.color = '';
+    st.textContent = '저장소에 올리는 중입니다';
+    try {
+      const b64 = await blobToBase64(deckBlob);
+      const r = await proxyCall('putDeck', { name: deckFileName, base64: b64 }, 300000);
+      st.className = 'layout-info'; st.style.color = 'var(--secondary)';
+      st.textContent = '저장했습니다: ' + r.path + (r.commit ? ' (' + r.commit + ')' : '');
+    } catch (e) {
+      st.className = 'layout-info text-danger'; st.style.color = '';
+      st.textContent = '저장 실패: ' + e.message;
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  /* ---------------- 가사 등록 ---------------- */
+  let songBlocks = [], songJson = null;
+
+  function isKo(line){ return HANGUL.test(line); }
+
+  function parseLyrics(){
+    const st = document.getElementById('parseStatus');
+    const lines = document.getElementById('lyricsInput').value.split('\n').map(l => l.trim());
+    if (lines.join('') === ''){
+      st.className = 'layout-info text-danger'; st.textContent = '가사를 붙여넣어 주세요.'; return;
+    }
+
+    const found = [];
+    let cur = null;
+    const close = () => { if (cur && (cur.ko.length || cur.en.length)) found.push(cur); cur = null; };
+
+    for (const line of lines){
+      if (line === ''){ close(); continue; }
+      if (!cur) cur = { ko: [], en: [] };
+      if (isKo(line)){
+        if (cur.en.length){ close(); cur = { ko: [], en: [] }; }
+        cur.ko.push(line);
+      } else {
+        cur.en.push(line);
+      }
+    }
+    close();
+
+    if (found.length === 0){
+      st.className = 'layout-info text-danger'; st.textContent = '덩어리를 찾지 못했습니다.'; return;
+    }
+
+    songBlocks = found;
+    const ko = found.reduce((n,b)=>n+b.ko.length,0);
+    const en = found.reduce((n,b)=>n+b.en.length,0);
+    st.className = 'layout-info'; st.style.color = 'var(--secondary)';
+    st.textContent = `슬라이드 ${found.length}장 · 한글 ${ko}줄 · 영어 ${en}줄`;
+    buildSongJson();
+  }
+
+  function buildSongJson(){
+    if (songBlocks.length === 0) return;
+    const title = document.getElementById('songTitle').value.trim();
+    const aliases = document.getElementById('songAliases').value
+      .split(',').map(s => s.trim()).filter(s => s !== '');
+
+    songJson = {
+      schema: SONG_SCHEMA,
+      title: title,
+      aliases: aliases,
+      blocks: songBlocks.map(b => ({ ko: b.ko.slice(), en: b.en.slice() })),
+      modifiedDate: new Date().toISOString()
+    };
+
+    const out = document.getElementById('jsonOut');
+    out.hidden = false;
+    out.textContent = JSON.stringify(songJson, null, 2);
+
+    const ready = !!title;
+    document.getElementById('dlJsonBtn').disabled = !ready;
+    document.getElementById('pushJsonBtn').disabled = !ready;
+
+    const ps = document.getElementById('pushStatus');
+    if (!ready){ ps.className = 'layout-info text-muted'; ps.textContent = '곡 제목을 입력하면 저장할 수 있습니다.'; }
+    else if (ps.textContent === '곡 제목을 입력하면 저장할 수 있습니다.') ps.textContent = '';
+  }
+
+  function songFileName(){
+    return (songJson.title || 'song').replace(/[\\/:*?"<>|]/g, '').trim() + '.json';
+  }
+
+  function downloadSongJson(){
+    if (!songJson) return;
+    const blob = new Blob([JSON.stringify(songJson, null, 2)], { type: 'application/json;charset=utf-8' });
+    triggerDownload(blob, songFileName());
+  }
+
+  async function pushSongToGit(){
+    const st = document.getElementById('pushStatus');
+    const btn = document.getElementById('pushJsonBtn');
+    if (!songJson){ return; }
+    if (!serverInfo){
+      const ok = await connectProxy(true);
+      if (!ok){
+        st.className = 'layout-info text-danger'; st.style.color = '';
+        st.textContent = '먼저 위에서 접속 암호를 넣고 연결해 주세요.'; return;
+      }
+    }
+
+    btn.disabled = true;
+    st.className = 'layout-info text-muted'; st.style.color = '';
+    st.textContent = '저장소에 올리는 중입니다';
+    try {
+      const name = songFileName();
+      const r = await proxyCall('putSong', { name: name, content: JSON.stringify(songJson, null, 2) });
+      songNames = null;   // 목록 캐시를 비워 다음 검색에 반영되게 한다
+      st.className = 'layout-info'; st.style.color = 'var(--secondary)';
+      st.textContent = '올렸습니다: ' + r.path + (r.commit ? ' (' + r.commit + ')' : '');
+    } catch (e) {
+      st.className = 'layout-info text-danger'; st.style.color = '';
+      st.textContent = '실패: ' + e.message;
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+
+  /* =====================================================================
+     [3] PPT 파일에서 가사 뽑기
+     ===================================================================== */
+
+  // 가사가 아닌 자리표시자 (슬라이드 번호 / 바닥글 / 머리글 / 날짜)
+  const SKIP_PH = ['sldNum', 'ftr', 'hdr', 'dt'];
+
+  /** presentation.xml 을 읽어 슬라이드의 실제 순서를 구한다 */
+  async function getSlideOrder(zip){
+    const relsFile = zip.file('ppt/_rels/presentation.xml.rels');
+    const presFile = zip.file('ppt/presentation.xml');
+
+    if (relsFile && presFile){
+      try {
+        const relsXml = await relsFile.async('string');
+        const presXml = await presFile.async('string');
+
+        const relMap = {};
+        const relRe = /<Relationship\b[^>]*\/>/g;
+        let m;
+        while ((m = relRe.exec(relsXml)) !== null){
+          const id = /Id="([^"]+)"/.exec(m[0]);
+          const target = /Target="([^"]+)"/.exec(m[0]);
+          if (id && target) relMap[id[1]] = target[1].replace(/^\.\//, '');
+        }
+
+        const order = [];
+        const idRe = /<p:sldId\b[^>]*r:id="([^"]+)"[^>]*\/>/g;
+        while ((m = idRe.exec(presXml)) !== null){
+          const t = relMap[m[1]];
+          if (t) order.push('ppt/' + t.replace(/^\.\.\//, ''));
+        }
+        if (order.length) return order;
+      } catch (e) { /* 아래 대체 방식으로 */ }
+    }
+
+    // 순서 정보를 못 읽으면 파일 이름의 숫자로 정렬한다
+    return Object.keys(zip.files)
+      .filter(p => /^ppt\/slides\/slide\d+\.xml$/.test(p))
+      .sort((a, b) => parseInt(/slide(\d+)\.xml/.exec(a)[1], 10) - parseInt(/slide(\d+)\.xml/.exec(b)[1], 10));
+  }
+
+  function decodeXmlEntities(text){
+    return text.replace(/&lt;/g,'<').replace(/&gt;/g,'>')
+               .replace(/&quot;/g,'"').replace(/&apos;/g,"'")
+               .replace(/&#(\d+);/g, (m,d) => String.fromCharCode(parseInt(d,10)))
+               .replace(/&amp;/g,'&');
+  }
+
+  /**
+   * 한 문단(a:p) 안의 글자를 줄 단위로 뽑는다.
+   * PowerPoint 는 문단 안의 줄바꿈을 <a:br/> 로 넣으므로 이것을 기준으로 나눠야
+   * "첫째 줄둘째 줄" 처럼 붙어 버리는 문제가 생기지 않는다.
+   */
+  function extractParagraphLines(paraXml){
+    const tokenRe = /<a:br\s*\/>|<a:br\b[\s\S]*?<\/a:br>|<a:t>([\s\S]*?)<\/a:t>/g;
+    const out = [];
+    let tok, cur = '';
+    while ((tok = tokenRe.exec(paraXml)) !== null){
+      if (tok[1] !== undefined) cur += tok[1];   // <a:t> 글자
+      else { out.push(cur); cur = ''; }          // <a:br/> 줄바꿈
+    }
+    out.push(cur);
+
+    return out
+      .map(t => decodeXmlEntities(t).replace(/\s+/g, ' ').trim())
+      .filter(t => t !== '' && !/^\d{1,3}$/.test(t));   // 쪽번호만 있는 줄 제외
+  }
+
+  /**
+   * 슬라이드에서 글상자 단위로 글자를 뽑는다.
+   * 자리표시자 종류로 제목을 판단하지 않는다. 가사를 제목 자리표시자에 넣은 파일이 많기 때문이다.
+   */
+  function extractSlideShapes(xml){
+    const shapes = [];
+    const shapeRe = /<p:sp\b[\s\S]*?<\/p:sp>/g;
+    let sp;
+
+    while ((sp = shapeRe.exec(xml)) !== null){
+      const shape = sp[0];
+      const phMatch = /<p:ph\b[^>]*type="([^"]+)"/.exec(shape);
+      if (phMatch && SKIP_PH.indexOf(phMatch[1]) >= 0) continue;
+
+      const lines = [];
+      const paraRe = /<a:p\b[\s\S]*?<\/a:p>/g;
+      let p;
+      while ((p = paraRe.exec(shape)) !== null){
+        extractParagraphLines(p[0]).forEach(t => lines.push(t));
+      }
+      if (lines.length) shapes.push({ lines: lines });
+    }
+    return shapes;
+  }
+
+  /**
+   * 곡 제목이 적힌 글상자를 걸러낸다. 자리표시자 종류가 아니라 실제 내용으로 판단한다.
+   *   ① 여러 슬라이드에 똑같이 나타나는 한 줄짜리 글상자  → 머리글로 본다
+   *   ② 같은 슬라이드의 다른(더 긴) 글상자에 이미 들어 있는 한 줄짜리 글상자 → 중복으로 본다
+   * 이렇게 걸러서 남는 글자가 없으면 원래대로 되돌린다.
+   */
+  function filterHeaderShapes(slideShapes){
+    const singleCount = {};
+    slideShapes.forEach(shapes => {
+      const seen = {};
+      shapes.forEach(sh => {
+        if (sh.lines.length !== 1) return;
+        const t = sh.lines[0];
+        if (seen[t]) return;
+        seen[t] = true;
+        singleCount[t] = (singleCount[t] || 0) + 1;
+      });
+    });
+
+    return slideShapes.map(shapes => {
+      const multiLineText = {};
+      shapes.forEach(sh => { if (sh.lines.length > 1) sh.lines.forEach(t => { multiLineText[t] = true; }); });
+
+      const kept = shapes.filter(sh => {
+        if (sh.lines.length !== 1) return true;
+        const t = sh.lines[0];
+        if (singleCount[t] >= 2) return false;   // ① 여러 슬라이드에 반복되는 머리글
+        if (multiLineText[t]) return false;      // ② 같은 슬라이드 본문에 이미 있는 줄
+        return true;
+      });
+
+      const lines = [];
+      (kept.length ? kept : shapes).forEach(sh => sh.lines.forEach(t => lines.push(t)));
+      return lines;
+    });
+  }
+
+  /** 한 줄에 한글과 영어가 함께 있을 때 뒤쪽 영어를 떼어낸다 */
+  function splitMixedLine(line){
+    let last = -1;
+    for (let i = line.length - 1; i >= 0; i--){ if (HANGUL.test(line[i])){ last = i; break; } }
+    if (last < 0) return null;
+
+    const head = line.slice(0, last + 1).trim();
+    const tail = line.slice(last + 1).replace(/^[\s.,!?)'"\]]+/, '').trim();
+
+    if (!head) return null;
+    if (!/[A-Za-z]/.test(tail)) return null;
+    // 낱말 하나짜리 짧은 영어(이름 등)는 가사 줄의 일부로 보고 나누지 않는다
+    if (tail.length < 6 || tail.split(/\s+/).length < 2) return null;
+
+    return { ko: head, en: tail };
+  }
+
+  function splitByLanguage(lines, splitMixed){
+    const ko = [], en = [];
+    lines.forEach(l => {
+      if (splitMixed && isKo(l)){
+        const m = splitMixedLine(l);
+        if (m){ ko.push(m.ko); en.push(m.en); return; }
+      }
+      (isKo(l) ? ko : en).push(l);
+    });
+    return { ko: ko, en: en };
+  }
+
+  async function convertOnePptx(file){
+    const buf = await file.arrayBuffer();
+    const zip = await JSZip.loadAsync(buf);
+    const order = await getSlideOrder(zip);
+    if (order.length === 0) throw new Error('슬라이드를 찾지 못했습니다.');
+
+    const skipFirst = document.getElementById('skipFirst').value === 'skip';
+    const titleMode = document.getElementById('titleMode').value;
+    const dropHeader = document.getElementById('headerMode').value === 'auto';
+    const splitMixed = document.getElementById('mixedLine').value === 'split';
+
+    // 1차: 슬라이드마다 글상자를 그대로 모은다
+    const slideShapes = [];
+    for (const path of order){
+      const entry = zip.file(path);
+      slideShapes.push(entry ? extractSlideShapes(await entry.async('string')) : []);
+    }
+
+    // 2차: 파일 전체를 보고 제목·머리글 글상자를 걸러낸다
+    const slideLines = dropHeader
+      ? filterHeaderShapes(slideShapes)
+      : slideShapes.map(shapes => { const l = []; shapes.forEach(sh => sh.lines.forEach(t => l.push(t))); return l; });
+
+    const blocks = [];
+    let firstText = '';
+
+    for (let i = 0; i < slideLines.length; i++){
+      const lines = slideLines[i];
+      if (i === 0 && lines.length) firstText = lines[0];
+      if (lines.length === 0) continue;
+      if (i === 0 && skipFirst) continue;
+      blocks.push(splitByLanguage(lines, splitMixed));
+    }
+
+    const baseName = file.name.replace(/\.pptx$/i, '');
+    const title = (titleMode === 'firstslide' && firstText) ? firstText : baseName;
+
+    if (blocks.length === 0) throw new Error('글자가 있는 슬라이드가 없습니다. 그림으로 만들어진 파일일 수 있습니다.');
+
+    return {
+      schema: SONG_SCHEMA,
+      title: title,
+      aliases: (title !== baseName) ? [baseName] : [],
+      blocks: blocks,
+      source: file.name,
+      modifiedDate: new Date().toISOString()
+    };
+  }
+
+  function safeSongFileName(title){
+    return String(title).replace(/[\\/:*?"<>|]/g, '').trim() || 'song';
+  }
+
+  async function handleConvFiles(event){
+    const picked = Array.from(event.target.files);
+    event.target.value = '';
+
+    const st = document.getElementById('convStatus');
+    const wrap = document.getElementById('convProgress');
+    const bar = document.getElementById('convProgressBar');
+    const txt = document.getElementById('convProgressText');
+
+    if (!hasJszip()){
+      await loadLibraries(true);
+      if (!hasJszip()){
+        st.className = 'layout-info text-danger'; st.style.color = '';
+        st.textContent = '압축 해제 라이브러리를 불러오지 못했습니다. PPT 만들기 탭의 안내를 확인해 주세요.';
+        return;
+      }
+    }
+
+    const files = picked.filter(f => /\.pptx$/i.test(f.name));
+    const skippedPpt = picked.filter(f => /\.ppt$/i.test(f.name)).length;
+
+    if (files.length === 0){
+      st.className = 'layout-info text-danger'; st.style.color = '';
+      st.textContent = '.pptx 파일이 없습니다.' + (skippedPpt ? ` (옛 형식 .ppt ${skippedPpt}개는 읽을 수 없습니다)` : '');
+      return;
+    }
+
+    convResults = [];
+    renderConvList();
+    wrap.style.display = 'block';
+    st.className = 'layout-info text-muted'; st.style.color = '';
+
+    let ok = 0, fail = 0;
+    for (let i = 0; i < files.length; i++){
+      const f = files[i];
+      txt.innerText = `${i + 1} / ${files.length} · ${f.name}`;
+      bar.style.width = Math.round((i / files.length) * 100) + '%';
+      await sleep(0);
+
+      try {
+        const json = await convertOnePptx(f);
+        convResults.push({ name: f.name, json: json, slides: json.blocks.length });
+        ok++;
+      } catch (e) {
+        convResults.push({ name: f.name, json: null, error: e.message });
+        fail++;
+      }
+    }
+
+    bar.style.width = '100%';
+    renderConvList();
+
+    const hasOk = ok > 0;
+    document.getElementById('convZipBtn').disabled = !hasOk;
+    document.getElementById('convUploadBtn').disabled = !(hasOk && serverInfo && serverInfo.canWrite);
+
+    st.className = 'layout-info'; st.style.color = fail ? 'var(--danger-text)' : 'var(--secondary)';
+    st.textContent = `변환 완료 · 성공 ${ok}개 / 실패 ${fail}개`
+      + (skippedPpt ? ` / 옛 형식 .ppt ${skippedPpt}개 제외` : '');
+    setTimeout(() => { wrap.style.display = 'none'; bar.style.width = '0%'; }, 1500);
+  }
+
+  function renderConvList(){
+    const ul = document.getElementById('convList');
+    ul.innerHTML = '';
+    convResults.forEach((r, i) => {
+      const li = document.createElement('li');
+      li.className = 'conv-item';
+
+      const n = document.createElement('span');
+      n.className = 'n'; n.textContent = r.json ? r.json.title : r.name;
+
+      const s = document.createElement('span');
+      s.className = 's';
+      if (r.json){ s.style.color = 'var(--secondary)'; s.textContent = (r.uploaded ? '올림 · ' : '') + r.slides + '장'; }
+      else { s.style.color = 'var(--danger-text)'; s.textContent = '실패'; }
+
+      li.appendChild(n); li.appendChild(s);
+
+      if (r.json){
+        const view = document.createElement('button');
+        view.textContent = '보기'; view.onclick = () => showConvPreview(i);
+        const dl = document.createElement('button');
+        dl.textContent = '내려받기'; dl.onclick = () => downloadConvOne(i);
+        li.appendChild(view); li.appendChild(dl);
+      } else {
+        const err = document.createElement('div');
+        err.className = 'err'; err.textContent = r.name + ' — ' + r.error;
+        li.appendChild(err);
+      }
+      ul.appendChild(li);
+    });
+  }
+
+  function showConvPreview(i){
+    const pre = document.getElementById('convPreview');
+    pre.hidden = false;
+    pre.textContent = JSON.stringify(convResults[i].json, null, 2);
+    pre.scrollIntoView({ block: 'nearest' });
+  }
+
+  function downloadConvOne(i){
+    const r = convResults[i];
+    if (!r.json) return;
+    const blob = new Blob([JSON.stringify(r.json, null, 2)], { type: 'application/json;charset=utf-8' });
+    triggerDownload(blob, safeSongFileName(r.json.title) + '.json');
+  }
+
+  async function downloadConvZip(){
+    const st = document.getElementById('convStatus');
+    const done = convResults.filter(r => r.json);
+    if (done.length === 0) return;
+    if (!hasJszip()){
+      st.className = 'layout-info text-danger'; st.style.color = '';
+      st.textContent = '압축 라이브러리가 준비되지 않았습니다.'; return;
+    }
+
+    st.className = 'layout-info text-muted'; st.style.color = '';
+    st.textContent = 'ZIP을 만드는 중입니다';
+    try {
+      const zip = new JSZip();
+      const used = {};
+      done.forEach(r => {
+        let name = safeSongFileName(r.json.title);
+        if (used[name]){ used[name]++; name = name + '_' + used[name]; } else { used[name] = 1; }
+        zip.file(name + '.json', JSON.stringify(r.json, null, 2));
+      });
+      const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
+      triggerDownload(blob, 'songs.zip', 60000);
+      st.className = 'layout-info'; st.style.color = 'var(--secondary)';
+      st.textContent = `JSON ${done.length}개를 ZIP으로 내려받았습니다.`;
+    } catch (e) {
+      st.className = 'layout-info text-danger'; st.style.color = '';
+      st.textContent = 'ZIP 만들기 실패: ' + (e && e.message ? e.message : e);
+    }
+  }
+
+  /** 변환된 가사를 저장소에 한꺼번에 올린다 */
+  async function uploadConvAll(){
+    const st = document.getElementById('convStatus');
+    const btn = document.getElementById('convUploadBtn');
+    const wrap = document.getElementById('convProgress');
+    const bar = document.getElementById('convProgressBar');
+    const txt = document.getElementById('convProgressText');
+
+    const done = convResults.filter(r => r.json && !r.uploaded);
+    if (done.length === 0){
+      st.className = 'layout-info text-muted'; st.style.color = '';
+      st.textContent = '올릴 새 파일이 없습니다.'; return;
+    }
+
+    if (!serverInfo){
+      const ok = await connectProxy(true);
+      if (!ok){
+        st.className = 'layout-info text-danger'; st.style.color = '';
+        st.textContent = '먼저 위에서 접속 암호를 넣고 연결해 주세요.'; return;
+      }
+    }
+
+    btn.disabled = true;
+    wrap.style.display = 'block';
+    st.className = 'layout-info text-muted'; st.style.color = '';
+
+    let ok = 0, fail = 0;
+    for (let i = 0; i < done.length; i++){
+      const r = done[i];
+      const name = safeSongFileName(r.json.title) + '.json';
+      txt.innerText = `${i + 1} / ${done.length} · ${name}`;
+      bar.style.width = Math.round((i / done.length) * 100) + '%';
+
+      try {
+        await proxyCall('putSong', { name: name, content: JSON.stringify(r.json, null, 2) });
+        r.uploaded = true;
+        ok++;
+      } catch (e) {
+        r.error = e.message;
+        fail++;
+      }
+    }
+
+    bar.style.width = '100%';
+    songNames = null;   // 목록 캐시를 비워 다음 검색에 반영되게 한다
+    renderConvList();
+
+    st.className = 'layout-info'; st.style.color = fail ? 'var(--danger-text)' : 'var(--secondary)';
+    st.textContent = `저장소에 올림 · 성공 ${ok}개 / 실패 ${fail}개`;
+    btn.disabled = false;
+    setTimeout(() => { wrap.style.display = 'none'; bar.style.width = '0%'; }, 1500);
+  }
+
+  /* ---------------- 시작 ---------------- */
+  loadAccessKey();
+  if (accessKey) connectProxy(true);
+  let startPage = 'pdf';
+  try { startPage = localStorage.getItem('worship-page') || 'pdf'; } catch (e) {}
+  showPage(startPage);
+
 </script>
 </body>
 </html>
