@@ -1,0 +1,37 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "거룩하신성령이여",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "거룩하신 성령이여",
+        "우리에게 임하소서"
+      ],
+      "en": [
+        "Holy Spirit, we welcome You"
+      ]
+    },
+    {
+      "ko": [
+        "성령의 불로 오셔서",
+        "세상 헛된 마음 태우소서"
+      ],
+      "en": [
+        "Move among us with Holy fire as we lay aside all earthly desire"
+      ]
+    },
+    {
+      "ko": [
+        "손 들고 주를 바랄때",
+        "성령이여 성령이여",
+        "성령이여 임하소서"
+      ],
+      "en": [
+        "Hands reach out and our hearts aspire Holy Spirit, Holy Spirit Holy Spirit, we welcome You"
+      ]
+    }
+  ],
+  "source": "거룩하신성령이여.pptx",
+  "modifiedDate": "2026-08-21T01:32:38.872Z"
+}

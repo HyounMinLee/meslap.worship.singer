@@ -1,0 +1,56 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "내모든삶의행동",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "내 모든 삶의 행동 주 안에",
+        "주님 안에 있네",
+        "나의 숨쉬는 순간들도",
+        "내 모든 삶의 행동 주안에"
+      ],
+      "en": [
+        "Every move I make I make in You",
+        "You make me move, Jesus",
+        "Ever breath I take I breathe in You"
+      ]
+    },
+    {
+      "ko": [
+        "내 모든 삶의 걸음 주 안에",
+        "내 길도 주 안에",
+        "나의 숨쉬는 순간들도"
+      ],
+      "en": [
+        "Every step I take I take in You",
+        "You are my way, Jesus",
+        "Every breath I take I breathe in You"
+      ]
+    },
+    {
+      "ko": [
+        "라-라라 라라라라 (*4)",
+        "자비와 은혜의 물결",
+        "어디서나 주 얼굴 보네"
+      ],
+      "en": [
+        "na — na—na na na na na",
+        "Wave of mercy Wave of grace",
+        "Everywhere I look I see Your face"
+      ]
+    },
+    {
+      "ko": [
+        "주 사랑 날 붙드네",
+        "오 놀라운 주님의 사랑"
+      ],
+      "en": [
+        "Your love has captured me",
+        "Oh my God, this love How can it be"
+      ]
+    }
+  ],
+  "source": "내모든삶의행동.pptx",
+  "modifiedDate": "2026-08-21T01:32:39.197Z"
+}

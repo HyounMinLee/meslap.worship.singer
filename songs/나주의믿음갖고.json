@@ -1,0 +1,37 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "나주의믿음갖고",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "나 주의 믿음 갖고",
+        "나 주의 믿음 갖고 홀로 걸어도",
+        "나 주의 믿음 갖고 실망치 않네"
+      ],
+      "en": [
+        "I just keep trusting my Lord as I walk a longI just keep trusting my Lord and He gives a song"
+      ]
+    },
+    {
+      "ko": [
+        "폭풍 구름 몰아치고 하늘 덮어도",
+        "나 주의 믿음 갖고 실망치 않네"
+      ],
+      "en": [
+        "Though the storm clouds darken the sky o'er the heav'nly trailI just keep trusting my Lord, He will never fail"
+      ]
+    },
+    {
+      "ko": [
+        "주는 내 친구 진실한 친구",
+        "끝날 까지도 주 의지하리"
+      ],
+      "en": [
+        "He's a faithful friend, such a faithful friendI can count on Him to the very end"
+      ]
+    }
+  ],
+  "source": "나주의믿음갖고.pptx",
+  "modifiedDate": "2026-08-21T01:32:39.170Z"
+}

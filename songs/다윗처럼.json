@@ -1,0 +1,48 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "다윗처럼",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "다윗처럼",
+        "다윗처럼 다윗처럼 아무것에 구애 받지 않고",
+        "성령님이 주시는 자유함으로 노래 부를거야"
+      ],
+      "en": [
+        "I'm free to do anything like David I'm going to sing with the freedom the Holy Spirit gives me"
+      ]
+    },
+    {
+      "ko": [
+        "(하박국처럼 *2) 가진 것 아무것 없어도",
+        "주로 인해 갖는 기쁨으로 감사 드릴거야"
+      ],
+      "en": [
+        "If I don't have anything like Habakkuk, I'll thank you for the pleasure of being mainly a human being"
+      ]
+    },
+    {
+      "ko": [
+        "내가 섬기는 하나님의 기쁨이 된다면",
+        "부끄러워하지 않고 소리치며 찬양해"
+      ],
+      "en": [
+        "If I become the joy of God I serve,",
+        "I will not be ashamed, shout and praise him"
+      ]
+    },
+    {
+      "ko": [
+        "할렐루야 할렐루야",
+        "할렐루야 영원하신 주 찬양"
+      ],
+      "en": [
+        "Hallelujah, Hallelujah",
+        "Hallelujah, Praise the LORD"
+      ]
+    }
+  ],
+  "source": "다윗처럼.pptx",
+  "modifiedDate": "2026-08-21T01:32:39.306Z"
+}

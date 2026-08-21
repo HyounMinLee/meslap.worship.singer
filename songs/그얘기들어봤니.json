@@ -1,0 +1,66 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "그얘기들어봤니",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "그 얘기 들어봤니",
+        "그 얘기 들어봤니 우릴 위해 구주가 나셨대",
+        "베들레헴 작은 마구간에서 오늘 태어나셨대"
+      ],
+      "en": [
+        "Have you heard the story? A Savior born for us In a humble manger In Bethlehem tonight"
+      ]
+    },
+    {
+      "ko": [
+        "아주 오래 전부터 예언되었던 그 일",
+        "오늘 바로 이뤄진 거야"
+      ],
+      "en": [
+        "Long ago it was spoken A promise from on highAnd today the Word is livingThe day has now arrived"
+      ]
+    },
+    {
+      "ko": [
+        "그 얘기 들어봤니 우릴 위해 구주가 나셨대",
+        "베들레헴 작은 마구간에서 오늘 태어나셨대"
+      ],
+      "en": [
+        "Have you heard the story? A Savior born for us In a humble manger In Bethlehem tonight"
+      ]
+    },
+    {
+      "ko": [
+        "우릴 죄악 가운데 버려둘 수 없어서",
+        "하나님의 사랑이 여기 내려오셨대"
+      ],
+      "en": [
+        "He would not leave us Broken in our sin So love from heaven Has come down once again"
+      ]
+    },
+    {
+      "ko": [
+        "하늘에는 영광이요 땅에는 평화로다",
+        "모든 사람 기뻐할 큰 기쁨의 소식",
+        "그 얘기 들어봤니"
+      ],
+      "en": [
+        "Glory in the highest Peace on earth below Good news of great joy For every heart to know Have you heard the story?"
+      ]
+    },
+    {
+      "ko": [
+        "하늘에는 영광이요 땅에는 평화로다",
+        "모든 사람 기뻐할 큰 기쁨의 소식",
+        "그 얘기 들어봤니 * 2"
+      ],
+      "en": [
+        "Glory in the highest Peace on earth below Good news of great joy For every heart to know Have you heard the story?"
+      ]
+    }
+  ],
+  "source": "그얘기들어봤니.pptx",
+  "modifiedDate": "2026-08-21T01:32:38.979Z"
+}

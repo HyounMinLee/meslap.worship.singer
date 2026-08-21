@@ -1,0 +1,46 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "사랑하는나의아버지",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "사랑하는 나의 아버지",
+        "이름 높여드립니다"
+      ],
+      "en": [
+        "Father in heaven how we love you We lift your name in all the earth"
+      ]
+    },
+    {
+      "ko": [
+        "주의 나라 찬양 속에 임하시니",
+        "능력의 주께 찬송하네"
+      ],
+      "en": [
+        "May your kingdom be established in our praises As Your people declare your mighty works!"
+      ]
+    },
+    {
+      "ko": [
+        "전능하신 하나님 찬양 언제나 동일하신 주",
+        "전능하신 하나님 찬양 영원히 다스리네"
+      ],
+      "en": [
+        "Blessed be the Lord, God almighty Who was and is and is to come Blessed be the Lord, God almighty Who reigns forever more"
+      ]
+    },
+    {
+      "ko": [
+        "나 주의 이름 높이리 (*2)",
+        "하늘 높이 들린 깃발처럼",
+        "주의 이름 높이리"
+      ],
+      "en": [
+        "I’ll lift the name of the Lord on high Just like a flag flown high in the sky I’ll lift the name of the Lord on high"
+      ]
+    }
+  ],
+  "source": "사랑하는나의아버지.pptx",
+  "modifiedDate": "2026-08-21T01:32:39.499Z"
+}

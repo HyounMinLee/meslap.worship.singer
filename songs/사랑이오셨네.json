@@ -1,0 +1,49 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "사랑이오셨네",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "사랑이 오셨네",
+        "사랑이 오셨네 어둠에 갇힌 우리에게",
+        "빛으로 오셨네 온 세상 구주 나셨네"
+      ],
+      "en": [
+        "Love has come to us, trapped in the darkness, He came as the light, born the Savior of the world"
+      ]
+    },
+    {
+      "ko": [
+        "세상 끝날까지 우리와 함께 하시려",
+        "사랑이 오셨네 온 세상 구주 나셨네"
+      ],
+      "en": [
+        "To be with us until the end of the age,",
+        "Love has come, the Savior of the world is born"
+      ]
+    },
+    {
+      "ko": [
+        "하늘엔 영광 땅에는 평화",
+        "천사들 노래 소리가",
+        "이제 나의 노래 되어"
+      ],
+      "en": [
+        "Glory in the highest, peace on earth The songs of the angels Now become my song"
+      ]
+    },
+    {
+      "ko": [
+        "이 땅에 외치네 사랑이 오셨네",
+        "우리와 함께 하시는",
+        "임마누엘"
+      ],
+      "en": [
+        "Shouting on this earth Love has come God with us, Emmanuel"
+      ]
+    }
+  ],
+  "source": "사랑이오셨네.pptx",
+  "modifiedDate": "2026-08-21T01:32:39.494Z"
+}

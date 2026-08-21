@@ -1,0 +1,49 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "더원합니다(예수사랑합니다)",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "예수 사랑합니다 사랑합니다",
+        "온 마음 다하여",
+        "더 원합니다 (예수 사랑합니다)"
+      ],
+      "en": [
+        "Jesus, I just want to say I love You, Lord",
+        "With all my heart"
+      ]
+    },
+    {
+      "ko": [
+        "오직 주님 한 분만",
+        "간절히 더 원합니다"
+      ],
+      "en": [
+        "I want more of You, only You, more of You"
+      ]
+    },
+    {
+      "ko": [
+        "넘쳐나네 넘쳐나네",
+        "주를 향한 내 속에 갈망이"
+      ],
+      "en": [
+        "I cannot help but seeking You, Lord",
+        "I am thirsty and hungry for more of You"
+      ]
+    },
+    {
+      "ko": [
+        "주님께로 날 이끌어 주소서",
+        "주님을 더 원합니다"
+      ],
+      "en": [
+        "To Your side lead me closer to You",
+        "Lord, I want more of You."
+      ]
+    }
+  ],
+  "source": "더원합니다(예수사랑합니다).pptx",
+  "modifiedDate": "2026-08-21T01:32:39.322Z"
+}

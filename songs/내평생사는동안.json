@@ -1,0 +1,41 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "내평생사는동안",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "내 평생 사는 동안 주 찬양하리",
+        "여호와 하나님 내 주를 찬양하리",
+        "내 평생 사는 동안"
+      ],
+      "en": [
+        "I will sing unto the Lord as long as I live.",
+        "I will sing praise to My God while I have my being."
+      ]
+    },
+    {
+      "ko": [
+        "주님을 묵상함이 즐겁도다",
+        "내 영혼 주 안에서 참 기쁘리"
+      ],
+      "en": [
+        "My meditation of Him shall be sweet,",
+        "I will be glad I will be glad in the Lord"
+      ]
+    },
+    {
+      "ko": [
+        "내 영혼아 주님을 송축하라",
+        "내 영혼아 주님을 찬양하라"
+      ],
+      "en": [
+        "(*2)",
+        "Bless thou the Lord O My soul,",
+        "Praise ye the Lord."
+      ]
+    }
+  ],
+  "source": "내평생사는동안.pptx",
+  "modifiedDate": "2026-08-21T01:32:39.263Z"
+}

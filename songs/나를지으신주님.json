@@ -1,0 +1,55 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "나를지으신주님",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "나를 지으신 주님 내 안에 계셔",
+        "처음부터 내 삶은 그의 손에 있었죠",
+        "나를 지으신 주님"
+      ],
+      "en": [
+        "Have a maker, He formed my heart",
+        "Before even time began, my life was in his hands"
+      ]
+    },
+    {
+      "ko": [
+        "내 이름 아시죠 내 모든 생각도",
+        "내 흐르는 눈물 그가 닦아 주셨죠"
+      ],
+      "en": [
+        "He knows my name",
+        "He knows my every thought",
+        "He sees each tear that falls",
+        "and hears me when I call"
+      ]
+    },
+    {
+      "ko": [
+        "그는 내 아버지 난 그의 소유",
+        "내가 어딜 가든지 날 떠나지 않죠"
+      ],
+      "en": [
+        "I have a father, He calls me his own",
+        "He’ll never leave me,",
+        "no matter where I go"
+      ]
+    },
+    {
+      "ko": [
+        "내 이름 아시죠 내 모든 생각도",
+        "아바라 부를때 그가 들으시죠"
+      ],
+      "en": [
+        "he knows your name",
+        "He knows your every thought",
+        "He sees each tear that falls",
+        "And hears you when you call"
+      ]
+    }
+  ],
+  "source": "나를지으신주님.pptx",
+  "modifiedDate": "2026-08-21T01:32:39.077Z"
+}

@@ -1,0 +1,30 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "내하나님은",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "내 하나님은",
+        "크고 힘있고 능 있어 못할 일 전혀 없네"
+      ],
+      "en": [
+        "My God is so big",
+        "so strong and so mighty",
+        "There's nothing my God cannot do"
+      ]
+    },
+    {
+      "ko": [
+        "저 산들도 주의 것 골짝도 주의 것",
+        "별들도 주의 솜씨"
+      ],
+      "en": [
+        "He made the trees He made the seas",
+        "He made the elephants, too"
+      ]
+    }
+  ],
+  "source": "내하나님은.pptx",
+  "modifiedDate": "2026-08-21T01:32:39.269Z"
+}

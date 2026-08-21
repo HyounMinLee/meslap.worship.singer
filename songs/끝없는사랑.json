@@ -1,0 +1,50 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "끝없는사랑",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "하늘보다 높은 주의 사랑",
+        "하늘에서 주 자비 내려",
+        "끝없는 사랑"
+      ],
+      "en": [
+        "Lord Your love is as high as the heavens",
+        "Your mercy showers rain from above"
+      ]
+    },
+    {
+      "ko": [
+        "영원한 사랑 알게 하소서",
+        "너무도 깊은 주의"
+      ],
+      "en": [
+        "Let me know of Your lasting love",
+        "How deep, how vast, how wide"
+      ]
+    },
+    {
+      "ko": [
+        "끝 없는 사랑 흐르게 하소서",
+        "주 사랑 더 알게 하소서"
+      ],
+      "en": [
+        "Unending love pour on me, let it flow",
+        "Lord I need to know more of Your love"
+      ]
+    },
+    {
+      "ko": [
+        "나에게 부으소서",
+        "끝 없는 사랑 원합니다"
+      ],
+      "en": [
+        "Rain on me, overflow",
+        "Lord I need Your unending love"
+      ]
+    }
+  ],
+  "source": "끝없는사랑.pptx",
+  "modifiedDate": "2026-08-21T01:32:39.029Z"
+}

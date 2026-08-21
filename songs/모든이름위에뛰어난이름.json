@@ -1,0 +1,47 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "모든이름위에뛰어난이름",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "모든 이름 위에 뛰어난 이름",
+        "예수는 주 예수는 주"
+      ],
+      "en": [
+        "Jesus, the name above all names Jesus is Lord. Yes, Jesus is Lord"
+      ]
+    },
+    {
+      "ko": [
+        "모두 무릎 꿇고 경배를 드리세",
+        "예수는 만유의 주님"
+      ],
+      "en": [
+        "Every knee shall bow and worship Him alone",
+        "Jesus is the Lord of all"
+      ]
+    },
+    {
+      "ko": [
+        "예수는 주 예수는 주",
+        "온 천하만물 우러러"
+      ],
+      "en": [
+        "Jesus is Lord. Yes, Jesus is Lord Let the whole earth lift Him up high"
+      ]
+    },
+    {
+      "ko": [
+        "그 보좌 앞 영광을 돌리세",
+        "예수 예수 예수는 주"
+      ],
+      "en": [
+        "Bring glory to the Lord on His throne",
+        "Jesus, Jesus, Jesus is the Lord"
+      ]
+    }
+  ],
+  "source": "모든이름위에뛰어난이름.pptx",
+  "modifiedDate": "2026-08-21T01:32:39.382Z"
+}

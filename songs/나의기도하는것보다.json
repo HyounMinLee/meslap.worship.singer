@@ -1,0 +1,51 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "나의기도하는것보다",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "나의 기도하는 것보다",
+        "더욱 응답하실 하나님"
+      ],
+      "en": [
+        "Much more than I’ve prayed for",
+        "God will hear and answer us"
+      ]
+    },
+    {
+      "ko": [
+        "나의 생각하는 것보다",
+        "더욱 이루시는 하나님"
+      ],
+      "en": [
+        "Much more than I’ve ever dreamed",
+        "God will accomplish all His will"
+      ]
+    },
+    {
+      "ko": [
+        "우리 가운데 역사하신",
+        "능력대로 우리들의",
+        "간구함을 넘치도록 능히 하실 주님께"
+      ],
+      "en": [
+        "God in the midst of us, working",
+        "According to His mighty power",
+        "Will abundantly supply all your needs"
+      ]
+    },
+    {
+      "ko": [
+        "모든 영광과 존귀 찬양과",
+        "경배를 돌릴지어다"
+      ],
+      "en": [
+        "Let there be all glory and honor",
+        "praise and worship to our God"
+      ]
+    }
+  ],
+  "source": "나의기도하는것보다.pptx",
+  "modifiedDate": "2026-08-21T01:32:39.093Z"
+}

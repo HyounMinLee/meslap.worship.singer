@@ -1,0 +1,38 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "내안에가장귀한것",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "내 안에 가장 귀한 것",
+        "내 안에 가장 귀한 것 예수를 앎이라",
+        "금,은보다 더 귀한 것 예수를 앎이라"
+      ],
+      "en": [
+        "Jesus, Knowing Jesus Is the thing most precious to me Jesus, knowing Jesus Is more precious than silver or gold"
+      ]
+    },
+    {
+      "ko": [
+        "세상 지식보다 귀한 것 예수를 앎이라",
+        "내 안에 가장 귀한 것 예수를 앎이라"
+      ],
+      "en": [
+        "Jesus,knowing Jesus Is more precious than knowledge of world Jesus, knowing Jesus Is the thing most precious to me"
+      ]
+    },
+    {
+      "ko": [
+        "예수의 이름 존귀한 그 이름",
+        "예수의 이름 능력의 그 이름"
+      ],
+      "en": [
+        "The name of Jesus, How majestic in honor!",
+        "The name of Jesus, How awesome in power!"
+      ]
+    }
+  ],
+  "source": "내안에가장귀한것.pptx",
+  "modifiedDate": "2026-08-21T01:32:39.212Z"
+}

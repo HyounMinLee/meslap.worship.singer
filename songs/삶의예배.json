@@ -1,0 +1,57 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "삶의예배",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "보여지는 예배 아닌 마음으로 드리는 예배",
+        "노래하는 찬양보다 삶으로 고백 되는 예배",
+        "삶의 예배"
+      ],
+      "en": [
+        "Worship with the heart, not with sight. Worship confessed through life rather than singing praise"
+      ]
+    },
+    {
+      "ko": [
+        "나를 위한 예배 아닌 주님 뜻을 향한 예배",
+        "내 맘과 정성 다하여서 주 앞에 드려지는 예배"
+      ],
+      "en": [
+        "Worship for the will of the Lord, not for myself Worship offered to the Lord with all my heart and sincerity"
+      ]
+    },
+    {
+      "ko": [
+        "주 앞에 엎드려 경배합니다",
+        "온전한 예배 내 맘의 예배"
+      ],
+      "en": [
+        "I bow down before you and worship you",
+        "Complete worship, worship in my heart"
+      ]
+    },
+    {
+      "ko": [
+        "내 모든 것 받기 합당하신 분",
+        "주 앞에 엎드려 예배합니다"
+      ],
+      "en": [
+        "The one who deserves everything I have",
+        "I bow down before you and worship you"
+      ]
+    },
+    {
+      "ko": [
+        "나의 모든 삶 나의 모든 뜻",
+        "말씀 앞에 순종하는 삶의 예배 드리기 원하네"
+      ],
+      "en": [
+        "All my life all my meaning Worship of a life of obedience to the Word I want to give it to you"
+      ]
+    }
+  ],
+  "source": "삶의예배.pptx",
+  "modifiedDate": "2026-08-21T01:32:39.517Z"
+}

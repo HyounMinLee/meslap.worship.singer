@@ -1,0 +1,40 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "믿음따라걸음마다",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "믿음 따라 걸음마다",
+        "믿음 따라 걸음 마다 말씀 따라",
+        "주님만 따르리"
+      ],
+      "en": [
+        "I walk by faith Each step by faith",
+        "To live by faith I put my trust in you"
+      ]
+    },
+    {
+      "ko": [
+        "나의 가는 길 믿음 따라 갈 때",
+        "군대가 날 에워싸도 겁없네"
+      ],
+      "en": [
+        "Every step I take is a step of faith",
+        "No weapon formed against me shall prosper"
+      ]
+    },
+    {
+      "ko": [
+        "또 내 입술의 기도 믿음의 선포",
+        "주님 날 위하시면 누가 날 대적하리"
+      ],
+      "en": [
+        "Every prayer I make is a prayer of faith",
+        "If my God is for me Who can be against me"
+      ]
+    }
+  ],
+  "source": "믿음따라걸음마다.pptx",
+  "modifiedDate": "2026-08-21T01:32:39.404Z"
+}

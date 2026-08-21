@@ -1,0 +1,49 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "기뻐하며왕께노래부르리",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "기뻐 하며 왕께 노래부르리",
+        "기뻐하며 왕께 노래 부르리",
+        "소리 높여 할렐루야 부르리"
+      ],
+      "en": [
+        "Shout for joy and sing your praises to the King",
+        "Lift your voice high, let your Hallelujahs ring"
+      ]
+    },
+    {
+      "ko": [
+        "주님 앞에 나와 찬양 드리며",
+        "우리 주님과 함께 기뻐하리라"
+      ],
+      "en": [
+        "Come before His throne to worship and adore",
+        "Enter joyfully now the presence of the Lord"
+      ]
+    },
+    {
+      "ko": [
+        "나의 창조자 나의 구원자",
+        "가장 귀한 나의 예수님 찬양합니다"
+      ],
+      "en": [
+        "You're my Creator, You're my Deliverer You're my Redeemer You are Lord, and You're my Healer"
+      ]
+    },
+    {
+      "ko": [
+        "나의 치료자 나의 선한 목자 되신 주",
+        "예수 나의 주 찬양하리"
+      ],
+      "en": [
+        "You're my Provider You're my Shepherd and my Guide",
+        "Jesus, Lord and King, I worship You"
+      ]
+    }
+  ],
+  "source": "기뻐하며왕께노래부르리.pptx",
+  "modifiedDate": "2026-08-21T01:32:38.998Z"
+}

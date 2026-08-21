@@ -1,0 +1,42 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "내영이주를찬양합니다",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "내 영이 주를 찬양합니다",
+        "내 영이 주를 찬양합니다(*4)"
+      ],
+      "en": [
+        "I’ll sing praises to You, Lord God on high.(*4)"
+      ]
+    },
+    {
+      "ko": [
+        "기뻐하라 나의 영혼아",
+        "감사하라 손을 들고",
+        "송축하라 주를 향해 외치라"
+      ],
+      "en": [
+        "Rejoice, rejoice, O my soul",
+        "Give thanks to God, lift up your hands",
+        "Bless the Lord, Shout joyfully, Bless His name."
+      ]
+    },
+    {
+      "ko": [
+        "기뻐하라 나의 영혼아",
+        "감사하라 손을 들고",
+        "송축하라 나의 영혼아"
+      ],
+      "en": [
+        "Rejoice, rejoice, O my soul",
+        "Give thanks to God, lift up your hands",
+        "Bless the Lord, O my soul."
+      ]
+    }
+  ],
+  "source": "내영이주를찬양합니다.pptx",
+  "modifiedDate": "2026-08-21T01:32:39.222Z"
+}
