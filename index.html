@@ -658,12 +658,12 @@
   <div class="control-panel">
     <div class="input-box">
       <label class="field-label">파일 이름과 콘티</label>
-      <input type="text" id="fileNameInput" class="form-input" placeholder="저장할 파일 이름 (예: 찬양악보)">
+      <input type="text" id="fileNameInput" class="form-input" placeholder="저장할 파일 이름 (예: 찬양악보)" onchange="refreshTextItems()">
       <textarea id="textInput" class="mt-s" placeholder="한 줄에 한 곡씩 콘티를 입력하세요. 첫 페이지로 만들어집니다."></textarea>
 
       <label class="field-label stacked">콘티 글자 크기</label>
       <select id="conteFontSize" class="form-select" onchange="refreshTextItems()"></select>
-      <p class="hint">첫 페이지에 들어가는 콘티 글자 크기입니다. 이미 추가한 텍스트 페이지도 변경 즉시 다시 그려집니다.</p>
+      <p class="hint">첫 페이지 콘티 상자의 글자 크기입니다. 상자 높이는 줄 수에 맞춰 자동으로 정해지고, 맨 위에는 위에서 입력한 파일 이름이 <strong>&lt; 이름 &gt;</strong> 형태로 굵게 들어갑니다. 크기나 이름을 바꾸면 이미 추가한 상자도 다시 그려집니다.</p>
 
       <div class="btn-row">
         <button class="btn btn-secondary" onclick="addTextBox()">콘티를 첫 페이지로 넣기</button>
@@ -1139,32 +1139,176 @@ Another English line"></textarea>
   let itemList = [], finalA3File = null, finalA4File = null;
   let hasGenerated = false;   // PDF를 한 번이라도 만들었는지 (다시 생성 안내에 사용)
 
+  /** 콘티 상자 위에 넣을 제목. 입력한 파일 이름을 < > 로 감싼다. */
+  function conteTitleText(){
+    const name = document.getElementById('fileNameInput').value.trim();
+    return name ? ('< ' + name + ' >') : '';
+  }
+
+  /**
+   * 한 줄이 상자 폭을 넘으면 여러 줄로 나눈다.
+   * 띄어쓰기에서 끊는 것을 우선하고, 한 낱말이 통째로 넘치면 글자 단위로 끊는다.
+   */
+  function wrapCanvasLine(ctx, line, maxWidth){
+    if (line === '') return [''];
+    if (ctx.measureText(line).width <= maxWidth) return [line];
+
+    const out = [];
+    let cur = '', lastSpace = -1;
+
+    for (let i = 0; i < line.length; i++){
+      const ch = line[i];
+      if (cur !== '' && ctx.measureText(cur + ch).width > maxWidth){
+        if (lastSpace > 0){
+          out.push(cur.slice(0, lastSpace).replace(/\s+$/, ''));
+          cur = cur.slice(lastSpace).replace(/^\s+/, '') + ch;
+        } else {
+          out.push(cur);
+          cur = ch;
+        }
+        lastSpace = -1;
+      } else {
+        cur += ch;
+        if (ch === ' ') lastSpace = cur.length - 1;
+      }
+    }
+    if (cur.replace(/\s+/g, '') !== '') out.push(cur.replace(/\s+$/, ''));
+    return out.length ? out : [''];
+  }
+
+  /** 글자를 재기 위한 임시 캔버스 (크기를 정하기 전에 폭을 알아야 한다) */
+  function measureContext(font){
+    const c = document.createElement('canvas');
+    c.width = 10; c.height = 10;
+    const x = c.getContext('2d');
+    x.font = font;
+    return x;
+  }
+
+  /**
+   * A3 첫 페이지에 들어갈 콘티 상자.
+   * 높이를 줄 수에 맞춰 정하므로 빈 공간이 남거나 글자가 잘리지 않는다.
+   */
   function createA3TextImage(text) {
     const fontSize = getConteFontSize();
     const lineHeight = Math.round(fontSize * 32 / 22);   // 기본값(22px / 32px 줄간격) 비율 유지
-    const canvas = document.createElement('canvas'); canvas.width = 800; canvas.height = 600;
-    const ctx = canvas.getContext('2d'); ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0,0,800,600);
-    ctx.lineWidth = 2; ctx.strokeStyle = '#000000'; ctx.strokeRect(5,5,790,590);
-    ctx.fillStyle = '#000000'; ctx.font = fontSize + "px " + CANVAS_FONT_STACK; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    const lines = text.split('\n'); const startY = (canvas.height/2) - ((lines.length-1)*lineHeight/2);
-    lines.forEach((line, idx) => ctx.fillText(line, canvas.width/2, startY + (idx*lineHeight)));
+    const titleSize = Math.round(fontSize * 1.3);
+    const titleLineHeight = Math.round(titleSize * 1.45);
+
+    const W = 800;
+    const PAD = 40;                       // 테두리 안쪽 여백
+    const MAX_TEXT_W = W - PAD * 2;
+    const bodyFont = fontSize + 'px ' + CANVAS_FONT_STACK;
+    const titleFont = 'bold ' + titleSize + 'px ' + CANVAS_FONT_STACK;
+
+    // 1) 글자를 먼저 재서 실제 줄 수를 구한다
+    const title = conteTitleText();
+    const mBody = measureContext(bodyFont);
+    const bodyLines = [];
+    text.split('\n').forEach(l => {
+      wrapCanvasLine(mBody, l.replace(/\s+$/, ''), MAX_TEXT_W).forEach(w => bodyLines.push(w));
+    });
+
+    let titleLines = [];
+    if (title){
+      const mTitle = measureContext(titleFont);
+      titleLines = wrapCanvasLine(mTitle, title, MAX_TEXT_W);
+    }
+
+    // 2) 줄 수에 맞춰 상자 높이를 정한다
+    const titleBlockH = titleLines.length ? (titleLines.length * titleLineHeight + Math.round(lineHeight * 0.6)) : 0;
+    const bodyBlockH = bodyLines.length * lineHeight;
+    const H = Math.max(180, Math.min(2400, PAD * 2 + titleBlockH + bodyBlockH));
+
+    // 3) 그린다
+    const canvas = document.createElement('canvas');
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, W, H);
+    ctx.lineWidth = 2; ctx.strokeStyle = '#000000';
+    ctx.strokeRect(5, 5, W - 10, H - 10);
+
+    ctx.fillStyle = '#000000';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+
+    let y = PAD;
+    if (titleLines.length){
+      ctx.font = titleFont;
+      titleLines.forEach(l => {
+        ctx.fillText(l, W / 2, y + Math.round((titleLineHeight - titleSize) / 2));
+        y += titleLineHeight;
+      });
+      y += Math.round(lineHeight * 0.6);
+    }
+
+    ctx.font = bodyFont;
+    bodyLines.forEach(l => {
+      ctx.fillText(l, W / 2, y + Math.round((lineHeight - fontSize) / 2));
+      y += lineHeight;
+    });
+
     const img = new Image(); img.src = canvas.toDataURL('image/png');
-    const size = { img: img, w: canvas.width, h: canvas.height };
+    const size = { img: img, w: W, h: H };
     canvas.width = 0; canvas.height = 0;   // 아이폰 캔버스 메모리 즉시 반환
     return size;
   }
 
+  /** A4 첫 페이지. 한 장을 다 쓰므로 크기는 고정하고 가운데에 모아 그린다. */
   function createA4TextImage(text) {
     // A4는 원본(22px -> 37px) 비율을 유지해 확대한다.
     const fontSize = Math.round(getConteFontSize() * 37 / 22);
     const lineHeight = Math.round(fontSize * 49 / 37);
-    const canvas = document.createElement('canvas'); canvas.width = 840; canvas.height = 1188;
-    const ctx = canvas.getContext('2d'); ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0,0,840,1188);
-    ctx.fillStyle = '#000000'; ctx.font = "bold " + fontSize + "px " + CANVAS_FONT_STACK; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    const lines = text.split('\n'); const startY = (canvas.height/2) - ((lines.length-1)*lineHeight/2);
-    lines.forEach((line, idx) => ctx.fillText(line, canvas.width/2, startY + (idx*lineHeight)));
+    const titleSize = Math.round(fontSize * 1.3);
+    const titleLineHeight = Math.round(titleSize * 1.45);
+
+    const W = 840, H = 1188, PAD = 60;
+    const MAX_TEXT_W = W - PAD * 2;
+    const bodyFont = 'bold ' + fontSize + 'px ' + CANVAS_FONT_STACK;
+    const titleFont = 'bold ' + titleSize + 'px ' + CANVAS_FONT_STACK;
+
+    const title = conteTitleText();
+    const mBody = measureContext(bodyFont);
+    const bodyLines = [];
+    text.split('\n').forEach(l => {
+      wrapCanvasLine(mBody, l.replace(/\s+$/, ''), MAX_TEXT_W).forEach(w => bodyLines.push(w));
+    });
+
+    let titleLines = [];
+    if (title){
+      const mTitle = measureContext(titleFont);
+      titleLines = wrapCanvasLine(mTitle, title, MAX_TEXT_W);
+    }
+
+    const titleBlockH = titleLines.length ? (titleLines.length * titleLineHeight + Math.round(lineHeight * 0.6)) : 0;
+    const totalH = titleBlockH + bodyLines.length * lineHeight;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#000000';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+
+    let y = Math.max(PAD, Math.round((H - totalH) / 2));
+    if (titleLines.length){
+      ctx.font = titleFont;
+      titleLines.forEach(l => {
+        ctx.fillText(l, W / 2, y + Math.round((titleLineHeight - titleSize) / 2));
+        y += titleLineHeight;
+      });
+      y += Math.round(lineHeight * 0.6);
+    }
+
+    ctx.font = bodyFont;
+    bodyLines.forEach(l => {
+      ctx.fillText(l, W / 2, y + Math.round((lineHeight - fontSize) / 2));
+      y += lineHeight;
+    });
+
     const img = new Image(); img.src = canvas.toDataURL('image/png');
-    const size = { img: img, w: canvas.width, h: canvas.height };
+    const size = { img: img, w: W, h: H };
     canvas.width = 0; canvas.height = 0;
     return size;
   }
@@ -1924,8 +2068,8 @@ Another English line"></textarea>
       hasGenerated = true;
       document.getElementById('staleNote').textContent = '';
       updateActionUI();
-      document.getElementById('downloadA3Btn').onclick = () => triggerDownload(finalA3File);
-      document.getElementById('downloadA4Btn').onclick = () => triggerDownload(finalA4File);
+      document.getElementById('downloadA3Btn').onclick = () => triggerDownload(finalA3File, finalA3File.name);
+      document.getElementById('downloadA4Btn').onclick = () => triggerDownload(finalA4File, finalA4File.name);
     } catch(e) {
       console.error(e);
       alert('PDF 생성 실패: ' + (e && e.message ? e.message : e));
@@ -1937,9 +2081,18 @@ Another English line"></textarea>
   }
 
   // 다운로드 실행 후 생성한 objectURL을 반환 (아이폰 대체 링크용)
-  function triggerDownload(fileObj, keepAliveMs) {
-    const url = URL.createObjectURL(fileObj); const a = document.createElement('a');
-    a.href = url; a.download = fileObj.name; a.rel = 'noopener';
+  /**
+   * 파일을 내려받게 한다.
+   * Blob 에는 이름이 없으므로 name 을 따로 받는다. File 을 넘길 때는 생략해도 된다.
+   * @param {Blob|File} fileObj
+   * @param {string} [name] 저장할 파일 이름
+   * @param {number} [keepAliveMs] 주소를 살려 둘 시간
+   */
+  function triggerDownload(fileObj, name, keepAliveMs) {
+    const fileName = (name && String(name).trim()) || fileObj.name || 'download';
+    const url = URL.createObjectURL(fileObj);
+    const a = document.createElement('a');
+    a.href = url; a.download = fileName; a.rel = 'noopener';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(url), keepAliveMs || 5000);
     return url;
@@ -2404,8 +2557,11 @@ Another English line"></textarea>
       if (hasJszip()){ blob = await injectEastAsianFont(blob, window.JSZip); fixed = true; }
 
       deckBlob = new Blob([blob], { type: PPTX_MIME });
-      const base = document.getElementById('deckName').value.trim() || ('예배PPT_' + new Date().toISOString().slice(0,10));
-      deckFileName = base.replace(/\.pptx$/i,'') + '.pptx';
+      // 입력한 이름을 그대로 쓰되, 파일 이름에 쓸 수 없는 문자만 걷어낸다
+      const typed = document.getElementById('deckName').value.trim().replace(/\.pptx$/i, '');
+      const cleaned = typed.replace(/[\\/:*?"<>|]/g, '').trim();
+      const base = cleaned || ('예배PPT_' + new Date().toISOString().slice(0, 10));
+      deckFileName = base + '.pptx';
 
       triggerDownload(deckBlob, deckFileName, 180000);
 
