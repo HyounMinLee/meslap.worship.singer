@@ -1,0 +1,48 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "주의말씀은영원해(풀은마르고꽃은시드나)",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "풀은 마르고 꽃은 시드나",
+        "주의 말씀은 영원해"
+      ],
+      "en": [
+        "(*2)",
+        "The grass withers and the flowers fade, but the Word of the Lord endures forever. (*2)"
+      ]
+    },
+    {
+      "ko": [
+        "주의 말씀을 믿는 자",
+        "그의 구원을 얻으리"
+      ],
+      "en": [
+        "Those who believe in",
+        "His Word will be saved."
+      ]
+    },
+    {
+      "ko": [
+        "주의 말씀을 행하는 자",
+        "그의 능력을 보게 되리라"
+      ],
+      "en": [
+        "Those who do His Word",
+        "will see His power."
+      ]
+    },
+    {
+      "ko": [
+        "주의 말씀은 영원해(*3)",
+        "영원해 ~~ 영원해"
+      ],
+      "en": [
+        "The Word of the Lord endures forever (*3), forever~~ forever"
+      ]
+    }
+  ],
+  "source": "주의말씀은영원해(풀은마르고꽃은시드나).pptx",
+  "modifiedDate": "2026-08-21T01:32:40.321Z"
+}

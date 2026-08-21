@@ -1,0 +1,47 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "주님말씀하시면",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "주님 말씀하시면 내가 나아가리라",
+        "주님 뜻이 아니면 내가 멈춰서리라",
+        "주님 말씀하시면"
+      ],
+      "en": [
+        "I will go forth when You say I will stop if it's not Your Will"
+      ]
+    },
+    {
+      "ko": [
+        "나의 가고 서는 것 주님 뜻에 있으니",
+        "오 주님 나를 이끄소서"
+      ],
+      "en": [
+        "It depends on Your Will, whether I will go or stop O Lord God, please lead me to your way"
+      ]
+    },
+    {
+      "ko": [
+        "뜻하신 그 곳에 나 있기 원합니다",
+        "이끄시는 대로 순종하며 살리니"
+      ],
+      "en": [
+        "Where you want me to be, I wan to be there with you I will obey your command and will live as you lead me"
+      ]
+    },
+    {
+      "ko": [
+        "연약한 내 영혼 통하여 일하소서",
+        "주님 나라와 그 뜻을 위하여",
+        "오 주님 나를 이끄소서"
+      ],
+      "en": [
+        "Even with my weak soul, may you work through me For the sake of the Lord's Kingdom and His Will O Lord God, please lead me to Your Way"
+      ]
+    }
+  ],
+  "source": "주님말씀하시면.pptx",
+  "modifiedDate": "2026-08-21T01:32:40.177Z"
+}

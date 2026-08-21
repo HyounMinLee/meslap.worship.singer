@@ -1,0 +1,50 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "주께가까이더욱가까이",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "주께 가까이",
+        "주께 가까이 더욱 가까이",
+        "가기 원해요 내 마음"
+      ],
+      "en": [
+        "Closer to You, Lord, ever closer",
+        "My heart longs to draw near"
+      ]
+    },
+    {
+      "ko": [
+        "주님의 모습 그 아름다운 모습",
+        "닮기 원해요 나의 소망"
+      ],
+      "en": [
+        "To be like You, to reflect Your beauty",
+        "This is my hope and prayer"
+      ]
+    },
+    {
+      "ko": [
+        "내 맘 다하여 내 힘을 다하여",
+        "주님을 사랑합니다 워~~"
+      ],
+      "en": [
+        "With all my heart, with all my strength",
+        "Lord, I love You, oh~~"
+      ]
+    },
+    {
+      "ko": [
+        "나의 평생에 주님만을 섬기며",
+        "주와 함께 거하기 원해요"
+      ],
+      "en": [
+        "All my life, I want to serve You alone",
+        "And dwell with You forever"
+      ]
+    }
+  ],
+  "source": "주께가까이더욱가까이.pptx",
+  "modifiedDate": "2026-08-21T01:32:40.123Z"
+}

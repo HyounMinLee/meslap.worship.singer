@@ -1,0 +1,36 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "존귀오존귀하신주",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "존귀 오 존귀하신 주",
+        "감사찬양과 경배 다 받으실 주님"
+      ],
+      "en": [
+        "Worthy o worthy are You Lord Worthy to be thanked and praised and worship and adored"
+      ]
+    },
+    {
+      "ko": [
+        "찬양 할렐루야 보좌 위 어린양께",
+        "우리 경배하며 영광 돌리네"
+      ],
+      "en": [
+        "Singing Hallelujah Lamb upon the throne We worship and adore You make Your glory known"
+      ]
+    },
+    {
+      "ko": [
+        "할렐루야 우리 왕께 영광",
+        "주는 승리의 용사 또 만유의 주님"
+      ],
+      "en": [
+        "Hallelujah Glory to the king You're more than a conqueror You're Lord of everything"
+      ]
+    }
+  ],
+  "source": "존귀오존귀하신주.pptx",
+  "modifiedDate": "2026-08-21T01:32:40.095Z"
+}

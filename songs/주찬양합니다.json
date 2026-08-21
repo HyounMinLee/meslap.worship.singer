@@ -1,0 +1,55 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "주찬양합니다",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "주 찬양합니다",
+        "내 마음을 다해"
+      ],
+      "en": [
+        "I praise You, Lord, with all my heart"
+      ]
+    },
+    {
+      "ko": [
+        "주가 하신 놀라운 일들을",
+        "세상에 모두 전하리라"
+      ],
+      "en": [
+        "I will tell the world of the wonders You have done"
+      ]
+    },
+    {
+      "ko": [
+        "주 찬양합니다",
+        "내 마음을 다해"
+      ],
+      "en": [
+        "I praise You, Lord, with all my heart"
+      ]
+    },
+    {
+      "ko": [
+        "내가 주를 기뻐하며 찬양해",
+        "할렐루야"
+      ],
+      "en": [
+        "I rejoice in You and lift my song Hallelujah!"
+      ]
+    },
+    {
+      "ko": [
+        "지극히 높으신 이름 찬양해",
+        "할렐루야"
+      ],
+      "en": [
+        "I praise the name that's higher than all",
+        "Hallelujah!"
+      ]
+    }
+  ],
+  "source": "주찬양합니다.pptx",
+  "modifiedDate": "2026-08-21T01:32:40.391Z"
+}

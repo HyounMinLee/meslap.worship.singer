@@ -1,0 +1,59 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "주님뜻대로살기로했네",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "주님 뜻대로 살기로 했네",
+        "주님 뜻대로 살기로 했네(*3)",
+        "뒤돌아서지 않겠네(*2)"
+      ],
+      "en": [
+        "I have decided to follow Jesus",
+        "No turning back, no turning bac"
+      ]
+    },
+    {
+      "ko": [
+        "이 세상 사람 날 몰라줘도(*3)",
+        "뒤돌아서지 않겠네(*2)"
+      ],
+      "en": [
+        "Though none go with me, still I will follow",
+        "No turning back, no turning back"
+      ]
+    },
+    {
+      "ko": [
+        "세상 등지고 십자가 보네(*3)",
+        "뒤돌아서지 않겠네(*2)"
+      ],
+      "en": [
+        "My cross I'll carry, till I see Jesus",
+        "No turning back, no turning back"
+      ]
+    },
+    {
+      "ko": [
+        "어떠한 시련이 와도 수많은 유혹 속에도",
+        "신실하신 주님 약속 나 붙들리라"
+      ],
+      "en": [
+        "Even if trials come,even in the midst of countless temptations,I will hold on to the faithful Lord’s promise."
+      ]
+    },
+    {
+      "ko": [
+        "세상이 이해 못하고 우리를 조롱하여도",
+        "신실하신 주님 약속만 붙들리라",
+        "결코 돌아서지 않으리"
+      ],
+      "en": [
+        "Though the world may not understand and may mock us, I will hold on only to the faithful Lord’s promise I will never turn back"
+      ]
+    }
+  ],
+  "source": "주님뜻대로살기로했네.pptx",
+  "modifiedDate": "2026-08-21T01:32:40.171Z"
+}

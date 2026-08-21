@@ -1,0 +1,49 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "주님과같이",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "주님과 같이",
+        "내 마음 만지는 분은 없네"
+      ],
+      "en": [
+        "There is none like You",
+        "No one else can touch my heart like You do"
+      ]
+    },
+    {
+      "ko": [
+        "오랜 세월 찾아 난 알았네",
+        "내겐 주 밖에 없네"
+      ],
+      "en": [
+        "I could search for all eternity long",
+        "and find There is none like You"
+      ]
+    },
+    {
+      "ko": [
+        "주 자비 강같이 흐르고",
+        "주 손길 치료하네"
+      ],
+      "en": [
+        "Your mercy flows like a river so wide",
+        "And healing comes from Your hands"
+      ]
+    },
+    {
+      "ko": [
+        "고통 받는 자녀 품으시니",
+        "주밖에 없네"
+      ],
+      "en": [
+        "Suffering children are safe in Your arms",
+        "There is none like You"
+      ]
+    }
+  ],
+  "source": "주님과같이.pptx",
+  "modifiedDate": "2026-08-21T01:32:40.157Z"
+}

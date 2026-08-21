@@ -1,0 +1,33 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "주따라왼쪽으로",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "주 따라 왼쪽으로",
+        "주 따라 왼쪽으로 우리 왼쪽으로",
+        "주가 오른 쪽으로 우리 오른쪽으로"
+      ],
+      "en": [
+        "And if He goes to the left",
+        "then we’ll go to the left",
+        "And if He goes to the right",
+        "then we’ll go to the right"
+      ]
+    },
+    {
+      "ko": [
+        "다함께 기뻐 뛰며 춤을 추세",
+        "기뻐 뛰며 우리 함께"
+      ],
+      "en": [
+        "We're going to jump jump",
+        "jump jump in the river",
+        "Jump jump jump jump everybody"
+      ]
+    }
+  ],
+  "source": "주따라왼쪽으로.pptx",
+  "modifiedDate": "2026-08-21T01:32:40.225Z"
+}

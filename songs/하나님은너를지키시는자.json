@@ -1,0 +1,66 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "하나님은너를지키시는자",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "하나님은 너를 지키시는 자",
+        "너의 우편에 그늘 되시니"
+      ],
+      "en": [
+        "The Lord watches over you",
+        "He is your shade at your right"
+      ]
+    },
+    {
+      "ko": [
+        "낮의 해와 밤의 달도",
+        "너를 해치 못하리"
+      ],
+      "en": [
+        "The sun will not harm you by day, nor the moon by night"
+      ]
+    },
+    {
+      "ko": [
+        "하나님은 너를 지키시는 자",
+        "너의 환란을 면케 하시니"
+      ],
+      "en": [
+        "The Lord watches over you",
+        "He keeps you from all harm"
+      ]
+    },
+    {
+      "ko": [
+        "그가 너를 지키시리라",
+        "너의 출입을 지키시리라"
+      ],
+      "en": [
+        "He will help you and watch over your life"
+      ]
+    },
+    {
+      "ko": [
+        "눈을 들어 산을 보아라",
+        "너의 도움 어디서 오나"
+      ],
+      "en": [
+        "Lift up your eyes to the hills",
+        "Where does your help come from?"
+      ]
+    },
+    {
+      "ko": [
+        "천지 지으신 너를 만드신",
+        "여호와께로다"
+      ],
+      "en": [
+        "Your help comes from the Lord the Maker of heaven and earth"
+      ]
+    }
+  ],
+  "source": "하나님은너를지키시는자.pptx",
+  "modifiedDate": "2026-08-21T01:32:40.453Z"
+}

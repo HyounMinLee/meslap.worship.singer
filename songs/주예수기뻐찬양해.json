@@ -1,0 +1,28 @@
+{
+  "schema": "worship-song/2.0",
+  "title": "주예수기뻐찬양해",
+  "aliases": [],
+  "blocks": [
+    {
+      "ko": [
+        "주 예수 기뻐 찬양해"
+      ],
+      "en": [
+        "(*4)",
+        "Celebrate Jesus Celebrate"
+      ]
+    },
+    {
+      "ko": [
+        "부활하신 우리 주님 영원히 다스리네",
+        "부활하신 우리 주님 다와서 찬양해",
+        "부활하신 주 찬양해"
+      ],
+      "en": [
+        "He is risen and He lives forevermore Celebrate come on and Celebrate The resurrection of our Lord"
+      ]
+    }
+  ],
+  "source": "주예수기뻐찬양해.pptx",
+  "modifiedDate": "2026-08-21T01:32:40.283Z"
+}
