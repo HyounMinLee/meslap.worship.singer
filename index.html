@@ -757,6 +757,7 @@ Amazing Grace"></textarea>
 
     <div class="btn-row">
       <button class="btn btn-primary" id="findSongsBtn" onclick="findConteSongs()">곡 찾기</button>
+      <button class="btn btn-ghost" onclick="refreshSongList()">목록 새로고침</button>
     </div>
     <p id="findStatus" class="layout-info"></p>
     <ul class="ppt-list" id="conteList"></ul>
@@ -1376,7 +1377,7 @@ Another English line"></textarea>
           reader.readAsDataURL(file);
         });
         img.src = dataUrl;
-        await new Promise((res, rej) => { img.onload = res; img.onerror = () => rej(new Error(file.name + " 이미지를 열지 못했습니다.")); });
+        await new Promise((res, rej) => { img.onload = res; img.onerror = () => rej(new Error(file.name + " 이미지를 열지 못했습니다. 브라우저가 지원하지 않는 형식(HEIC 등)이거나 파일이 손상되었을 수 있습니다.")); });
         const w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
         // 업로드 순서를 그대로 유지하기 위해 항상 끝에 추가한다.
         itemList.push({ id: uid(), type: 'image', page: 1, split: false, imgObjA3: img, wA3: w, hA3: h, imgObjA4: img, wA4: w, hA4: h });
@@ -2258,7 +2259,32 @@ Another English line"></textarea>
     return t.length > 0 ? t : line.trim();
   }
 
-  let songNames = null;   // [{name, norm}]
+  let songNames = null;              // [{name, norm}]
+  const songCache = new Map();       // 파일 이름 → 가사 JSON (같은 곡을 다시 받지 않기 위해)
+  const songErrors = new Map();      // 파일 이름 → 읽지 못한 이유
+
+  /** 목록과 내려받아 둔 가사를 모두 비우고 다시 읽는다 */
+  async function refreshSongList(){
+    const st = document.getElementById('findStatus');
+    if (!serverInfo){
+      const ok = await connectProxy(true);
+      if (!ok){
+        st.className = 'layout-info text-danger'; st.style.color = '';
+        st.textContent = '먼저 위에서 접속 암호를 넣고 연결해 주세요.'; return;
+      }
+    }
+    st.className = 'layout-info text-muted'; st.style.color = '';
+    st.textContent = '목록을 다시 읽는 중입니다';
+    try {
+      songCache.clear(); songErrors.clear();
+      const list = await listSongs(true);
+      st.className = 'layout-info'; st.style.color = 'var(--secondary)';
+      st.textContent = `목록을 새로 읽었습니다. 가사 ${list.length}곡`;
+    } catch (e) {
+      st.className = 'layout-info text-danger'; st.style.color = '';
+      st.textContent = '실패: ' + e.message;
+    }
+  }
 
   async function listSongs(force){
     if (songNames && !force) return songNames;
@@ -2300,33 +2326,57 @@ Another English line"></textarea>
     st.className = 'layout-info text-muted';
     st.textContent = '저장소에서 곡을 찾는 중입니다';
 
+    const started = Date.now();
+
     try {
-      const index = await listSongs(true);
+      // 목록은 캐시를 쓴다. 새 곡을 방금 올렸다면 [목록 새로고침] 을 누르면 된다.
+      const index = await listSongs(false);
       conteResults = [];
-      let missing = 0;
 
-      for (const line of lines){
-        const query = stripChord(line);
-        const q = normalizeName(query);
+      // 1) 먼저 파일 이름만 맞춰 둔다 (여기까지는 통신이 없다)
+      const matched = lines.map(line => {
+        const q = normalizeName(stripChord(line));
         const qRaw = normalizeName(line);
+        const hit = index.find(f => f.norm === q) || index.find(f => f.norm === qRaw)
+                 || index.find(f => f.norm.indexOf(q) >= 0) || index.find(f => q.indexOf(f.norm) >= 0);
+        return { query: line, file: hit ? hit.name : null };
+      });
 
-        // 완전일치 → 부분일치 순으로 찾는다
-        let hit = index.find(f => f.norm === q) || index.find(f => f.norm === qRaw)
-               || index.find(f => f.norm.indexOf(q) >= 0) || index.find(f => q.indexOf(f.norm) >= 0);
+      // 2) 아직 받아 오지 않은 곡만 골라 한 번에 요청한다
+      const needed = [];
+      matched.forEach(m => {
+        if (m.file && !songCache.has(m.file) && needed.indexOf(m.file) < 0) needed.push(m.file);
+      });
 
-        if (!hit){ conteResults.push({ query: line, file: null, song: null }); missing++; continue; }
-
-        let song = null;
-        try { const r = await proxyCall('getSong', { name: hit.name }); song = r.song; }
-        catch (e) { conteResults.push({ query: line, file: hit.name, song: null, error: e.message }); missing++; continue; }
-        conteResults.push({ query: line, file: hit.name, song: song });
+      if (needed.length > 0){
+        st.textContent = `가사 ${needed.length}곡을 받아 오는 중입니다`;
+        const r = await proxyCall('getSongs', { names: needed }, 180000);
+        Object.keys(r.songs || {}).forEach(name => { songCache.set(name, r.songs[name]); songErrors.delete(name); });
+        (r.missing || []).forEach(name => {
+          songCache.set(name, null);
+          songErrors.set(name, (r.errors && r.errors[name]) || '파일을 읽지 못했습니다.');
+        });
       }
+
+      // 3) 결과 조립
+      let missing = 0;
+      conteResults = matched.map(m => {
+        if (!m.file){ missing++; return { query: m.query, file: null, song: null }; }
+        const song = songCache.get(m.file);
+        if (!song){
+          missing++;
+          return { query: m.query, file: m.file, song: null, error: songErrors.get(m.file) || '파일을 읽지 못했습니다.' };
+        }
+        return { query: m.query, file: m.file, song: song };
+      });
 
       renderConteList();
       const ok = conteResults.length - missing;
+      const secs = ((Date.now() - started) / 1000).toFixed(1);
       st.className = 'layout-info';
       st.style.color = missing ? 'var(--danger-text)' : 'var(--secondary)';
-      st.textContent = `찾음 ${ok}곡 / 못 찾음 ${missing}곡`;
+      st.textContent = `찾음 ${ok}곡 / 못 찾음 ${missing}곡 · ${secs}초`
+        + (needed.length < ok ? ` (${ok - needed.length}곡은 저장해 둔 내용 사용)` : '');
       document.getElementById('makeDeckBtn').disabled = !(ok > 0 && hasPptx());
       document.getElementById('saveDeckBtn').disabled = true;
       deckBlob = null;
@@ -2363,10 +2413,12 @@ Another English line"></textarea>
       row.appendChild(num); row.appendChild(q); row.appendChild(mark);
       li.appendChild(row);
 
-      // 둘째 줄: 실제로 찾은 파일 이름
+      // 둘째 줄: 실제로 찾은 파일 이름 (읽지 못했다면 그 이유까지)
       if (r.file){
         const file = document.createElement('span');
-        file.className = 'file'; file.textContent = r.file;
+        file.className = 'file';
+        file.textContent = r.error ? (r.file + ' — ' + r.error) : r.file;
+        if (r.error) file.classList.add('text-danger');
         li.appendChild(file);
       }
 
@@ -2721,7 +2773,7 @@ Another English line"></textarea>
     try {
       const name = songFileName();
       const r = await proxyCall('putSong', { name: name, content: JSON.stringify(songJson, null, 2) });
-      songNames = null;   // 목록 캐시를 비워 다음 검색에 반영되게 한다
+      songNames = null; songCache.clear(); songErrors.clear();   // 목록·내용 캐시를 비워 다음 검색에 반영되게 한다
       st.className = 'layout-info'; st.style.color = 'var(--secondary)';
       st.textContent = '올렸습니다: ' + r.path + (r.commit ? ' (' + r.commit + ')' : '');
     } catch (e) {
@@ -3127,7 +3179,7 @@ Another English line"></textarea>
     }
 
     bar.style.width = '100%';
-    songNames = null;   // 목록 캐시를 비워 다음 검색에 반영되게 한다
+    songNames = null; songCache.clear(); songErrors.clear();   // 목록·내용 캐시를 비워 다음 검색에 반영되게 한다
     renderConvList();
 
     st.className = 'layout-info'; st.style.color = fail ? 'var(--danger-text)' : 'var(--secondary)';
