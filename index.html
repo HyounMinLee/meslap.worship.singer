@@ -536,12 +536,18 @@
       max-height: 320px; overflow: auto; white-space: pre;
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     }
-    .conte-item { display: flex; align-items: center; gap: 10px; }
-    .conte-item .mark { font-weight: 700; font-size: .8rem; white-space: nowrap; }
+    /* 제목 줄과 파일 이름 줄을 위아래로 나눠 좁은 화면에서도 읽히게 한다 */
+    .conte-item { display: block; }
+    .conte-row { display: flex; align-items: baseline; gap: 8px; }
+    .conte-item .q { flex: 1; word-break: break-all; font-weight: 600; }
+    .conte-item .mark { font-weight: 700; font-size: .78rem; white-space: nowrap; }
     .conte-item .found { color: var(--sage); }
     .conte-item .miss { color: var(--danger-text); }
-    .conte-item .q { flex: 1; word-break: break-all; }
-    .conte-item .file { color: var(--text-muted); font-size: .8rem; word-break: break-all; }
+    .conte-item .file {
+      display: block; margin-top: 3px; padding-left: 1.4em;
+      color: var(--text-muted); font-size: .78rem; line-height: 1.45; word-break: break-all;
+    }
+    .conte-item .file::before { content: '↳ '; }
 
     /* ---------- 파일 고르기 / 변환 목록 ---------- */
     .drop {
@@ -769,6 +775,7 @@ Amazing Grace"></textarea>
       <label class="font-chip"><input type="radio" name="deckLang" value="en"> 영어만</label>
       <label class="font-chip"><input type="radio" name="deckLang" value="both"> 한글 + 영어</label>
     </div>
+    <p class="hint">한글과 영어를 함께 넣으면 사이에 빈 줄이 한 칸 들어가고, 영어는 배경에 맞춘 금빛 계열로 구분해 표시합니다.</p>
 
     <div class="grid3" style="margin-top:16px">
       <div class="field"><label class="field-label" for="deckFontSize">글자 크기</label>
@@ -2338,6 +2345,10 @@ Another English line"></textarea>
       const li = document.createElement('li');
       li.className = 'ppt-item conte-item';
 
+      // 첫 줄: 번호 + 콘티에 적은 제목 + 상태
+      const row = document.createElement('div');
+      row.className = 'conte-row';
+
       const num = document.createElement('strong'); num.textContent = (i + 1) + '.';
       const q = document.createElement('span'); q.className = 'q'; q.textContent = r.query;
 
@@ -2349,10 +2360,16 @@ Another English line"></textarea>
         mark.className = 'mark miss'; mark.textContent = r.error ? '읽기 실패' : '없음';
       }
 
-      const file = document.createElement('span');
-      file.className = 'file'; file.textContent = r.file || '';
+      row.appendChild(num); row.appendChild(q); row.appendChild(mark);
+      li.appendChild(row);
 
-      li.appendChild(num); li.appendChild(q); li.appendChild(file); li.appendChild(mark);
+      // 둘째 줄: 실제로 찾은 파일 이름
+      if (r.file){
+        const file = document.createElement('span');
+        file.className = 'file'; file.textContent = r.file;
+        li.appendChild(file);
+      }
+
       ul.appendChild(li);
     });
   }
@@ -2502,9 +2519,12 @@ Another English line"></textarea>
     const dark = document.getElementById('deckBg').value === 'dark';
     const withTitle = document.getElementById('deckTitle').value === 'on';
 
-    const bg = dark ? '000000' : 'FFFFFF';
+    // 배경에 맞춰 글자색을 정한다. 영어 가사는 한글과 구분되도록 금빛 계열로 따로 둔다.
+    //   검정 바탕: 흰색 21:1 / 금빛 12.2:1
+    //   흰 바탕  : 먹색 18:1 / 황동 6.1:1   (둘 다 본문 기준 4.5:1 을 넉넉히 넘김)
+    const bg   = dark ? '000000' : 'FFFFFF';
     const fgKo = dark ? 'FFFFFF' : '111111';
-    const fgEn = dark ? 'B9BBAF' : '555555';
+    const fgEn = dark ? 'E3C275' : '7A5E2A';
 
     btn.disabled = true;
     st.className = 'layout-info text-muted'; st.style.color = '';
@@ -2538,10 +2558,15 @@ Another English line"></textarea>
             text: t, options: { fontSize: size, color: color, fontFace: font, breakLine: true }
           }));
           if (lang === 'ko' || lang === 'both') push(b.ko, sizeKo, fgKo);
+          // 한글과 영어 사이에 빈 줄 한 칸
           if (lang === 'both' && (b.ko || []).length && (b.en || []).length){
-            runs.push({ text: ' ', options: { fontSize: Math.round(sizeEn * 0.5), fontFace: font, breakLine: true } });
+            runs.push({ text: ' ', options: { fontSize: sizeEn, fontFace: font, breakLine: true } });
           }
-          if (lang === 'en' || lang === 'both') push(b.en, lang === 'en' ? sizeKo : sizeEn, lang === 'en' ? fgKo : fgEn);
+          // '영어만' 일 때는 영어가 본문이므로 기본 글자색을 쓰고,
+          // 한글과 함께 나올 때만 구분색을 쓴다
+          if (lang === 'en' || lang === 'both'){
+            push(b.en, lang === 'en' ? sizeKo : sizeEn, lang === 'en' ? fgKo : fgEn);
+          }
           if (runs.length) addSlide(runs);
         });
       });
