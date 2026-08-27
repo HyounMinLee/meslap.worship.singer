@@ -418,6 +418,7 @@
     .layout-info {
       text-align: center; font-size: .84rem; font-weight: 600;
       margin-top: 12px; line-height: 1.55;
+      white-space: pre-line;   /* 줄바꿈(\n)을 그대로 보여 준다 */
     }
 
     /* ---------- 선택 칩 ---------- */
@@ -793,6 +794,17 @@ Amazing Grace"></textarea>
         </select></div>
     </div>
 
+    <div class="grid2" style="margin-top:12px">
+      <div class="field"><label class="field-label" for="deckVAlign">세로 정렬</label>
+        <select id="deckVAlign" class="form-select" onchange="updateVAlignUI()">
+          <option value="middle" selected>가운데</option>
+          <option value="bottom">아래쪽</option>
+        </select></div>
+      <div class="field"><label class="field-label" for="deckBottomCm">아래 여백 (cm)</label>
+        <input type="number" id="deckBottomCm" class="form-input" value="2" min="0" max="8" step="0.1" disabled></div>
+    </div>
+    <p class="hint" id="vAlignHint">가사를 슬라이드 가운데에 놓습니다. 자막처럼 아래쪽에 붙이려면 “아래쪽”을 고르고 여백을 정하세요.</p>
+
     <label class="field-label stacked" for="deckName">파일 이름</label>
     <input type="text" id="deckName" class="form-input" placeholder="예) 2026-08-23 주일예배">
 
@@ -1139,6 +1151,7 @@ Another English line"></textarea>
   }
 
   updateLayoutModeHint();   // 최초 진입 시 안내 문구 표시
+  updateVAlignUI();
 
   /* -----------------------------------------------------------------
      [1] 이미지 -> PDF 변환 관련 스크립트
@@ -2224,7 +2237,8 @@ Another English line"></textarea>
 
       st.className = 'layout-info';
       st.style.color = proxyLegacy ? 'var(--danger-text)' : 'var(--secondary)';
-      st.textContent = `연결되었습니다. ${r.repo} · 가사 ${r.songCount}곡`
+      st.textContent = '연결되었습니다\n'
+        + `${r.repo} · 가사 ${r.songCount}곡`
         + (r.canWrite ? '' : ' · 읽기 전용')
         + (r.version ? ` · 서버 ${r.version}` : '')
         + (proxyLegacy ? '\n※ 중계 서버가 옛 버전입니다. proxy.gs 를 새로 붙여넣고 [배포 → 배포 관리 → 연필 → 버전: 새 버전]으로 다시 배포해 주세요.' : '');
@@ -2562,6 +2576,16 @@ Another English line"></textarea>
     return el ? el.value : '';
   }
 
+  /** 아래쪽 정렬을 골랐을 때만 여백 입력을 쓸 수 있게 한다 */
+  function updateVAlignUI(){
+    const bottom = document.getElementById('deckVAlign').value === 'bottom';
+    const cm = document.getElementById('deckBottomCm');
+    cm.disabled = !bottom;
+    document.getElementById('vAlignHint').textContent = bottom
+      ? '가사를 슬라이드 아래쪽에 붙입니다. 아래 여백은 슬라이드 맨 아래에서 글자 상자 밑변까지의 거리입니다.'
+      : '가사를 슬라이드 가운데에 놓습니다. 자막처럼 아래쪽에 붙이려면 “아래쪽”을 고르고 여백을 정하세요.';
+  }
+
   (function buildDeckSizes(){
     const sel = document.getElementById('deckFontSize');
     for (let s = 20; s <= 60; s += 2){
@@ -2616,6 +2640,24 @@ Another English line"></textarea>
     const fgKo = dark ? 'FFFFFF' : '111111';
     const fgEn = dark ? 'E3C275' : '7A5E2A';
 
+    // 16:9 슬라이드는 10 x 5.625 인치. 글자 상자의 세로 위치를 여기서 정한다.
+    const SLIDE_H = 5.625;
+    const BOX_X = 0.4, BOX_Y = 0.4, BOX_W = 9.2;
+    const bottomAlign = document.getElementById('deckVAlign').value === 'bottom';
+
+    let boxH = SLIDE_H - BOX_Y * 2;          // 가운데 정렬일 때 (4.825)
+    let vAlign = 'middle';
+    let bottomCm = 0;
+
+    if (bottomAlign){
+      const raw = parseFloat(document.getElementById('deckBottomCm').value);
+      bottomCm = isNaN(raw) ? 2 : Math.max(0, Math.min(8, raw));
+      const marginIn = bottomCm / 2.54;
+      // 상자 밑변이 '슬라이드 아래에서 marginIn' 위치에 오도록 높이를 맞춘다
+      boxH = Math.max(1, SLIDE_H - marginIn - BOX_Y);
+      vAlign = 'bottom';
+    }
+
     btn.disabled = true;
     st.className = 'layout-info text-muted'; st.style.color = '';
     st.textContent = 'PPT를 만드는 중입니다';
@@ -2629,8 +2671,8 @@ Another English line"></textarea>
         const slide = pptx.addSlide();
         slide.background = { color: bg, fill: bg };
         slide.addText(runs, {
-          x: 0.4, y: 0.4, w: 9.2, h: 4.8,
-          align: 'center', valign: 'middle',
+          x: BOX_X, y: BOX_Y, w: BOX_W, h: boxH,
+          align: 'center', valign: vAlign,
           lineSpacingMultiple: 1.25, fontFace: font, shrinkText: true
         });
         slideCount++;
@@ -2682,6 +2724,7 @@ Another English line"></textarea>
 
       st.className = 'layout-info'; st.style.color = 'var(--secondary)';
       st.textContent = `${songs.length}곡 · 슬라이드 ${slideCount}장을 만들어 내려받았습니다.`
+        + (bottomAlign ? `\n아래쪽 정렬 · 여백 ${bottomCm}cm` : '\n가운데 정렬')
         + (fixed ? '' : ' (JSZip이 없어 한글 글꼴 보정은 건너뛰었습니다)');
       const canWrite = !!(serverInfo && serverInfo.canWrite);
       document.getElementById('saveDeckBtn').disabled = !canWrite;
