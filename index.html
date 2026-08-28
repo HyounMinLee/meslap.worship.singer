@@ -797,13 +797,21 @@ Amazing Grace"></textarea>
     </div>
 
     <div class="grid2" style="margin-top:12px">
+      <div class="field"><label class="field-label" for="deckRatio">슬라이드 비율</label>
+        <select id="deckRatio" class="form-select">
+          <option value="16x9" selected>16:9 (와이드)</option>
+          <option value="4x3">4:3 (정방형에 가까움)</option>
+        </select></div>
       <div class="field"><label class="field-label" for="deckVAlign">세로 정렬</label>
         <select id="deckVAlign" class="form-select" onchange="updateVAlignUI()">
           <option value="middle" selected>가운데</option>
           <option value="bottom">아래쪽</option>
         </select></div>
+    </div>
+    <div class="grid2" style="margin-top:12px">
       <div class="field"><label class="field-label" for="deckBottomCm">아래 여백 (cm)</label>
         <input type="number" id="deckBottomCm" class="form-input" value="2" min="0" max="8" step="0.1" disabled></div>
+      <div class="field"></div>
     </div>
     <p class="hint" id="vAlignHint">가사를 슬라이드 가운데에 놓습니다. 자막처럼 아래쪽에 붙이려면 “아래쪽”을 고르고 여백을 정하세요.</p>
 
@@ -2667,8 +2675,11 @@ Another English line"></textarea>
     const fgKo = dark ? 'FFFFFF' : '111111';
     const fgEn = dark ? 'E3C275' : '7A5E2A';
 
-    // 16:9 슬라이드는 10 x 5.625 인치. 글자 상자의 세로 위치를 여기서 정한다.
-    const SLIDE_H = 5.625;
+    // 슬라이드 크기 (PptxGenJS 기본 레이아웃)
+    //   16:9 → 10 x 5.625 인치 / 4:3 → 10 x 7.5 인치. 가로는 둘 다 10인치라 상자 폭은 같다.
+    const ratio = document.getElementById('deckRatio').value === '4x3' ? '4x3' : '16x9';
+    const layoutName = (ratio === '4x3') ? 'LAYOUT_4x3' : 'LAYOUT_16x9';
+    const SLIDE_H = (ratio === '4x3') ? 7.5 : 5.625;
     const BOX_X = 0.4, BOX_Y = 0.4, BOX_W = 9.2;
     const bottomAlign = document.getElementById('deckVAlign').value === 'bottom';
 
@@ -2691,7 +2702,7 @@ Another English line"></textarea>
 
     try {
       const pptx = new PptxGenJS();
-      pptx.layout = 'LAYOUT_16x9';
+      pptx.layout = layoutName;
 
       let slideCount = 0;
       const addSlide = (runs) => {
@@ -2751,7 +2762,8 @@ Another English line"></textarea>
 
       st.className = 'layout-info'; st.style.color = 'var(--secondary)';
       st.textContent = `${songs.length}곡 · 슬라이드 ${slideCount}장을 만들어 내려받았습니다.`
-        + (bottomAlign ? `\n아래쪽 정렬 · 여백 ${bottomCm}cm` : '\n가운데 정렬')
+        + `\n${ratio === '4x3' ? '4:3' : '16:9'} · `
+        + (bottomAlign ? `아래쪽 정렬 · 여백 ${bottomCm}cm` : '가운데 정렬')
         + (fixed ? '' : ' (JSZip이 없어 한글 글꼴 보정은 건너뛰었습니다)');
       const canWrite = !!(serverInfo && serverInfo.canWrite);
       document.getElementById('saveDeckBtn').disabled = !canWrite;
