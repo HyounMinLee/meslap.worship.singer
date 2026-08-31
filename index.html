@@ -550,6 +550,36 @@
     }
     .conte-item .file::before { content: '↳ '; }
 
+    /* ---------- 작업 종류 표시 ---------- */
+    .mode-banner {
+      display: block; margin: 0 0 14px; padding: 10px 14px;
+      border-radius: var(--radius-sm); border: 1px solid var(--rule);
+      font-size: .88rem; font-weight: 700; letter-spacing: -.01em;
+      white-space: pre-line;
+    }
+    .mode-banner.is-new {
+      background: color-mix(in srgb, var(--sage) 12%, transparent);
+      border-color: var(--sage); color: var(--sage);
+    }
+    .mode-banner.is-edit {
+      background: var(--orange-soft);
+      border-color: var(--orange-border); color: var(--gold);
+    }
+    .mode-banner.is-wait {
+      background: var(--surface-2); border-color: var(--rule); color: var(--text-muted);
+      font-weight: 600;
+    }
+    /* 고른 작업이 무엇인지 칩 색으로도 구분한다 */
+    .font-chip.mode-new:has(input:checked) {
+      border-color: var(--sage);
+      background: color-mix(in srgb, var(--sage) 12%, transparent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--sage) 18%, transparent);
+    }
+    .font-chip.mode-edit:has(input:checked) {
+      border-color: var(--gold); background: var(--orange-soft);
+      box-shadow: 0 0 0 3px var(--orange-ring);
+    }
+
     /* ---------- 파일 고르기 / 변환 목록 ---------- */
     .drop {
       border: 1px dashed var(--dashed-border);
@@ -737,6 +767,7 @@
   <div id="downloadGroup">
     <button id="downloadA3Btn" class="btn btn-secondary">A3 내려받기 · 3단 배치</button>
     <button id="downloadA4Btn" class="btn btn-purple">A4 내려받기 · 한 장씩</button>
+    <p class="hint" id="pdfOpenHint" hidden>안드로이드에서는 새 탭에서 PDF 뷰어로 바로 열립니다. 저장하려면 뷰어의 내려받기를 누르세요.</p>
   </div>
 </section>
 
@@ -796,11 +827,17 @@ Amazing Grace"></textarea>
         </select></div>
     </div>
 
-    <div class="grid2" style="margin-top:12px">
+    <div class="grid3" style="margin-top:12px">
       <div class="field"><label class="field-label" for="deckRatio">슬라이드 비율</label>
         <select id="deckRatio" class="form-select">
           <option value="16x9" selected>16:9 (와이드)</option>
           <option value="4x3">4:3 (정방형에 가까움)</option>
+        </select></div>
+      <div class="field"><label class="field-label" for="deckLineSpacing">줄 간격</label>
+        <select id="deckLineSpacing" class="form-select">
+          <option value="1">1배</option>
+          <option value="1.5" selected>1.5배</option>
+          <option value="2">2배</option>
         </select></div>
       <div class="field"><label class="field-label" for="deckVAlign">세로 정렬</label>
         <select id="deckVAlign" class="form-select" onchange="updateVAlignUI()">
@@ -809,11 +846,16 @@ Amazing Grace"></textarea>
         </select></div>
     </div>
     <div class="grid2" style="margin-top:12px">
-      <div class="field"><label class="field-label" for="deckBottomCm">아래 여백 (cm)</label>
+      <div class="field"><label class="field-label" for="deckBottomCm">아래 여백 (cm) · 아래쪽 정렬용</label>
         <input type="number" id="deckBottomCm" class="form-input" value="2" min="0" max="8" step="0.1" disabled></div>
-      <div class="field"></div>
+      <div class="field"><label class="field-label" for="deckFiller">아래 빈 줄 · 가운데 정렬용</label>
+        <select id="deckFiller" class="form-select">
+          <option value="0" selected>넣지 않기</option>
+          <option value="1">1줄</option>
+          <option value="2">2줄</option>
+        </select></div>
     </div>
-    <p class="hint" id="vAlignHint">가사를 슬라이드 가운데에 놓습니다. 자막처럼 아래쪽에 붙이려면 “아래쪽”을 고르고 여백을 정하세요.</p>
+    <p class="hint" id="vAlignHint"></p>
 
     <label class="field-label stacked" for="deckName">파일 이름</label>
     <input type="text" id="deckName" class="form-input" placeholder="예) 2026-08-23 주일예배">
@@ -842,10 +884,30 @@ Amazing Grace"></textarea>
     <div class="staff-rule"></div>
     <span class="eyebrow">자료</span>
     <h2 class="section-title">가사 등록하기</h2>
-    <p class="section-note">가사를 붙여넣으면 JSON으로 바꿔 저장소에 올립니다. 한글 줄과 영어 줄을 자동으로 나눕니다.</p>
+    <p class="section-note">먼저 무엇을 할지 고르세요. 새 곡을 넣는 것과 이미 있는 곡을 고치는 것은 저장되는 방식이 다릅니다.</p>
   </header>
 
   <div class="input-box block">
+    <label class="field-label">무엇을 하시겠어요?</label>
+    <div class="font-group">
+      <label class="font-chip mode-new"><input type="radio" name="songMode" value="new" checked onchange="onSongModeChange()"> 새 곡 추가</label>
+      <label class="font-chip mode-edit"><input type="radio" name="songMode" value="edit" onchange="onSongModeChange()"> 등록한 곡 수정</label>
+    </div>
+    <p class="hint" id="songModeHint"></p>
+  </div>
+
+  <div class="input-box block" id="editBox" hidden>
+    <label class="field-label" for="editSearch">고칠 곡 찾기</label>
+    <div class="search-row">
+      <input type="text" id="editSearch" class="form-input" placeholder="곡 제목 일부를 넣고 찾기">
+      <button class="btn btn-primary" onclick="searchExistingSongs()">찾기</button>
+    </div>
+    <p id="editStatus" class="layout-info"></p>
+    <ul class="ppt-list" id="editResults"></ul>
+  </div>
+
+  <div class="input-box block">
+    <p id="modeBanner" class="mode-banner is-new"></p>
     <div class="grid2">
       <div class="field"><label class="field-label" for="songTitle">곡 제목 (파일 이름이 됩니다)</label>
         <input type="text" id="songTitle" class="form-input" placeholder="예) 감사로 주님께 나가세" oninput="buildSongJson()"></div>
@@ -872,7 +934,8 @@ Another English line"></textarea>
 
     <div class="btn-row">
       <button class="btn btn-secondary" id="dlJsonBtn" onclick="downloadSongJson()" disabled>JSON 내려받기</button>
-      <button class="btn btn-orange" id="pushJsonBtn" onclick="pushSongToGit()" disabled>Git에 올리기</button>
+      <button class="btn btn-orange" id="pushJsonBtn" onclick="pushSongToGit()" disabled>저장소에 올리기</button>
+      <button class="btn btn-ghost" onclick="startNewSong()">입력 내용 비우기</button>
     </div>
     <p id="pushStatus" class="layout-info"></p>
   </div>
@@ -1159,9 +1222,6 @@ Another English line"></textarea>
     renderGrid();
     markDirty();
   }
-
-  updateLayoutModeHint();   // 최초 진입 시 안내 문구 표시
-  updateVAlignUI();
 
   /* -----------------------------------------------------------------
      [1] 이미지 -> PDF 변환 관련 스크립트
@@ -2099,8 +2159,8 @@ Another English line"></textarea>
       hasGenerated = true;
       document.getElementById('staleNote').textContent = '';
       updateActionUI();
-      document.getElementById('downloadA3Btn').onclick = () => triggerDownload(finalA3File, finalA3File.name);
-      document.getElementById('downloadA4Btn').onclick = () => triggerDownload(finalA4File, finalA4File.name);
+      document.getElementById('downloadA3Btn').onclick = () => triggerDownload(finalA3File, finalA3File.name, 60000, true);
+      document.getElementById('downloadA4Btn').onclick = () => triggerDownload(finalA4File, finalA4File.name, 60000, true);
     } catch(e) {
       console.error(e);
       alert('PDF 생성 실패: ' + (e && e.message ? e.message : e));
@@ -2119,13 +2179,33 @@ Another English line"></textarea>
    * @param {string} [name] 저장할 파일 이름
    * @param {number} [keepAliveMs] 주소를 살려 둘 시간
    */
-  function triggerDownload(fileObj, name, keepAliveMs) {
+  const IS_ANDROID = /Android/i.test(navigator.userAgent || '');
+
+  /**
+   * 파일을 내려받게 한다.
+   * Blob 에는 이름이 없으므로 name 을 따로 받는다. File 을 넘길 때는 생략해도 된다.
+   * openInViewer 가 true 이고 안드로이드라면 내려받는 대신 새 탭에서 바로 연다.
+   * (아이폰은 기존 방식을 그대로 두어 동작이 바뀌지 않게 한다)
+   */
+  function triggerDownload(fileObj, name, keepAliveMs, openInViewer) {
     const fileName = (name && String(name).trim()) || fileObj.name || 'download';
     const url = URL.createObjectURL(fileObj);
+    const keep = keepAliveMs || 5000;
+
+    if (openInViewer && IS_ANDROID){
+      const win = window.open(url, '_blank');
+      if (win){
+        // 뷰어가 다 읽을 때까지 주소를 살려 둔다
+        setTimeout(() => URL.revokeObjectURL(url), Math.max(keep, 120000));
+        return url;
+      }
+      // 새 탭이 막혔다면 아래 내려받기 방식으로 이어서 처리한다
+    }
+
     const a = document.createElement('a');
     a.href = url; a.download = fileName; a.rel = 'noopener';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), keepAliveMs || 5000);
+    setTimeout(() => URL.revokeObjectURL(url), keep);
     return url;
   }
 
@@ -2614,11 +2694,11 @@ Another English line"></textarea>
   /** 아래쪽 정렬을 골랐을 때만 여백 입력을 쓸 수 있게 한다 */
   function updateVAlignUI(){
     const bottom = document.getElementById('deckVAlign').value === 'bottom';
-    const cm = document.getElementById('deckBottomCm');
-    cm.disabled = !bottom;
+    document.getElementById('deckBottomCm').disabled = !bottom;
+    document.getElementById('deckFiller').disabled = bottom;
     document.getElementById('vAlignHint').textContent = bottom
       ? '가사를 슬라이드 아래쪽에 붙입니다. 아래 여백은 슬라이드 맨 아래에서 글자 상자 밑변까지의 거리입니다.'
-      : '가사를 슬라이드 가운데에 놓습니다. 자막처럼 아래쪽에 붙이려면 “아래쪽”을 고르고 여백을 정하세요.';
+      : '가사를 슬라이드 가운데에 놓습니다. 가사 뭉치를 조금 위로 올리려면 아래 빈 줄을 넣으세요.';
   }
 
   (function buildDeckSizes(){
@@ -2683,9 +2763,13 @@ Another English line"></textarea>
     const BOX_X = 0.4, BOX_Y = 0.4, BOX_W = 9.2;
     const bottomAlign = document.getElementById('deckVAlign').value === 'bottom';
 
-    let boxH = SLIDE_H - BOX_Y * 2;          // 가운데 정렬일 때 (4.825)
+    let boxH = SLIDE_H - BOX_Y * 2;          // 가운데 정렬일 때
     let vAlign = 'middle';
     let bottomCm = 0;
+
+    const lineSpacing = parseFloat(document.getElementById('deckLineSpacing').value) || 1.5;
+    // 가운데 정렬에서 가사 뭉치를 위로 올리기 위해 아래에 넣는 빈 줄 수
+    const fillerLines = bottomAlign ? 0 : (parseInt(document.getElementById('deckFiller').value, 10) || 0);
 
     if (bottomAlign){
       const raw = parseFloat(document.getElementById('deckBottomCm').value);
@@ -2705,13 +2789,25 @@ Another English line"></textarea>
       pptx.layout = layoutName;
 
       let slideCount = 0;
-      const addSlide = (runs) => {
+
+      // 가운데 정렬일 때 아래쪽에 빈 줄을 붙이면 글자 뭉치가 그만큼 위로 올라간다
+      const withFiller = (runs) => {
+        if (fillerLines <= 0 || runs.length === 0) return runs;
+        const out = runs.slice();
+        for (let i = 0; i < fillerLines; i++){
+          out.push({ text: ' ', options: { fontSize: sizeKo, fontFace: font, breakLine: true } });
+        }
+        return out;
+      };
+
+      const addSlide = (rawRuns) => {
+        const runs = withFiller(rawRuns);
         const slide = pptx.addSlide();
         slide.background = { color: bg, fill: bg };
         slide.addText(runs, {
           x: BOX_X, y: BOX_Y, w: BOX_W, h: boxH,
           align: 'center', valign: vAlign,
-          lineSpacingMultiple: 1.25, fontFace: font, shrinkText: true
+          lineSpacingMultiple: lineSpacing, fontFace: font, shrinkText: true
         });
         slideCount++;
       };
@@ -2762,8 +2858,9 @@ Another English line"></textarea>
 
       st.className = 'layout-info'; st.style.color = 'var(--secondary)';
       st.textContent = `${songs.length}곡 · 슬라이드 ${slideCount}장을 만들어 내려받았습니다.`
-        + `\n${ratio === '4x3' ? '4:3' : '16:9'} · `
-        + (bottomAlign ? `아래쪽 정렬 · 여백 ${bottomCm}cm` : '가운데 정렬')
+        + `\n${ratio === '4x3' ? '4:3' : '16:9'} · 줄 간격 ${lineSpacing}배 · `
+        + (bottomAlign ? `아래쪽 정렬 · 여백 ${bottomCm}cm`
+                       : '가운데 정렬' + (fillerLines ? ` · 아래 빈 줄 ${fillerLines}줄` : ''))
         + (fixed ? '' : ' (JSZip이 없어 한글 글꼴 보정은 건너뛰었습니다)');
       const canWrite = !!(serverInfo && serverInfo.canWrite);
       document.getElementById('saveDeckBtn').disabled = !canWrite;
@@ -2856,13 +2953,163 @@ Another English line"></textarea>
     out.hidden = false;
     out.textContent = JSON.stringify(songJson, null, 2);
 
-    const ready = !!title;
-    document.getElementById('dlJsonBtn').disabled = !ready;
-    document.getElementById('pushJsonBtn').disabled = !ready;
+    updateSongModeUI();
 
     const ps = document.getElementById('pushStatus');
-    if (!ready){ ps.className = 'layout-info text-muted'; ps.textContent = '곡 제목을 입력하면 저장할 수 있습니다.'; }
+    if (!title){ ps.className = 'layout-info text-muted'; ps.textContent = '곡 제목을 입력하면 저장할 수 있습니다.'; }
     else if (ps.textContent === '곡 제목을 입력하면 저장할 수 있습니다.') ps.textContent = '';
+  }
+
+
+  /* ---------------- 등록된 가사 수정 ---------------- */
+  let editingFile = '';   // 불러온 원본 파일 이름 (덮어쓸 대상)
+
+  /** 저장된 blocks 를 다시 붙여넣기 칸에 넣을 글로 되돌린다 */
+  function blocksToText(blocks){
+    return (blocks || []).map(b => {
+      const lines = (b.ko || []).concat(b.en || []);
+      return lines.join('\n');
+    }).join('\n\n');
+  }
+
+  function getSongMode(){
+    const el = document.querySelector('input[name="songMode"]:checked');
+    return (el && el.value === 'edit') ? 'edit' : 'new';
+  }
+
+  /** 지금 무엇을 하는 중인지 띠와 버튼 문구로 분명히 보여 준다 */
+  function updateSongModeUI(){
+    const mode = getSongMode();
+    const banner = document.getElementById('modeBanner');
+    const push = document.getElementById('pushJsonBtn');
+    const hint = document.getElementById('songModeHint');
+
+    document.getElementById('editBox').hidden = (mode !== 'edit');
+
+    if (mode === 'edit'){
+      hint.textContent = '저장소에 있는 곡을 불러와 고칩니다. 저장하면 같은 파일에 덮어씁니다.';
+      if (editingFile){
+        banner.className = 'mode-banner is-edit';
+        banner.textContent = '수정 중 · ' + editingFile + '\n저장하면 이 파일을 덮어씁니다.';
+        push.textContent = '이 곡 덮어써 저장';
+      } else {
+        banner.className = 'mode-banner is-wait';
+        banner.textContent = '고칠 곡을 위에서 찾아 [불러오기] 를 누르세요.';
+        push.textContent = '이 곡 덮어써 저장';
+      }
+    } else {
+      hint.textContent = '저장소에 없는 곡을 새로 넣습니다. 곡 제목이 그대로 파일 이름이 됩니다.';
+      banner.className = 'mode-banner is-new';
+      banner.textContent = '새 곡 추가\n곡 제목으로 새 파일을 만듭니다.';
+      push.textContent = '새 곡으로 저장소에 올리기';
+    }
+
+    // 수정 모드인데 아직 불러오지 않았으면 저장할 수 없다
+    const ready = !!(songJson && songJson.title) && (mode === 'new' || !!editingFile);
+    push.disabled = !ready;
+    document.getElementById('dlJsonBtn').disabled = !(songJson && songJson.title);
+  }
+
+  /** 입력칸을 비운다. 모드는 바꾸지 않는다. */
+  function resetSongForm(){
+    editingFile = '';
+    songBlocks = []; songJson = null;
+    document.getElementById('songTitle').value = '';
+    document.getElementById('songAliases').value = '';
+    document.getElementById('lyricsInput').value = '';
+    const out = document.getElementById('jsonOut'); out.hidden = true; out.textContent = '';
+    document.getElementById('parseStatus').textContent = '';
+    document.getElementById('pushStatus').textContent = '';
+    document.getElementById('editStatus').textContent = '';
+    document.getElementById('editResults').innerHTML = '';
+    updateSongModeUI();
+  }
+
+  /** 작업 종류를 바꾸면 섞이지 않도록 입력칸을 비운다 */
+  function onSongModeChange(){
+    resetSongForm();
+  }
+
+  function startNewSong(){
+    resetSongForm();
+  }
+
+  async function searchExistingSongs(){
+    const st = document.getElementById('editStatus');
+    const ul = document.getElementById('editResults');
+    const q = document.getElementById('editSearch').value.trim();
+
+    if (!serverInfo){
+      const ok = await connectProxy(true);
+      if (!ok){
+        st.className = 'layout-info text-danger'; st.style.color = '';
+        st.textContent = '먼저 위에서 접속 암호를 넣고 연결해 주세요.'; return;
+      }
+    }
+
+    st.className = 'layout-info text-muted'; st.style.color = '';
+    st.textContent = '찾는 중입니다';
+    ul.innerHTML = '';
+
+    try {
+      const index = await listSongs(false);
+      const nq = normalizeName(q);
+      const hits = (nq === '') ? index.slice(0, 30) : index.filter(f => f.norm.indexOf(nq) >= 0).slice(0, 30);
+
+      if (hits.length === 0){
+        st.className = 'layout-info text-danger'; st.style.color = '';
+        st.textContent = '찾은 곡이 없습니다.'; return;
+      }
+
+      hits.forEach(f => {
+        const li = document.createElement('li');
+        li.className = 'ppt-item';
+        const name = document.createElement('span');
+        name.style.cssText = 'flex:1; word-break:break-all;';
+        name.textContent = f.name;
+        const btn = document.createElement('button');
+        btn.className = 'move-btn'; btn.textContent = '불러오기';
+        btn.onclick = () => loadSongForEdit(f.name);
+        li.appendChild(name); li.appendChild(btn);
+        ul.appendChild(li);
+      });
+
+      st.className = 'layout-info'; st.style.color = 'var(--secondary)';
+      st.textContent = `${hits.length}곡 찾았습니다` + (nq === '' ? ' (앞에서부터 30곡)' : '');
+    } catch (e) {
+      st.className = 'layout-info text-danger'; st.style.color = '';
+      st.textContent = '오류: ' + e.message;
+    }
+  }
+
+  async function loadSongForEdit(fileName){
+    const st = document.getElementById('editStatus');
+    st.className = 'layout-info text-muted'; st.style.color = '';
+    st.textContent = fileName + ' 을 불러오는 중입니다';
+
+    try {
+      let song = songCache.get(fileName);
+      if (!song){
+        const r = await proxyCall('getSong', { name: fileName });
+        song = r.song;
+        songCache.set(fileName, song);
+      }
+
+      editingFile = fileName;
+      document.getElementById('songTitle').value = song.title || fileName.replace(/\.json$/i, '');
+      document.getElementById('songAliases').value = (song.aliases || []).join(', ');
+      document.getElementById('lyricsInput').value = blocksToText(song.blocks);
+
+      parseLyrics();          // 곧바로 미리보기를 만들어 둔다
+      updateSongModeUI();     // 띠에 파일 이름을 띄운다
+
+      st.className = 'layout-info'; st.style.color = 'var(--secondary)';
+      st.textContent = fileName + ' 을 불러왔습니다. 아래에서 고친 뒤 [저장소에 올리기]를 누르세요.';
+      document.getElementById('lyricsInput').scrollIntoView({ block: 'nearest' });
+    } catch (e) {
+      st.className = 'layout-info text-danger'; st.style.color = '';
+      st.textContent = '불러오지 못했습니다: ' + e.message;
+    }
   }
 
   function songFileName(){
@@ -2891,11 +3138,49 @@ Another English line"></textarea>
     st.className = 'layout-info text-muted'; st.style.color = '';
     st.textContent = '저장소에 올리는 중입니다';
     try {
+      const mode = getSongMode();
       const name = songFileName();
+
+      if (mode === 'edit'){
+        if (!editingFile){
+          st.className = 'layout-info text-danger'; st.style.color = '';
+          st.textContent = '먼저 고칠 곡을 불러와 주세요.';
+          btn.disabled = false; return;
+        }
+        // 제목을 바꾸면 파일 이름도 바뀌어 원본이 그대로 남는다
+        if (name !== editingFile){
+          const goNew = confirm(`곡 제목이 바뀌어 파일 이름이 달라집니다.\n\n원본: ${editingFile}\n새로 만들 파일: ${name}\n\n계속하면 원본은 그대로 남고 새 파일이 하나 더 생깁니다.`);
+          if (!goNew){
+            st.className = 'layout-info text-muted'; st.style.color = '';
+            st.textContent = '취소했습니다. 제목을 원래대로 돌리면 같은 파일에 덮어씁니다.';
+            btn.disabled = false; return;
+          }
+        }
+      } else {
+        // 새 곡인데 같은 이름이 이미 있으면 덮어쓸지 물어본다
+        let exists = false;
+        try {
+          const index = await listSongs(false);
+          exists = index.some(f => f.name === name);
+        } catch (e) { /* 목록을 못 읽어도 저장은 진행한다 */ }
+
+        if (exists){
+          const over = confirm(`같은 이름의 곡이 이미 있습니다.\n\n${name}\n\n덮어쓸까요?\n기존 가사는 사라집니다. 고치려는 것이라면 [등록한 곡 수정] 으로 바꿔 불러오는 편이 안전합니다.`);
+          if (!over){
+            st.className = 'layout-info text-muted'; st.style.color = '';
+            st.textContent = '취소했습니다. 제목을 바꾸거나 [등록한 곡 수정] 으로 불러와 주세요.';
+            btn.disabled = false; return;
+          }
+        }
+      }
+
       const r = await proxyCall('putSong', { name: name, content: JSON.stringify(songJson, null, 2) });
       songNames = null; songCache.clear(); songErrors.clear();   // 목록·내용 캐시를 비워 다음 검색에 반영되게 한다
+      const wasNew = (getSongMode() === 'new');
+      editingFile = name; updateSongModeUI();
       st.className = 'layout-info'; st.style.color = 'var(--secondary)';
-      st.textContent = '올렸습니다: ' + r.path + (r.commit ? ' (' + r.commit + ')' : '');
+      st.textContent = (wasNew ? '새 곡을 올렸습니다: ' : '덮어썼습니다: ')
+        + r.path + (r.commit ? ' (' + r.commit + ')' : '');
     } catch (e) {
       st.className = 'layout-info text-danger'; st.style.color = '';
       st.textContent = '실패: ' + e.message;
@@ -3308,7 +3593,16 @@ Another English line"></textarea>
     setTimeout(() => { wrap.style.display = 'none'; bar.style.width = '0%'; }, 1500);
   }
 
-  /* ---------------- 시작 ---------------- */
+  /* ---------------- 시작 ----------------
+     아래 코드는 스크립트 맨 끝에서만 실행한다.
+     위쪽에서 미리 부르면 아직 만들어지지 않은 const 를 건드려
+     "Cannot access ... before initialization" 오류로 스크립트 전체가 멈춘다.
+  -------------------------------------- */
+  updateLayoutModeHint();   // 배치 방식 안내 문구
+  updateVAlignUI();         // 세로 정렬에 따른 입력칸 잠금
+  updateSongModeUI();       // 가사 등록 탭의 작업 종류 표시
+  if (IS_ANDROID) document.getElementById('pdfOpenHint').hidden = false;
+
   loadAccessKey();
   if (accessKey) connectProxy(true);
   let startPage = 'pdf';
