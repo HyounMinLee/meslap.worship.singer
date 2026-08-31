@@ -9,6 +9,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- 중계 서버 주소와 기본값. 이 파일만 따로 두면 index.html 을 새로 받아도 다시 넣을 필요가 없다. -->
+  <script src="config.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
@@ -2246,8 +2249,16 @@ Another English line"></textarea>
      이 화면은 중계 서버 주소와 접속 암호만 안다.
   ------------------------------------------------ */
 
-  // ★ 관리자가 배포한 Apps Script 웹 앱 주소를 여기에 넣으세요 ★
-  const PROXY_URL = "https://script.google.com/macros/s/AKfycbzp4G2CZ8zB4dN8nJ0BHrJCzkeZY5Y4pOu0UBIOJ0esnZ9eVruZopp9BSZsXawamSpoMQ/exec";
+  // 설정은 같은 폴더의 config.js 에서 읽는다. 파일이 없거나 값이 비어 있으면 기본값을 쓴다.
+  const CFG = (typeof window !== 'undefined' && window.WORSHIP_CONFIG) ? window.WORSHIP_CONFIG : {};
+  const CONFIG_LOADED = (typeof window !== 'undefined' && !!window.WORSHIP_CONFIG);
+
+  function cfg(key, fallback){
+    const v = CFG[key];
+    return (v === undefined || v === null || v === '') ? fallback : v;
+  }
+
+  const PROXY_URL = cfg('PROXY_URL', '');
 
   const KEY_STORAGE = 'worship-access-key';
   let accessKey = '';
@@ -2275,7 +2286,9 @@ Another English line"></textarea>
   /** 중계 서버 호출 — text/plain 으로 보내 사전요청(preflight)을 피한다 */
   async function proxyCall(action, payload, timeoutMs){
     if (!PROXY_URL || PROXY_URL.indexOf('여기에_배포_ID') >= 0){
-      throw new Error('중계 서버 주소가 설정되지 않았습니다. 관리자에게 문의해 주세요.');
+      throw new Error(CONFIG_LOADED
+        ? 'config.js 의 PROXY_URL 이 아직 채워지지 않았습니다.'
+        : 'config.js 를 찾지 못했습니다. index.html 과 같은 폴더에 두었는지 확인해 주세요.');
     }
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs || 120000);
@@ -2325,6 +2338,7 @@ Another English line"></textarea>
       // 서버가 '아는 동작' 목록을 알려 줄 때만 판단한다.
       // 목록을 알려 주지 않는 서버는 일단 할 수 있다고 보고, 실제로 실패하면 그때 예비 경로로 넘어간다.
       proxyLegacy = Array.isArray(r.actions) ? (r.actions.indexOf('getSongs') < 0) : false;
+      legacyReason = '';
 
       st.className = 'layout-info';
       st.style.color = proxyLegacy ? 'var(--danger-text)' : 'var(--secondary)';
@@ -2333,7 +2347,8 @@ Another English line"></textarea>
         + (r.canWrite ? '' : ' · 읽기 전용')
         + (r.version ? ` · 서버 ${r.version}` : '')
         + (proxyLegacy
-            ? '\n※ 이 배포에는 여러 곡 한 번에 읽기가 없습니다. proxy.gs 를 새로 붙여넣고 [배포 → 배포 관리 → 연필 → 버전: 새 버전]으로 다시 배포해 주세요.'
+            ? '\n※ 이 배포가 알려 준 동작 목록에 getSongs 가 없습니다. 곡을 한 곡씩 받게 되어 느립니다.'
+              + '\nproxy.gs 를 새로 붙여넣고 [배포 → 배포 관리 → 연필 → 버전: 새 버전]으로 다시 배포해 주세요.'
             : '');
       updateWriteButtons();
       return true;
@@ -2412,6 +2427,8 @@ Another English line"></textarea>
     st.textContent = '목록을 다시 읽는 중입니다';
     try {
       songCache.clear(); songErrors.clear();
+      // 그 사이 중계 서버를 새로 배포했을 수 있으므로 판정을 되돌린다
+      proxyLegacy = false; legacyReason = '';
       const list = await listSongs(true);
       st.className = 'layout-info'; st.style.color = 'var(--secondary)';
       st.textContent = `목록을 새로 읽었습니다. 가사 ${list.length}곡`;
@@ -2423,6 +2440,7 @@ Another English line"></textarea>
 
   // 중계 서버가 여러 곡 한 번에 읽기를 모르는 옛 버전이면 true 가 된다
   let proxyLegacy = false;
+  let legacyReason = '';   // 중계 서버가 실제로 돌려준 거절 사유
 
   /** 여러 곡을 한 번에 받아 온다. 옛 서버라면 한 곡씩 받는 방식으로 자동 전환한다. */
   async function fetchSongs(names){
@@ -2440,7 +2458,9 @@ Another English line"></textarea>
         return merged;
       } catch (e) {
         if (!/알 수 없는 요청/.test(e.message)) throw e;
-        proxyLegacy = true;   // 옛 서버로 판단하고 아래 방식으로 넘어간다
+        // 중계 서버가 이 요청을 모른다고 답한 경우에만 아래 방식으로 넘어간다
+        proxyLegacy = true;
+        legacyReason = e.message;
       }
     }
 
@@ -2543,7 +2563,11 @@ Another English line"></textarea>
       st.style.color = missing ? 'var(--danger-text)' : 'var(--secondary)';
       st.textContent = `찾음 ${ok}곡 / 못 찾음 ${missing}곡 · ${secs}초`
         + (needed.length < ok ? ` (${ok - needed.length}곡은 저장해 둔 내용 사용)` : '')
-        + (proxyLegacy ? '\n※ 중계 서버가 옛 버전이라 한 곡씩 받았습니다. proxy.gs 를 새로 배포하면 훨씬 빨라집니다.' : '');
+        + (proxyLegacy
+            ? '\n※ 중계 서버가 여러 곡 한 번에 읽기를 거부해 한 곡씩 받았습니다.'
+              + (legacyReason ? '\n서버 응답: ' + legacyReason : '')
+              + '\nproxy.gs 를 새로 배포한 뒤 [목록 새로고침] 을 누르면 다시 확인합니다.'
+            : '');
       document.getElementById('makeDeckBtn').disabled = !(ok > 0 && hasPptx());
       document.getElementById('saveDeckBtn').disabled = true;
       deckBlob = null;
@@ -3593,6 +3617,43 @@ Another English line"></textarea>
     setTimeout(() => { wrap.style.display = 'none'; bar.style.width = '0%'; }, 1500);
   }
 
+  /** config.js 에 적어 둔 기본값을 화면 선택칸에 반영한다 */
+  function applyConfigDefaults(){
+    const setSel = (id, val) => {
+      const el = document.getElementById(id);
+      if (!el || val === undefined || val === null || val === '') return;
+      const v = String(val);
+      for (let i = 0; i < el.options.length; i++){
+        if (el.options[i].value === v){ el.value = v; return; }
+      }
+      // 목록에 없는 값이면 그대로 둔다
+    };
+    const setRadio = (name, val) => {
+      if (!val) return;
+      const el = document.querySelector('input[name="' + name + '"][value="' + String(val).replace(/"/g, '') + '"]');
+      if (el) el.checked = true;
+    };
+
+    setRadio('deckFont', cfg('DEFAULT_FONT', null));
+    setRadio('deckLang', cfg('DEFAULT_LANG', null));
+    setSel('deckFontSize', cfg('DEFAULT_DECK_SIZE', null));
+    setSel('deckRatio', cfg('DEFAULT_RATIO', null));
+    setSel('deckLineSpacing', cfg('DEFAULT_LINE_SPACING', null));
+    setSel('deckBg', cfg('DEFAULT_BG', null));
+    setSel('conteFontSize', cfg('DEFAULT_CONTE_SIZE', null));
+  }
+
+  /** 설정 파일이 없거나 주소가 비었으면 접속 영역에 미리 알린다 */
+  function checkConfig(){
+    if (PROXY_URL && PROXY_URL.indexOf('여기에_배포_ID') < 0) return true;
+    const st = document.getElementById('ghStatus');
+    st.className = 'layout-info text-danger'; st.style.color = '';
+    st.textContent = CONFIG_LOADED
+      ? 'config.js 의 PROXY_URL 이 비어 있습니다.\n중계 서버 주소를 넣은 뒤 새로고침해 주세요.'
+      : 'config.js 를 찾지 못했습니다.\nindex.html 과 같은 폴더에 config.js 를 두어야 합니다.';
+    return false;
+  }
+
   /* ---------------- 시작 ----------------
      아래 코드는 스크립트 맨 끝에서만 실행한다.
      위쪽에서 미리 부르면 아직 만들어지지 않은 const 를 건드려
@@ -3603,8 +3664,11 @@ Another English line"></textarea>
   updateSongModeUI();       // 가사 등록 탭의 작업 종류 표시
   if (IS_ANDROID) document.getElementById('pdfOpenHint').hidden = false;
 
+  applyConfigDefaults();
+  updateVAlignUI();         // 설정값을 반영한 뒤 다시 잠금 상태를 맞춘다
+
   loadAccessKey();
-  if (accessKey) connectProxy(true);
+  if (checkConfig() && accessKey) connectProxy(true);
   let startPage = 'pdf';
   try { startPage = localStorage.getItem('worship-page') || 'pdf'; } catch (e) {}
   showPage(startPage);
