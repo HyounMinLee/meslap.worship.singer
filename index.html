@@ -16,6 +16,46 @@
 
   <script>
     // 화면 깜빡임(플래시)을 막기 위해 CSS 적용 전에 테마를 먼저 결정한다.
+    // 휴대폰에서는 개발자도구를 열 수 없어 오류를 볼 방법이 없다.
+    // 오류가 나면 화면 위에 그대로 띄워 원인을 바로 알 수 있게 한다.
+    (function () {
+      var pending = [];
+
+      function paint(text) {
+        if (!document.body) { pending.push(text); return; }
+        var box = document.getElementById('jsErrorBox');
+        if (!box) {
+          box = document.createElement('div');
+          box.id = 'jsErrorBox';
+          box.style.cssText = 'position:fixed;left:0;right:0;top:0;z-index:9999;'
+            + 'background:#8C2F39;color:#fff;padding:10px 14px;font-size:13px;line-height:1.5;'
+            + 'white-space:pre-wrap;word-break:break-all;max-height:45vh;overflow:auto;'
+            + 'font-family:ui-monospace,Menlo,monospace;';
+          var close = document.createElement('button');
+          close.textContent = '닫기';
+          close.style.cssText = 'float:right;margin-left:10px;background:#fff;color:#8C2F39;'
+            + 'border:none;border-radius:4px;padding:4px 10px;font-weight:700;';
+          close.onclick = function () { box.remove(); };
+          box.appendChild(close);
+          document.body.appendChild(box);
+        }
+        var line = document.createElement('div');
+        line.textContent = text;
+        box.appendChild(line);
+      }
+
+      window.addEventListener('error', function (e) {
+        paint('오류: ' + (e.message || e.error) + '\n' + (e.filename || '') + ' ' + (e.lineno || '') + ':' + (e.colno || ''));
+      });
+      window.addEventListener('unhandledrejection', function (e) {
+        var r = e.reason;
+        paint('처리되지 않은 오류: ' + ((r && r.message) ? r.message : r));
+      });
+      document.addEventListener('DOMContentLoaded', function () {
+        while (pending.length) paint(pending.shift());
+      });
+    })();
+
     (function () {
       var mode = 'auto';
       try { mode = localStorage.getItem('worship-tool-theme') || 'auto'; } catch (e) { mode = 'auto'; }
@@ -770,7 +810,15 @@
   <div id="downloadGroup">
     <button id="downloadA3Btn" class="btn btn-secondary">A3 내려받기 · 3단 배치</button>
     <button id="downloadA4Btn" class="btn btn-purple">A4 내려받기 · 한 장씩</button>
-    <p class="hint" id="pdfOpenHint" hidden>안드로이드에서는 새 탭에서 PDF 뷰어로 바로 열립니다. 저장하려면 뷰어의 내려받기를 누르세요.</p>
+    <div class="btn-row" id="pdfOpenRow">
+      <button id="openA3Btn" class="btn btn-ghost">A3 브라우저에서 열어 보기</button>
+      <button id="openA4Btn" class="btn btn-ghost">A4 브라우저에서 열어 보기</button>
+    </div>
+    <p class="hint" id="pdfOpenHint" hidden>
+      내려받기를 누르면 파일이 저장되고, 알림을 누르면 기본 PDF 앱으로 열립니다.
+      바로 보기만 하려면 위 [브라우저에서 열어 보기] 를 쓰세요. 기기에 따라 빈 화면이 나올 수 있는데,
+      그때는 뒤로 가기를 누르고 내려받기를 쓰시면 됩니다.
+    </p>
   </div>
 </section>
 
@@ -2162,8 +2210,10 @@ Another English line"></textarea>
       hasGenerated = true;
       document.getElementById('staleNote').textContent = '';
       updateActionUI();
-      document.getElementById('downloadA3Btn').onclick = () => triggerDownload(finalA3File, finalA3File.name, 60000, true);
-      document.getElementById('downloadA4Btn').onclick = () => triggerDownload(finalA4File, finalA4File.name, 60000, true);
+      document.getElementById('downloadA3Btn').onclick = () => triggerDownload(finalA3File, finalA3File.name, 60000);
+      document.getElementById('downloadA4Btn').onclick = () => triggerDownload(finalA4File, finalA4File.name, 60000);
+      document.getElementById('openA3Btn').onclick = () => openInBrowser(finalA3File, infoText);
+      document.getElementById('openA4Btn').onclick = () => openInBrowser(finalA4File, infoText);
     } catch(e) {
       console.error(e);
       alert('PDF 생성 실패: ' + (e && e.message ? e.message : e));
@@ -2187,23 +2237,12 @@ Another English line"></textarea>
   /**
    * 파일을 내려받게 한다.
    * Blob 에는 이름이 없으므로 name 을 따로 받는다. File 을 넘길 때는 생략해도 된다.
-   * openInViewer 가 true 이고 안드로이드라면 내려받는 대신 새 탭에서 바로 연다.
-   * (아이폰은 기존 방식을 그대로 두어 동작이 바뀌지 않게 한다)
+   * 모든 기기에서 '저장' 으로 동작한다. 새 탭에서 열어 보는 것은 openInBrowser 로 따로 처리한다.
    */
-  function triggerDownload(fileObj, name, keepAliveMs, openInViewer) {
+  function triggerDownload(fileObj, name, keepAliveMs) {
     const fileName = (name && String(name).trim()) || fileObj.name || 'download';
     const url = URL.createObjectURL(fileObj);
     const keep = keepAliveMs || 5000;
-
-    if (openInViewer && IS_ANDROID){
-      const win = window.open(url, '_blank');
-      if (win){
-        // 뷰어가 다 읽을 때까지 주소를 살려 둔다
-        setTimeout(() => URL.revokeObjectURL(url), Math.max(keep, 120000));
-        return url;
-      }
-      // 새 탭이 막혔다면 아래 내려받기 방식으로 이어서 처리한다
-    }
 
     const a = document.createElement('a');
     a.href = url; a.download = fileName; a.rel = 'noopener';
@@ -2212,6 +2251,23 @@ Another English line"></textarea>
     return url;
   }
 
+
+  /**
+   * 새 탭에서 파일을 열어 본다. 저장하지 않고 화면으로만 확인할 때 쓴다.
+   * 기기·브라우저에 따라 blob 주소를 읽지 못해 빈 화면이 나오기도 하므로
+   * 기본 동작으로는 쓰지 않고, 사용자가 직접 누를 때만 실행한다.
+   */
+  function openInBrowser(fileObj, statusEl){
+    const url = URL.createObjectURL(fileObj);
+    const win = window.open(url, '_blank');
+    setTimeout(() => URL.revokeObjectURL(url), 180000);
+
+    if (!win && statusEl){
+      statusEl.style.color = 'var(--danger-text)';
+      statusEl.textContent = '새 탭이 막혀 있습니다. 팝업 차단을 풀거나 내려받기를 써 주세요.';
+    }
+    return url;
+  }
 
   /* =====================================================================
      [2] PPT 만들기 — Git 저장소의 가사 JSON으로 발표 파일 만들기
@@ -3662,7 +3718,8 @@ Another English line"></textarea>
   updateLayoutModeHint();   // 배치 방식 안내 문구
   updateVAlignUI();         // 세로 정렬에 따른 입력칸 잠금
   updateSongModeUI();       // 가사 등록 탭의 작업 종류 표시
-  if (IS_ANDROID) document.getElementById('pdfOpenHint').hidden = false;
+  // 안내 문구는 안드로이드에서만 보여 준다. [열어 보기] 버튼은 어느 기기에서나 쓸 수 있다.
+  document.getElementById('pdfOpenHint').hidden = !IS_ANDROID;
 
   applyConfigDefaults();
   updateVAlignUI();         // 설정값을 반영한 뒤 다시 잠금 상태를 맞춘다
