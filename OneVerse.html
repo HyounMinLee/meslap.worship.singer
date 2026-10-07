@@ -1,1 +1,1004 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111214" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="오늘의 말씀">
+<meta name="description" content="하루 한 구절, 나만의 말씀 기록">
+<title>오늘의 말씀</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2348998a'/%3E%3Cstop offset='1' stop-color='%23255750'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ccircle cx='45' cy='19' r='6' fill='%23ffd9a8'/%3E%3Cpath d='M17 49C25 40 33 32 45 28' stroke='%23fff' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Cpath d='M26 41c-6 0-10-4-11-10 6 0 10 4 11 10z' fill='%23fff'/%3E%3Cpath d='M33 35c-1-6 2-10 7-12 1 6-2 10-7 12z' fill='%23fff' opacity='.85'/%3E%3Cpath d='M30 43c5 3 10 2 14-2-5-3-10-2-14 2z' fill='%23fff' opacity='.7'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#f6f4ef; --surface:#ffffff; --surface-2:#efede7; --text:#1b1a18; --muted:#7d7a74; --faint:#b8b5ae; --line:#e7e4dd;
+  --accent:#2f7366; --accent-2:#48998a; --accent-ink:#ffffff; --accent-soft:#e1efeb;
+  --sun:#d4553f; --sat:#3f6fd4; --danger:#d4553f;
+  --glass:rgba(255,255,255,.58); --glass-2:rgba(255,255,255,.42);
+  --shadow:0 1px 2px rgba(30,25,20,.04),0 12px 32px rgba(30,25,20,.07);
+  --sans:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --serif:"Noto Serif KR","Nanum Myeongjo","AppleMyungjo",serif;
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#111214; --surface:#1a1b1e; --surface-2:#25262a; --text:#f2f1ec; --muted:#9d9ba3; --faint:#55565c; --line:#2d2e33;
+    --accent:#6cc3b2; --accent-2:#4fa898; --accent-ink:#0e1d1a; --accent-soft:#1d332f;
+    --sun:#ef7a66; --sat:#7ea2ef; --danger:#ef7a66;
+    --glass:rgba(255,255,255,.07); --glass-2:rgba(255,255,255,.05);
+    --shadow:0 1px 2px rgba(0,0,0,.35),0 12px 32px rgba(0,0,0,.28);
+  }
+}
+/* 날짜별 팔레트: 요소의 style 속성에 --pa/--pb/--pacc(라이트), --pda/--pdb/--pdacc(다크)를 지정 */
+.pal{--ga:var(--pa);--gb:var(--pb);--gacc:var(--pacc)}
+@media (prefers-color-scheme: dark){.pal{--ga:var(--pda);--gb:var(--pdb);--gacc:var(--pdacc)}}
 
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{margin:0;color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.5;letter-spacing:-.01em;
+  overscroll-behavior-x:none;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+svg{display:block}
+
+/* 배경 그래픽 */
+.blob{position:fixed;z-index:-1;border-radius:50%;pointer-events:none;filter:blur(64px);transition:background-color .9s ease}
+.blob.b1{width:85vw;height:85vw;max-width:560px;max-height:560px;top:-34vw;right:-28vw;background-color:var(--gb);opacity:.75}
+.blob.b2{width:65vw;height:65vw;max-width:420px;max-height:420px;top:22vh;left:-38vw;background-color:var(--ga);opacity:.6}
+@media (min-width:600px){.blob.b1{top:-240px;right:calc(50% - 560px)}.blob.b2{left:calc(50% - 560px)}}
+@media (prefers-color-scheme: dark){.blob.b1{opacity:.55}.blob.b2{opacity:.4}}
+
+.app{max-width:560px;margin:0 auto;padding:0 16px calc(120px + env(safe-area-inset-bottom))}
+
+/* 상단 */
+.brand-row{display:flex;align-items:center;justify-content:space-between;padding:calc(14px + env(safe-area-inset-top)) 4px 0}
+.brand{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:750;letter-spacing:-.02em}
+.brand svg{width:28px;height:28px;border-radius:8px;box-shadow:0 4px 10px rgba(47,115,102,.25)}
+.topbar{position:sticky;top:0;z-index:10;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;
+  margin:0 -16px;padding:calc(10px + env(safe-area-inset-top)) 20px 12px;
+  background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4)}
+.topbar-text{min-width:0}
+.eyebrow{margin:0;font-size:13px;font-weight:650;color:var(--muted);display:flex;align-items:center;gap:6px}
+.today-tag{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:10px;background:var(--accent-soft);color:var(--accent);font-size:11px;font-weight:750}
+h1{margin:3px 0 0;font-size:27px;font-weight:780;letter-spacing:-.035em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-btns{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.icon-btn{position:relative;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--glass);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:var(--shadow);border:1px solid var(--glass-2)}
+.icon-btn svg{width:18px;height:18px}
+.badge{position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--danger);box-shadow:0 0 0 2px var(--bg);display:none}
+.badge.on{display:block}
+.pill{height:40px;padding:0 15px;border-radius:20px;background:var(--glass);border:1px solid var(--glass-2);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:var(--shadow);font-size:14px;font-weight:700}
+.pill:disabled{opacity:.4;cursor:default}
+
+/* 일/주/월 */
+.seg{position:relative;display:grid;grid-template-columns:repeat(3,1fr);padding:4px;margin:2px 0 18px;border-radius:16px;
+  background:var(--glass);border:1px solid var(--glass-2);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.seg button{position:relative;z-index:1;height:38px;font-size:14px;font-weight:650;color:var(--muted);transition:color .2s}
+.seg button[aria-selected="true"]{color:var(--text)}
+.seg-thumb{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/3);border-radius:12px;background:var(--surface);
+  box-shadow:0 2px 8px rgba(0,0,0,.08);transition:transform .32s cubic-bezier(.2,.8,.2,1)}
+.seg[data-active="1"] .seg-thumb{transform:translateX(100%)}
+.seg[data-active="2"] .seg-thumb{transform:translateX(200%)}
+
+#viewport{touch-action:pan-y;overflow-x:hidden;margin:0 -16px;padding:0 16px 32px;min-height:60vh}
+#stage{will-change:transform}
+.dow-0{color:var(--sun)} .dow-6{color:var(--sat)}
+
+/* 일 보기: 주간 스트립 */
+.strip{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px}
+.strip-day{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 8px;border-radius:16px;transition:background .2s}
+.sd-w{font-size:12px;font-weight:650;color:var(--muted)}
+.sd-n{font-size:17px;font-weight:700}
+.sd-dot{width:6px;height:6px;border-radius:50%;background:transparent}
+.sd-dot.on{background:var(--gacc)}
+.strip-day.is-today .sd-n{color:var(--accent)}
+.strip-day.is-sel{background:var(--text);box-shadow:0 8px 18px rgba(0,0,0,.14)}
+.strip-day.is-sel .sd-w,.strip-day.is-sel .sd-n{color:var(--bg)}
+
+/* 일 보기: 구절 카드 */
+.verse-card{position:relative;overflow:hidden;isolation:isolate;border-radius:30px;background:var(--surface);
+  background:linear-gradient(155deg,var(--ga) 0%,var(--gb) 100%);box-shadow:var(--shadow)}
+.rays{position:absolute;inset:0;width:100%;height:100%;z-index:-1;color:#fff;opacity:.4;
+  -webkit-mask-image:radial-gradient(circle at 100% 0,#000 0,transparent 78%);mask-image:radial-gradient(circle at 100% 0,#000 0,transparent 78%)}
+.glow{position:absolute;z-index:-1;border-radius:50%;filter:blur(34px);pointer-events:none}
+.glow.g1{width:240px;height:240px;right:-70px;top:-90px;background:#fff;opacity:.6}
+.glow.g2{width:220px;height:220px;left:-80px;bottom:-100px;background:var(--gacc);opacity:.2}
+@media (prefers-color-scheme: dark){
+  .rays{color:var(--gacc);opacity:.1}
+  .glow.g1{background:var(--gacc);opacity:.12}
+  .glow.g2{opacity:.12}
+}
+.vc-inner{padding:22px 22px 16px}
+.vc-top{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:32px}
+.vc-day{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--gacc)}
+.ref{display:inline-flex;align-items:center;max-width:70%;padding:6px 13px;border-radius:999px;background:var(--glass);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:var(--gacc);font-size:14px;font-weight:750;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qmark{display:block;height:46px;margin-top:16px;font-family:var(--serif);font-size:92px;line-height:1;color:var(--gacc);opacity:.32}
+.verse{margin:4px 2px 0;font-family:var(--serif);font-size:22px;line-height:1.82;letter-spacing:-.025em;
+  white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere}
+.ornament{display:flex;justify-content:center;margin:24px 0 6px;color:var(--gacc)}
+.ornament svg{width:128px;height:22px}
+.note{margin-top:14px;padding:14px 16px;border-radius:18px;background:var(--glass)}
+.note-label{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:750;color:var(--gacc);margin-bottom:6px}
+.note-label svg{width:13px;height:13px}
+.note p{margin:0;font-size:15px;line-height:1.65;white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere}
+.card-foot{display:flex;justify-content:flex-end;gap:6px;margin-top:16px}
+.chip-btn{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:999px;font-size:13px;font-weight:700;background:var(--glass)}
+.chip-btn svg{width:15px;height:15px}
+
+/* 일 보기: 빈 상태 */
+.empty-card{position:relative;overflow:hidden;border-radius:30px;padding:26px 24px 30px;text-align:center;box-shadow:var(--shadow);
+  background:var(--surface);background:linear-gradient(180deg,color-mix(in srgb,var(--ga) 75%,var(--surface)) 0%,var(--surface) 72%)}
+.illus{width:210px;max-width:72%;height:auto;margin:0 auto 6px;color:var(--gacc)}
+.illus .paper{fill:var(--surface)}
+.empty-title{margin:0;font-size:18px;font-weight:780;letter-spacing:-.03em}
+.empty-sub{margin:6px 0 22px;font-size:14px;color:var(--muted)}
+
+.streak{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;font-size:13px;color:var(--muted)}
+.streak svg{width:18px;height:18px;color:var(--accent)}
+.streak b{color:var(--text)}
+.hint{text-align:center;font-size:12px;color:var(--faint);margin:14px 0 0}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:50px;padding:0 22px;border-radius:16px;font-size:15px;font-weight:750}
+.btn.primary{color:var(--accent-ink);background:linear-gradient(145deg,var(--accent-2),var(--accent));box-shadow:0 8px 20px color-mix(in srgb,var(--accent) 30%,transparent)}
+.btn.ghost{background:var(--surface-2)}
+.btn.danger{color:var(--danger)}
+.btn.full{width:100%}
+.btn:disabled{opacity:.5}
+
+/* 주 보기 */
+.week-summary{display:flex;align-items:center;justify-content:space-between;margin:0 4px 12px;font-size:13px;font-weight:650;color:var(--muted)}
+.week-summary b{color:var(--text)}
+.wsegs{display:flex;gap:4px}
+.wsegs i{width:20px;height:6px;border-radius:3px;background:var(--line)}
+.wsegs i.on{background:linear-gradient(90deg,var(--gb),var(--gacc))}
+.week-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.week-item{width:100%;display:flex;gap:14px;align-items:center;text-align:left;padding:12px 14px 12px 12px;border-radius:22px;background:var(--surface);box-shadow:var(--shadow)}
+.week-item.is-empty{background:var(--glass-2);box-shadow:none;border:1px dashed var(--line)}
+.wi-tile{flex:0 0 52px;height:60px;border-radius:17px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--surface-2)}
+.wi-tile.pal{background:linear-gradient(150deg,var(--ga),var(--gb))}
+.wi-tile.pal .wi-w{color:var(--gacc)}
+.wi-w{font-size:12px;font-weight:700}
+.wi-n{font-size:21px;font-weight:800;line-height:1.15}
+.week-item.is-today .wi-tile{box-shadow:0 0 0 2px var(--accent)}
+.wi-body{flex:1;min-width:0}
+.wi-ref{margin:0 0 2px;font-size:13px;font-weight:750;color:var(--gacc)}
+.wi-text{margin:0;font-family:var(--serif);font-size:15px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:keep-all}
+.wi-none{margin:0;font-size:14px;color:var(--faint)}
+.chev{width:18px;height:18px;color:var(--faint);flex-shrink:0}
+
+/* 월 보기 */
+.month{padding:14px 10px 10px;border-radius:28px;background:var(--surface);box-shadow:var(--shadow)}
+.mgrid{display:grid;grid-template-columns:repeat(7,1fr);text-align:center}
+.mh{font-size:12px;font-weight:650;color:var(--muted);padding-bottom:6px}
+.mh.dow-0{color:var(--sun)} .mh.dow-6{color:var(--sat)}
+.mc{position:relative;height:50px;display:flex;align-items:center;justify-content:center}
+.mc-n{width:36px;height:36px;line-height:36px;border-radius:13px;font-size:15px;font-weight:650;transition:transform .15s}
+.mc:active .mc-n{transform:scale(.92)}
+.mc.dow-0 .mc-n{color:var(--sun)} .mc.dow-6 .mc-n{color:var(--sat)}
+.mc.out{opacity:.28}
+.mc.has .mc-n{background:linear-gradient(145deg,var(--ga),var(--gb));color:var(--text);font-weight:750}
+.mc.is-sel .mc-n{box-shadow:0 0 0 2px var(--text)}
+.mc.is-today::after{content:'';position:absolute;bottom:2px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+
+.stats{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:10px;margin-top:12px}
+.stat{display:flex;flex-direction:column;justify-content:center;gap:2px;padding:14px;border-radius:22px;background:var(--surface);box-shadow:var(--shadow);min-width:0}
+.stat.ring-stat{flex-direction:row;align-items:center;justify-content:flex-start;gap:10px}
+.ring{width:50px;height:50px;flex-shrink:0}
+.ring circle{fill:none;stroke-width:7}
+.ring-bg{stroke:var(--surface-2)}
+.ring-fg{stroke:var(--gacc);stroke-linecap:round;transition:stroke-dasharray .7s cubic-bezier(.2,.8,.2,1)}
+.stat b{font-size:20px;font-weight:800;letter-spacing:-.03em;line-height:1.2}
+.stat b small{font-size:13px;font-weight:700;color:var(--muted);margin-left:1px}
+.stat span{font-size:12px;font-weight:650;color:var(--muted);white-space:nowrap}
+
+.month-list{margin-top:22px}
+.month-list h3{margin:0 4px 10px;font-size:15px;font-weight:750;display:flex;align-items:center;gap:8px}
+.count{font-size:12px;font-weight:750;padding:2px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.month-list ul{list-style:none;margin:0;padding:0;border-radius:22px;background:var(--surface);box-shadow:var(--shadow);overflow:hidden}
+.ml-item{width:100%;display:flex;gap:12px;align-items:center;padding:14px 16px;text-align:left;border-bottom:1px solid var(--line)}
+.month-list li:last-child .ml-item{border-bottom:0}
+.ml-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;background:linear-gradient(145deg,var(--gb),var(--gacc))}
+.ml-date{flex:0 0 auto;min-width:56px;font-size:13px;font-weight:650;color:var(--muted)}
+.ml-ref{flex:1;min-width:0;font-size:15px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ml-none{padding:20px 16px;font-size:14px;color:var(--faint);text-align:center}
+
+/* 등록 버튼 */
+#fab{position:fixed;right:max(20px,calc(50% - 260px));bottom:calc(24px + env(safe-area-inset-bottom));z-index:15;width:60px;height:60px;border-radius:21px;
+  display:grid;place-items:center;color:var(--accent-ink);background:linear-gradient(145deg,var(--accent-2),var(--accent));
+  box-shadow:0 12px 26px color-mix(in srgb,var(--accent) 40%,transparent);transition:transform .15s}
+#fab:active{transform:scale(.93)}
+#fab svg{width:24px;height:24px}
+
+/* 바텀시트 */
+#backdrop{position:fixed;inset:0;z-index:20;background:rgba(10,10,10,.4);opacity:0;pointer-events:none;transition:opacity .25s}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;max-width:560px;max-height:92dvh;margin:0 auto;overflow:auto;
+  background:var(--surface);border-radius:28px 28px 0 0;padding:10px 20px calc(20px + env(safe-area-inset-bottom));
+  transform:translateY(105%);visibility:hidden;transition:transform .32s cubic-bezier(.2,.8,.2,1),visibility 0s linear .32s}
+body.sheet-open #backdrop{opacity:1;pointer-events:auto}
+body.sheet-open{overflow:hidden}
+body[data-sheet="edit"] #editSheet,body[data-sheet="settings"] #settingsSheet{transform:none;visibility:visible;transition:transform .32s cubic-bezier(.2,.8,.2,1),visibility 0s}
+.grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 14px}
+.sheet h2{margin:0 0 16px;font-size:20px;font-weight:780;letter-spacing:-.03em}
+.field{display:block;margin-bottom:14px}
+.field span{display:block;font-size:13px;font-weight:650;color:var(--muted);margin-bottom:6px}
+.field input,.field textarea{width:100%;font:inherit;font-size:16px;color:var(--text);background:var(--surface-2);border:1.5px solid transparent;border-radius:15px;
+  padding:13px 14px;outline:none;transition:border-color .2s,background .2s;-webkit-appearance:none;appearance:none}
+.field input[type="date"]{min-height:50px}
+.field textarea{resize:vertical;min-height:52px;line-height:1.6}
+.field input:focus,.field textarea:focus{border-color:var(--accent);background:var(--surface)}
+.sheet-actions{display:flex;gap:8px;margin-top:6px}
+.sheet-actions .primary{flex:1}
+
+/* 보관함 */
+.set-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.set-stats div{padding:14px;border-radius:18px;background:var(--surface-2)}
+.set-stats b{display:block;font-size:20px;font-weight:800;letter-spacing:-.03em}
+.set-stats span{font-size:12px;font-weight:650;color:var(--muted)}
+.set-note{margin:0 0 14px;padding:12px 14px;border-radius:14px;background:var(--accent-soft);color:var(--accent);font-size:13px;font-weight:600;line-height:1.5}
+.set-note.warn{background:color-mix(in srgb,var(--danger) 14%,transparent);color:var(--danger)}
+.row-btn{width:100%;display:flex;align-items:center;gap:14px;padding:14px;margin-bottom:8px;border-radius:18px;text-align:left;border:1px solid var(--line)}
+.row-btn .ri{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;flex-shrink:0;background:var(--accent-soft);color:var(--accent)}
+.row-btn .ri svg{width:20px;height:20px}
+.row-btn b{display:block;font-size:15px;font-weight:750}
+.row-btn small{display:block;font-size:13px;color:var(--muted)}
+.set-help{margin:10px 2px 16px;font-size:12px;line-height:1.6;color:var(--muted)}
+
+#toast{position:fixed;left:50%;bottom:calc(104px + env(safe-area-inset-bottom));z-index:30;transform:translate(-50%,12px);
+  padding:11px 18px;border-radius:14px;background:var(--text);color:var(--bg);font-size:14px;font-weight:650;
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;white-space:nowrap;max-width:calc(100vw - 32px);overflow:hidden;text-overflow:ellipsis}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body class="pal">
+<div class="blob b1" aria-hidden="true"></div>
+<div class="blob b2" aria-hidden="true"></div>
+
+<div class="app">
+  <div class="brand-row">
+    <div class="brand">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="logoG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#48998a"/><stop offset="1" stop-color="#255750"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#logoG)"/><circle cx="45" cy="19" r="6" fill="#ffd9a8"/><path d="M17 49C25 40 33 32 45 28" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M26 41c-6 0-10-4-11-10 6 0 10 4 11 10z" fill="#fff"/><path d="M33 35c-1-6 2-10 7-12 1 6-2 10-7 12z" fill="#fff" opacity=".85"/><path d="M30 43c5 3 10 2 14-2-5-3-10-2-14 2z" fill="#fff" opacity=".7"/></svg>
+      <span>오늘의 말씀</span>
+    </div>
+    <button class="icon-btn" id="settingsBtn" aria-label="보관함 및 백업">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>
+      <i class="badge" id="backupBadge"></i>
+    </button>
+  </div>
+
+  <header class="topbar">
+    <div class="topbar-text">
+      <p class="eyebrow" id="eyebrow"></p>
+      <h1 id="title"></h1>
+    </div>
+    <div class="nav-btns">
+      <button class="icon-btn" id="prevBtn" aria-label="이전"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <button class="pill" id="todayBtn">오늘</button>
+      <button class="icon-btn" id="nextBtn" aria-label="다음"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+    </div>
+  </header>
+
+  <div class="seg" id="seg" role="tablist" data-active="0">
+    <button role="tab" data-view="day">일</button>
+    <button role="tab" data-view="week">주</button>
+    <button role="tab" data-view="month">월</button>
+    <span class="seg-thumb" aria-hidden="true"></span>
+  </div>
+
+  <main id="viewport"><div id="stage"></div></main>
+</div>
+
+<button id="fab" aria-label="구절 등록"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+
+<div id="backdrop"></div>
+
+<section class="sheet" id="editSheet" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+  <div class="grab"></div>
+  <h2 id="editTitle">구절 등록</h2>
+  <form id="form" novalidate>
+    <label class="field"><span>날짜</span><input type="date" id="fDate" required></label>
+    <label class="field"><span>성경 구절</span><input type="text" id="fRef" maxlength="100" placeholder="예: 시편 23:1" autocomplete="off"></label>
+    <label class="field"><span>본문</span><textarea id="fText" rows="5" maxlength="2000" required placeholder="말씀 본문을 입력하세요"></textarea></label>
+    <label class="field"><span>묵상 메모 (선택)</span><textarea id="fNote" rows="3" maxlength="2000" placeholder="오늘 마음에 남은 생각"></textarea></label>
+    <div class="sheet-actions">
+      <button type="button" class="btn ghost danger" id="delBtn">삭제</button>
+      <button type="button" class="btn ghost" data-close>취소</button>
+      <button type="submit" class="btn primary" id="saveBtn">저장</button>
+    </div>
+  </form>
+</section>
+
+<section class="sheet" id="settingsSheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <div class="grab"></div>
+  <h2 id="settingsTitle">보관함</h2>
+  <div class="set-stats">
+    <div><b id="sTotal">0개</b><span>저장된 구절</span></div>
+    <div><b id="sBackup">없음</b><span>마지막 백업</span></div>
+  </div>
+  <p class="set-note" id="sPersist"></p>
+  <button class="row-btn" id="exportBtn">
+    <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg></span>
+    <span><b>백업 파일 내보내기</b><small>모든 구절을 JSON 파일 하나로 저장</small></span>
+  </button>
+  <button class="row-btn" id="importBtn">
+    <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></span>
+    <span><b>백업 파일 불러오기</b><small>같은 날짜는 파일 내용으로 덮어써요</small></span>
+  </button>
+  <input type="file" id="importInput" accept="application/json,.json" multiple hidden>
+  <p class="set-help">구절은 이 기기의 브라우저에만 저장돼요. 브라우저 데이터를 지우거나 기기를 바꾸면 사라지므로 주기적으로 백업 파일을 내보내 두세요.</p>
+  <button class="btn ghost full" data-close>닫기</button>
+</section>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ================= 기본 상수 / 유틸 ================= */
+  const DOW = ['일', '월', '화', '수', '목', '금', '토'];
+  const VIEWS = ['day', 'week', 'month'];
+  const KEYS = { data: 'dailyVerse.v1', view: 'dailyVerse.view', backup: 'dailyVerse.lastBackup' };
+  const LIMITS = { reference: 100, text: 2000, note: 2000 };
+  const BACKUP_REMIND_DAYS = 14;
+  const DAY_MS = 86400000;
+
+  // 날짜별 팔레트 (라이트 a/b/acc, 다크 da/db/dacc)
+  const PALETTES = [
+    { a: '#ffe6d0', b: '#ffcbb6', acc: '#b4563a', da: '#3b2620', db: '#2b1c1e', dacc: '#f2a184' }, // 새벽
+    { a: '#e3efd8', b: '#c8dfc4', acc: '#4a7a45', da: '#1f2c1f', db: '#1a2520', dacc: '#a5d39b' }, // 올리브
+    { a: '#dcebfb', b: '#c3d6f4', acc: '#3a62a6', da: '#1c2638', db: '#1a1f33', dacc: '#9dbcf0' }, // 하늘
+    { a: '#ebe3fb', b: '#d5caf3', acc: '#6a50b0', da: '#2a2238', db: '#221d33', dacc: '#c3b2f2' }, // 라벤더
+    { a: '#f6ecd4', b: '#ebdab4', acc: '#8a6629', da: '#302a1d', db: '#28221a', dacc: '#e3c784' }, // 모래
+    { a: '#fce3e9', b: '#f3c8d4', acc: '#a8456a', da: '#36202a', db: '#2c1b25', dacc: '#f0a0bd' }, // 장미
+    { a: '#d6f0ed', b: '#bbe2dc', acc: '#2b7970', da: '#1a2f2d', db: '#172826', dacc: '#8ad5cb' }, // 청록
+  ];
+
+  const $ = (s) => document.querySelector(s);
+  const pad = (n) => String(n).padStart(2, '0');
+  const keyOf = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const parseKey = (k) => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
+  const isValidKey = (k) => typeof k === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(k) && keyOf(parseKey(k)) === k;
+  const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+  const addMonths = (d, n) => {
+    const last = new Date(d.getFullYear(), d.getMonth() + n + 1, 0).getDate();
+    return new Date(d.getFullYear(), d.getMonth() + n, Math.min(d.getDate(), last));
+  };
+  const startOfWeek = (d) => addDays(d, -d.getDay());
+  const todayDate = () => { const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); };
+  const sameDay = (a, b) => keyOf(a) === keyOf(b);
+  const dayNumber = (d) => Math.round(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / DAY_MS);
+  const dayOfYear = (d) => dayNumber(d) - dayNumber(new Date(d.getFullYear(), 0, 1)) + 1;
+  const daysBetween = (a, b) => { const out = []; for (let d = a; d <= b; d = addDays(d, 1)) out.push(d); return out; };
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  const paletteFor = (d) => PALETTES[((dayNumber(d) % 7) + 7) % 7];
+  const palStyle = (p) => `--pa:${p.a};--pb:${p.b};--pacc:${p.acc};--pda:${p.da};--pdb:${p.db};--pdacc:${p.dacc}`;
+
+  /* ================= 저장소 (localStorage) ================= */
+  const LS = (() => { try { const s = window.localStorage; s.getItem('_'); return s; } catch { return null; } })();
+  const pref = {
+    get(k) { try { return LS ? LS.getItem(k) : null; } catch { return null; } },
+    set(k, v) { try { if (LS) LS.setItem(k, v); } catch { /* 설정값 저장 실패는 무시 */ } },
+  };
+
+  function normalizeEntry(e) {
+    if (!e || typeof e !== 'object' || !isValidKey(e.date)) return null;
+    const out = { date: e.date };
+    for (const [field, max] of Object.entries(LIMITS)) {
+      const v = e[field] == null ? '' : e[field];
+      if (typeof v !== 'string') return null;
+      out[field] = v.trim().slice(0, max);
+    }
+    if (!out.text) return null;
+    const now = new Date().toISOString();
+    out.createdAt = typeof e.createdAt === 'string' ? e.createdAt : now;
+    out.updatedAt = typeof e.updatedAt === 'string' ? e.updatedAt : now;
+    return out;
+  }
+
+  // 지원 형식: {entries:{날짜:구절}} / {entries:[...]} / {items:[...]} / [...] / 단일 구절 객체(이전 서버 버전 파일)
+  function extractEntries(obj) {
+    if (Array.isArray(obj)) return obj;
+    if (!obj || typeof obj !== 'object') return [];
+    if (obj.entries && typeof obj.entries === 'object') return Array.isArray(obj.entries) ? obj.entries : Object.values(obj.entries);
+    if (Array.isArray(obj.items)) return obj.items;
+    if (obj.date) return [obj];
+    return [];
+  }
+
+  const db = {
+    map: new Map(),
+    writable: !!LS,
+    warning: LS ? '' : '이 브라우저에서는 저장소를 사용할 수 없어요',
+
+    load() {
+      if (!LS) return;
+      let raw = null;
+      try { raw = LS.getItem(KEYS.data); } catch { this.writable = false; this.warning = '저장소에 접근할 수 없어요'; return; }
+      if (!raw) return;
+      try {
+        extractEntries(JSON.parse(raw)).forEach((x) => { const n = normalizeEntry(x); if (n) this.map.set(n.date, n); });
+      } catch (err) {
+        // 손상된 원본은 덮어쓰기 전에 별도 키로 보관
+        console.error('저장 데이터가 손상되었습니다', err);
+        try { LS.setItem(`${KEYS.data}.corrupt-${Date.now()}`, raw); } catch { /* 보관 실패 */ }
+        this.warning = '저장 데이터가 손상되어 별도로 보관했어요. 백업 파일로 복구해 주세요';
+      }
+    },
+
+    snapshot() {
+      const entries = {};
+      [...this.map.keys()].sort().forEach((k) => { entries[k] = this.map.get(k); });
+      return { app: 'daily-verse', version: 1, savedAt: new Date().toISOString(), entries };
+    },
+
+    /** 변경 후 저장. 실패하면 메모리 상태를 되돌림 */
+    transact(fn) {
+      if (!this.writable) throw new Error(this.warning || '저장할 수 없어요');
+      const before = new Map(this.map);
+      fn(this.map);
+      try {
+        LS.setItem(KEYS.data, JSON.stringify(this.snapshot()));
+      } catch (err) {
+        this.map = before;
+        console.error('저장 실패', err);
+        throw new Error(err && err.name === 'QuotaExceededError' ? '저장 공간이 부족해요' : '저장하지 못했어요');
+      }
+      requestPersist();
+    },
+
+    get(k) { return this.map.get(k) || null; },
+    get size() { return this.map.size; },
+  };
+
+  let persistAsked = false;
+  function requestPersist() {
+    if (persistAsked || !navigator.storage || !navigator.storage.persist) return;
+    persistAsked = true;
+    navigator.storage.persisted()
+      .then((p) => (p ? true : navigator.storage.persist()))
+      .catch((e) => console.warn('영구 저장 요청 실패', e));
+  }
+
+  /* ================= 상태 ================= */
+  const savedView = pref.get(KEYS.view);
+  const state = {
+    view: VIEWS.includes(savedView) ? savedView : 'day',
+    cursor: todayDate(),
+    animating: false,
+    lastSwipeAt: 0,
+    editingKey: null,
+  };
+
+  const el = {
+    eyebrow: $('#eyebrow'), title: $('#title'), seg: $('#seg'), viewport: $('#viewport'), stage: $('#stage'),
+    prevBtn: $('#prevBtn'), nextBtn: $('#nextBtn'), todayBtn: $('#todayBtn'), fab: $('#fab'),
+    settingsBtn: $('#settingsBtn'), backupBadge: $('#backupBadge'), backdrop: $('#backdrop'),
+    form: $('#form'), editTitle: $('#editTitle'), fDate: $('#fDate'), fRef: $('#fRef'), fText: $('#fText'), fNote: $('#fNote'),
+    delBtn: $('#delBtn'), saveBtn: $('#saveBtn'),
+    sTotal: $('#sTotal'), sBackup: $('#sBackup'), sPersist: $('#sPersist'),
+    exportBtn: $('#exportBtn'), importBtn: $('#importBtn'), importInput: $('#importInput'), toast: $('#toast'),
+  };
+
+  /* ================= 그래픽 조각 ================= */
+  const RAYS = (() => {
+    let lines = '';
+    for (let i = 0; i < 9; i++) {
+      const a = (102 + i * 8.5) * Math.PI / 180;
+      lines += `<line x1="300" y1="0" x2="${(300 + Math.cos(a) * 480).toFixed(1)}" y2="${(Math.sin(a) * 480).toFixed(1)}" stroke-width="${i % 2 ? 16 : 6}"/>`;
+    }
+    return `<svg class="rays" viewBox="0 0 300 300" preserveAspectRatio="xMaxYMin slice" aria-hidden="true"><g stroke="currentColor" stroke-linecap="round">${lines}</g></svg>`;
+  })();
+
+  const SPRIG = '<svg viewBox="0 0 140 24" aria-hidden="true"><path d="M8 12H50M90 12H132" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".45"/><path d="M70 5l4 7-4 7-4-7z" fill="currentColor"/><path d="M63 12c-3-5-8-7-13-5 2 4 7 6 13 5z" fill="currentColor" opacity=".75"/><path d="M77 12c3-5 8-7 13-5-2 4-7 6-13 5z" fill="currentColor" opacity=".75"/><path d="M63 12c-3 5-8 7-13 5 2-4 7-6 13-5z" fill="currentColor" opacity=".45"/><path d="M77 12c3 5 8 7 13 5-2-4-7-6-13-5z" fill="currentColor" opacity=".45"/></svg>';
+
+  const ILLUS = (() => {
+    let rays = '';
+    for (let deg = -165; deg <= -15; deg += 25) {
+      const r = deg * Math.PI / 180;
+      rays += `<line x1="${(100 + Math.cos(r) * 34).toFixed(1)}" y1="${(54 + Math.sin(r) * 34).toFixed(1)}" x2="${(100 + Math.cos(r) * 46).toFixed(1)}" y2="${(54 + Math.sin(r) * 46).toFixed(1)}"/>`;
+    }
+    return `<svg class="illus" viewBox="0 0 200 140" aria-hidden="true">
+      <circle cx="100" cy="54" r="27" fill="currentColor" opacity=".14"/>
+      <circle cx="100" cy="54" r="15" fill="currentColor" opacity=".3"/>
+      <g stroke="currentColor" stroke-width="2.5" stroke-linecap="round" opacity=".35">${rays}</g>
+      <ellipse cx="100" cy="131" rx="70" ry="5" fill="currentColor" opacity=".1"/>
+      <path class="paper" d="M100 88C80 78 54 76 32 82v42c22-6 48-4 68 6z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+      <path class="paper" d="M100 88c20-10 46-12 68-6v42c-22-6-48-4-68 6z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M44 93c15-3 32-2 46 4M44 103c15-3 32-2 46 4M44 113c15-3 32-2 46 4M156 93c-15-3-32-2-46 4M156 103c-15-3-32-2-46 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity=".3"/>
+      <path d="M150 116c6-10 14-17 26-22" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity=".7"/>
+      <path d="M160 106c-4-5-4-11 0-15 4 5 4 11 0 15zM168 101c1-6 6-10 11-10-1 6-6 10-11 10zM155 113c-6-1-10-5-11-10 6 0 10 4 11 10z" fill="currentColor" opacity=".7"/>
+    </svg>`;
+  })();
+
+  const ICON = {
+    copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>',
+    edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+    leaf: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10z"/><path d="M2 21c0-3 1.9-5.4 5.2-6.1 2.5-.5 5-2 6.8-3.9"/></svg>',
+    chev: '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>',
+  };
+
+  /* ================= 통계 ================= */
+  function streakCount() {
+    let d = todayDate();
+    if (!db.get(keyOf(d))) d = addDays(d, -1);
+    let n = 0;
+    while (db.get(keyOf(d))) { n++; d = addDays(d, -1); }
+    return n;
+  }
+
+  /* ================= 렌더링 ================= */
+  function isCurrentPeriod() {
+    const c = state.cursor, t = todayDate();
+    if (state.view === 'day') return sameDay(c, t);
+    if (state.view === 'week') return sameDay(startOfWeek(c), startOfWeek(t));
+    return c.getFullYear() === t.getFullYear() && c.getMonth() === t.getMonth();
+  }
+
+  function renderHeader() {
+    const c = state.cursor;
+    let year = c.getFullYear();
+    let title;
+    if (state.view === 'day') {
+      title = `${c.getMonth() + 1}월 ${c.getDate()}일 ${DOW[c.getDay()]}요일`;
+    } else if (state.view === 'week') {
+      const s = startOfWeek(c), e = addDays(s, 6);
+      year = s.getFullYear();
+      title = s.getMonth() === e.getMonth()
+        ? `${s.getMonth() + 1}월 ${s.getDate()}일 – ${e.getDate()}일`
+        : `${s.getMonth() + 1}.${s.getDate()} – ${e.getMonth() + 1}.${e.getDate()}`;
+    } else {
+      title = `${c.getMonth() + 1}월`;
+    }
+    const current = isCurrentPeriod();
+    const tag = { day: '오늘', week: '이번 주', month: '이번 달' }[state.view];
+    el.eyebrow.innerHTML = `${year}년${current ? `<span class="today-tag">${tag}</span>` : ''}`;
+    el.title.textContent = title;
+    el.todayBtn.disabled = current;
+  }
+
+  function verseCardHTML(e, d) {
+    const k = keyOf(d);
+    return `<article class="verse-card pal" style="${palStyle(paletteFor(d))}">
+      ${RAYS}<span class="glow g1"></span><span class="glow g2"></span>
+      <div class="vc-inner">
+        <div class="vc-top">
+          <span class="vc-day">DAY ${String(dayOfYear(d)).padStart(3, '0')}</span>
+          ${e.reference ? `<span class="ref">${esc(e.reference)}</span>` : ''}
+        </div>
+        <span class="qmark" aria-hidden="true">“</span>
+        <blockquote class="verse">${esc(e.text)}</blockquote>
+        <div class="ornament">${SPRIG}</div>
+        ${e.note ? `<div class="note"><span class="note-label">${ICON.leaf}묵상</span><p>${esc(e.note)}</p></div>` : ''}
+        <div class="card-foot">
+          <button class="chip-btn" data-copy="${k}">${ICON.copy}복사</button>
+          <button class="chip-btn" data-edit="${k}">${ICON.edit}수정</button>
+        </div>
+      </div>
+    </article>`;
+  }
+
+  function emptyCardHTML(d) {
+    return `<article class="empty-card pal" style="${palStyle(paletteFor(d))}">
+      ${ILLUS}
+      <p class="empty-title">이 날의 말씀을 기다리고 있어요</p>
+      <p class="empty-sub">마음에 남은 구절 하나를 기록해 보세요</p>
+      <button class="btn primary" data-edit="${keyOf(d)}">구절 등록</button>
+    </article>`;
+  }
+
+  function dayHTML() {
+    const c = state.cursor, k = keyOf(c), t = todayDate(), s = startOfWeek(c);
+    const strip = daysBetween(s, addDays(s, 6)).map((d) => {
+      const dk = keyOf(d);
+      const cls = ['strip-day', 'pal', dk === k ? 'is-sel' : '', sameDay(d, t) ? 'is-today' : ''].join(' ');
+      return `<button class="${cls}" style="${palStyle(paletteFor(d))}" data-goto="${dk}" aria-label="${d.getMonth() + 1}월 ${d.getDate()}일">
+        <span class="sd-w dow-${d.getDay()}">${DOW[d.getDay()]}</span><span class="sd-n">${d.getDate()}</span>
+        <i class="sd-dot${db.get(dk) ? ' on' : ''}"></i></button>`;
+    }).join('');
+
+    const e = db.get(k);
+    const streak = sameDay(c, t) ? streakCount() : 0;
+    const extra = streak > 0
+      ? `<div class="streak">${ICON.leaf}<span><b>${streak}일</b> 연속으로 말씀을 기록했어요</span></div>`
+      : '<p class="hint">좌우로 밀어서 날짜를 이동할 수 있어요</p>';
+    return `<div class="strip">${strip}</div>${e ? verseCardHTML(e, c) : emptyCardHTML(c)}${extra}`;
+  }
+
+  function weekHTML() {
+    const s = startOfWeek(state.cursor), t = todayDate();
+    const days = daysBetween(s, addDays(s, 6));
+    const filled = days.filter((d) => db.get(keyOf(d))).length;
+    const segs = days.map((d) => `<i class="pal${db.get(keyOf(d)) ? ' on' : ''}" style="${palStyle(paletteFor(d))}"></i>`).join('');
+
+    const items = days.map((d) => {
+      const k = keyOf(d), e = db.get(k), p = paletteFor(d);
+      const body = e
+        ? `${e.reference ? `<p class="wi-ref">${esc(e.reference)}</p>` : ''}<p class="wi-text">${esc(e.text)}</p>`
+        : '<p class="wi-none">등록된 구절 없음</p>';
+      return `<li><button class="week-item pal${e ? '' : ' is-empty'}${sameDay(d, t) ? ' is-today' : ''}" style="${palStyle(p)}" data-goto="${k}">
+        <div class="wi-tile${e ? ' pal' : ''}"><span class="wi-w${e ? '' : ` dow-${d.getDay()}`}">${DOW[d.getDay()]}</span><span class="wi-n">${d.getDate()}</span></div>
+        <div class="wi-body">${body}</div>${e ? ICON.chev : ''}</button></li>`;
+    }).join('');
+
+    return `<div class="week-summary"><span><b>${filled}</b> / 7일 기록</span><div class="wsegs">${segs}</div></div>
+      <ul class="week-list">${items}</ul>`;
+  }
+
+  function monthHTML() {
+    const c = state.cursor, y = c.getFullYear(), m = c.getMonth(), k = keyOf(c), t = todayDate();
+    const first = new Date(y, m, 1), last = new Date(y, m + 1, 0);
+    const head = DOW.map((w, i) => `<span class="mh dow-${i}">${w}</span>`).join('');
+    const cells = daysBetween(startOfWeek(first), addDays(startOfWeek(last), 6)).map((d) => {
+      const dk = keyOf(d);
+      const cls = ['mc', 'pal', `dow-${d.getDay()}`, d.getMonth() !== m ? 'out' : '', sameDay(d, t) ? 'is-today' : '',
+        dk === k ? 'is-sel' : '', db.get(dk) ? 'has' : ''].join(' ');
+      return `<button class="${cls}" style="${palStyle(paletteFor(d))}" data-goto="${dk}"><span class="mc-n">${d.getDate()}</span></button>`;
+    }).join('');
+
+    const entries = daysBetween(first, last).map((d) => [d, db.get(keyOf(d))]).filter(([, e]) => e);
+    const total = last.getDate();
+    const ratio = entries.length / total;
+    const C = 2 * Math.PI * 21;
+    const ring = `<svg class="ring" viewBox="0 0 50 50" aria-hidden="true"><circle class="ring-bg" cx="25" cy="25" r="21"/>
+      <circle class="ring-fg" cx="25" cy="25" r="21" stroke-dasharray="${(C * ratio).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 25 25)"/></svg>`;
+
+    const list = entries.length
+      ? entries.map(([d, e]) => `<li><button class="ml-item pal" style="${palStyle(paletteFor(d))}" data-goto="${keyOf(d)}">
+          <i class="ml-dot"></i><span class="ml-date">${d.getDate()}일 (${DOW[d.getDay()]})</span>
+          <span class="ml-ref">${esc(e.reference || e.text)}</span></button></li>`).join('')
+      : '<li class="ml-none">이번 달에 등록된 구절이 없어요</li>';
+
+    return `<div class="month"><div class="mgrid">${head}</div><div class="mgrid">${cells}</div></div>
+      <div class="stats">
+        <div class="stat ring-stat">${ring}<div><b>${entries.length}<small>/${total}</small></b><span>이달 기록</span></div></div>
+        <div class="stat"><b>${streakCount()}<small>일</small></b><span>연속 기록</span></div>
+        <div class="stat"><b>${db.size}<small>개</small></b><span>전체 구절</span></div>
+      </div>
+      <section class="month-list"><h3>${m + 1}월의 말씀 <span class="count">${entries.length}</span></h3><ul>${list}</ul></section>`;
+  }
+
+  function applyBodyPalette() {
+    const p = paletteFor(state.cursor);
+    const map = { '--pa': p.a, '--pb': p.b, '--pacc': p.acc, '--pda': p.da, '--pdb': p.db, '--pdacc': p.dacc };
+    for (const [prop, val] of Object.entries(map)) document.body.style.setProperty(prop, val);
+  }
+
+  function renderNow() {
+    renderHeader();
+    applyBodyPalette();
+    el.stage.innerHTML = state.view === 'day' ? dayHTML() : state.view === 'week' ? weekHTML() : monthHTML();
+    el.seg.dataset.active = String(VIEWS.indexOf(state.view));
+    el.seg.querySelectorAll('button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.view === state.view)));
+    updateBackupBadge();
+  }
+
+  function setView(v) {
+    state.view = v;
+    pref.set(KEYS.view, v);
+    renderNow();
+  }
+
+  /* ================= 이동 / 스와이프 ================= */
+  function moved(d, dir) {
+    if (state.view === 'day') return addDays(d, dir);
+    if (state.view === 'week') return addDays(d, dir * 7);
+    return addMonths(d, dir);
+  }
+
+  async function slide(dir) {
+    if (state.animating) return;
+    state.animating = true;
+    const w = el.viewport.clientWidth;
+    const st = el.stage.style;
+    st.transition = 'transform .18s ease-in, opacity .18s ease-in';
+    st.transform = `translate3d(${-dir * w}px,0,0)`;
+    st.opacity = '0';
+    await wait(180);
+
+    state.cursor = moved(state.cursor, dir);
+    renderNow();
+    st.transition = 'none';
+    st.transform = `translate3d(${dir * w * 0.35}px,0,0)`;
+    void el.stage.offsetWidth;
+    st.transition = 'transform .28s cubic-bezier(.2,.8,.2,1), opacity .28s';
+    st.transform = 'translate3d(0,0,0)';
+    st.opacity = '1';
+    await wait(280);
+    st.transition = '';
+    state.animating = false;
+  }
+
+  function snapBack() {
+    const st = el.stage.style;
+    st.transition = 'transform .22s cubic-bezier(.2,.8,.2,1), opacity .22s';
+    st.transform = 'translate3d(0,0,0)';
+    st.opacity = '1';
+  }
+
+  const touch = { active: false, axis: null, sx: 0, sy: 0, dx: 0, t0: 0 };
+
+  el.viewport.addEventListener('touchstart', (e) => {
+    if (state.animating || document.body.classList.contains('sheet-open') || e.touches.length !== 1) return;
+    Object.assign(touch, { active: true, axis: null, sx: e.touches[0].clientX, sy: e.touches[0].clientY, dx: 0, t0: performance.now() });
+    el.stage.style.transition = 'none';
+  }, { passive: true });
+
+  el.viewport.addEventListener('touchmove', (e) => {
+    if (!touch.active) return;
+    const mx = e.touches[0].clientX - touch.sx;
+    const my = e.touches[0].clientY - touch.sy;
+    if (!touch.axis) {
+      if (Math.abs(mx) < 8 && Math.abs(my) < 8) return;
+      touch.axis = Math.abs(mx) > Math.abs(my) * 1.2 ? 'x' : 'y';
+    }
+    if (touch.axis !== 'x') return;
+    if (e.cancelable) e.preventDefault();
+    touch.dx = mx;
+    el.stage.style.transform = `translate3d(${mx}px,0,0)`;
+    el.stage.style.opacity = String(1 - Math.min(Math.abs(mx) / el.viewport.clientWidth, 1) * 0.5);
+  }, { passive: false });
+
+  function endTouch() {
+    if (!touch.active) return;
+    touch.active = false;
+    if (touch.axis !== 'x') return;
+    state.lastSwipeAt = performance.now();
+    const w = el.viewport.clientWidth;
+    const velocity = Math.abs(touch.dx) / Math.max(performance.now() - touch.t0, 1);
+    if (Math.abs(touch.dx) > w * 0.22 || (velocity > 0.5 && Math.abs(touch.dx) > 30)) slide(touch.dx < 0 ? 1 : -1);
+    else snapBack();
+  }
+  el.viewport.addEventListener('touchend', endTouch);
+  el.viewport.addEventListener('touchcancel', endTouch);
+
+  /* ================= 시트 공통 ================= */
+  function openSheet(name) {
+    document.body.dataset.sheet = name;
+    document.body.classList.add('sheet-open');
+  }
+  function closeSheet() {
+    document.body.classList.remove('sheet-open');
+    delete document.body.dataset.sheet;
+    if (document.activeElement) document.activeElement.blur();
+  }
+
+  /* ================= 등록 / 수정 ================= */
+  function openEditor(k) {
+    const e = db.get(k);
+    state.editingKey = e ? k : null;
+    el.editTitle.textContent = e ? '구절 수정' : '구절 등록';
+    el.fDate.value = k;
+    el.fRef.value = e ? e.reference : '';
+    el.fText.value = e ? e.text : '';
+    el.fNote.value = e ? e.note : '';
+    el.delBtn.hidden = !e;
+    openSheet('edit');
+  }
+
+  el.form.addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    const date = el.fDate.value;
+    if (!isValidKey(date)) { toast('날짜를 선택하세요'); return; }
+    const entry = normalizeEntry({ date, reference: el.fRef.value, text: el.fText.value, note: el.fNote.value });
+    if (!entry) { toast('본문을 입력하세요'); el.fText.focus(); return; }
+    const oldKey = state.editingKey;
+    if (date !== oldKey && db.get(date) && !confirm(`${date}에 이미 등록된 구절이 있어요. 덮어쓸까요?`)) return;
+
+    try {
+      db.transact((m) => {
+        const prev = m.get(date) || (oldKey ? m.get(oldKey) : null);
+        const now = new Date().toISOString();
+        entry.createdAt = prev ? prev.createdAt : now;
+        entry.updatedAt = now;
+        if (oldKey && oldKey !== date) m.delete(oldKey);
+        m.set(date, entry);
+      });
+    } catch (e) {
+      toast(e.message);
+      return;
+    }
+    state.cursor = parseKey(date);
+    closeSheet();
+    renderNow();
+    toast('저장했어요');
+  });
+
+  el.delBtn.addEventListener('click', () => {
+    const k = state.editingKey;
+    if (!k || !confirm('이 날의 구절을 삭제할까요?')) return;
+    try {
+      db.transact((m) => m.delete(k));
+    } catch (e) {
+      toast(e.message);
+      return;
+    }
+    closeSheet();
+    renderNow();
+    toast('삭제했어요');
+  });
+
+  async function copyVerse(k) {
+    const e = db.get(k);
+    if (!e) return;
+    const text = e.reference ? `${e.text}\n— ${e.reference}` : e.text;
+    try {
+      await navigator.clipboard.writeText(text);
+      toast('구절을 복사했어요');
+    } catch (err) {
+      console.warn('복사 실패', err);
+      toast('복사하지 못했어요');
+    }
+  }
+
+  /* ================= 보관함 / 백업 ================= */
+  function lastBackupDate() {
+    const v = pref.get(KEYS.backup);
+    const d = v ? new Date(v) : null;
+    return d && !isNaN(d) ? d : null;
+  }
+
+  function updateBackupBadge() {
+    const last = lastBackupDate();
+    const stale = !last || (Date.now() - last.getTime()) > BACKUP_REMIND_DAYS * DAY_MS;
+    el.backupBadge.classList.toggle('on', db.size > 0 && stale);
+  }
+
+  async function updateSettings() {
+    el.sTotal.textContent = `${db.size}개`;
+    const last = lastBackupDate();
+    el.sBackup.textContent = last ? `${last.getMonth() + 1}월 ${last.getDate()}일` : '없음';
+
+    el.sPersist.classList.remove('warn');
+    if (db.warning) {
+      el.sPersist.textContent = db.warning;
+      el.sPersist.classList.add('warn');
+      return;
+    }
+    let persisted = false;
+    try { persisted = !!(navigator.storage && navigator.storage.persisted && await navigator.storage.persisted()); } catch { /* 미지원 */ }
+    el.sPersist.textContent = persisted
+      ? '브라우저가 이 데이터를 영구 보관하도록 허용했어요.'
+      : '저장 공간이 부족하거나 오래 사용하지 않으면 브라우저가 데이터를 정리할 수 있어요. 홈 화면에 추가해 사용하고, 백업 파일도 함께 보관하세요.';
+  }
+
+  function exportBackup() {
+    if (!db.size) { toast('내보낼 구절이 없어요'); return; }
+    const json = JSON.stringify(db.snapshot(), null, 2);
+    const name = `daily-verse-backup-${keyOf(todayDate()).replace(/-/g, '')}.json`;
+    const file = new File([json], name, { type: 'application/json' });
+    const markDone = () => { pref.set(KEYS.backup, new Date().toISOString()); updateSettings(); updateBackupBadge(); };
+
+    // 모바일: 공유 시트로 '파일에 저장' 가능 / 그 외: 다운로드
+    const coarse = window.matchMedia && matchMedia('(pointer: coarse)').matches;
+    if (coarse && navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: '오늘의 말씀 백업' })
+        .then(() => { markDone(); toast('백업 파일을 저장했어요'); })
+        .catch((err) => { if (err.name !== 'AbortError') { console.warn('공유 실패, 다운로드로 대체', err); download(file); markDone(); } });
+      return;
+    }
+    download(file);
+    markDone();
+    toast('백업 파일을 내보냈어요');
+  }
+
+  function download(file) {
+    const url = URL.createObjectURL(file);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = file.name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+
+  async function importFiles(files) {
+    const found = new Map();
+    let skipped = 0;
+    for (const f of files) {
+      if (f.size > 10 * 1024 * 1024) { skipped++; continue; }
+      try {
+        extractEntries(JSON.parse(await f.text())).forEach((x) => {
+          const n = normalizeEntry(x);
+          if (n) found.set(n.date, n); else skipped++;
+        });
+      } catch (err) {
+        console.warn(`불러오기 실패: ${f.name}`, err);
+        skipped++;
+      }
+    }
+    if (!found.size) { toast('불러올 구절을 찾지 못했어요'); return; }
+
+    let add = 0, over = 0;
+    found.forEach((_, k) => (db.get(k) ? over++ : add++));
+    const msg = `구절 ${found.size}개를 불러올까요?\n새로 추가 ${add}개 · 덮어쓰기 ${over}개` + (skipped ? `\n(형식이 맞지 않아 건너뜀 ${skipped}개)` : '');
+    if (!confirm(msg)) return;
+    try {
+      db.transact((m) => found.forEach((e, k) => m.set(k, e)));
+    } catch (e) {
+      toast(e.message);
+      return;
+    }
+    renderNow();
+    updateSettings();
+    toast(`${found.size}개를 불러왔어요`);
+  }
+
+  /* ================= 이벤트 ================= */
+  let toastTimer = 0;
+  function toast(msg) {
+    el.toast.textContent = msg;
+    el.toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.toast.classList.remove('show'), 2200);
+  }
+
+  el.stage.addEventListener('click', (e) => {
+    if (performance.now() - state.lastSwipeAt < 350) return;
+    const copy = e.target.closest('[data-copy]');
+    if (copy) { copyVerse(copy.dataset.copy); return; }
+    const edit = e.target.closest('[data-edit]');
+    if (edit) { openEditor(edit.dataset.edit); return; }
+    const go = e.target.closest('[data-goto]');
+    if (go) { state.cursor = parseKey(go.dataset.goto); setView('day'); }
+  });
+
+  el.seg.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-view]');
+    if (b && b.dataset.view !== state.view) setView(b.dataset.view);
+  });
+
+  el.prevBtn.addEventListener('click', () => slide(-1));
+  el.nextBtn.addEventListener('click', () => slide(1));
+  el.todayBtn.addEventListener('click', () => { state.cursor = todayDate(); renderNow(); });
+  el.fab.addEventListener('click', () => openEditor(keyOf(state.cursor)));
+  el.settingsBtn.addEventListener('click', () => { updateSettings(); openSheet('settings'); });
+  el.exportBtn.addEventListener('click', exportBackup);
+  el.importBtn.addEventListener('click', () => el.importInput.click());
+  el.importInput.addEventListener('change', () => {
+    const files = [...el.importInput.files];
+    el.importInput.value = '';
+    if (files.length) importFiles(files);
+  });
+  el.backdrop.addEventListener('click', closeSheet);
+  document.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', closeSheet));
+
+  document.addEventListener('keydown', (e) => {
+    if (document.body.classList.contains('sheet-open')) { if (e.key === 'Escape') closeSheet(); return; }
+    if (e.key === 'ArrowLeft') slide(-1);
+    if (e.key === 'ArrowRight') slide(1);
+  });
+
+  // 자정이 지난 뒤 돌아오면 '오늘' 표시 갱신
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') renderNow(); });
+
+  // 다른 탭에서 변경된 경우 동기화
+  window.addEventListener('storage', (e) => {
+    if (e.key !== KEYS.data) return;
+    db.map = new Map();
+    db.load();
+    renderNow();
+  });
+
+  /* ================= 시작 ================= */
+  db.load();
+  renderNow();
+  if (db.warning) toast(db.warning);
+})();
+</script>
+</body>
+</html>
